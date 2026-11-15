@@ -63,7 +63,7 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
             // Write the file into EVERY granted container: the app and the
             // extension can be signed into different sets, and one known
             // intersection is what the fallback needs.
-            for url in AppGroup.allContainerURLs {
+            for url in SharedChannel.allContainerURLs {
                 StatsMirror.write(json: json, into: url)
             }
             // ALWAYS mirror into the keychain as well: a re-signed build can
@@ -87,7 +87,7 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
         // unambiguous.
         StatsMirror.clear(from: AppGroup.containerURL)
         DirectMirror.clear(from: AppGroup.containerURL)
-        for url in AppGroup.allContainerURLs {
+        for url in SharedChannel.allContainerURLs {
             StatsMirror.clear(from: url)
             DirectMirror.clear(from: url)
         }
@@ -455,6 +455,25 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
             logMsg("ERROR: no provider configuration")
             completionHandler(VPNError.noConfiguration)
             return
+        }
+
+        // The APP's App Group, sent on every connect. On a re-signed build the
+        // extension's grant can differ, and a mirror written into its own
+        // container never reaches the app — the exported log shows exactly
+        // that. Writing into the app's group as well is what makes the
+        // stats/log/direct mirrors visible without IPC.
+        if let group = config["app_group"] as? String, !group.isEmpty {
+            SharedChannel.appGroupOverride = group
+            SharedLogger.shared.adoptSharedGroup(group)
+            // Re-point Go's file too: it was configured above against the
+            // extension's own container, and the app reads the APP's one.
+            if let path = SharedLogger.shared.logFilePath {
+                path.withCString { ptr in
+                    wgSetLogFilePath(UnsafeMutablePointer(mutating: ptr))
+                }
+                logMsg("Go log file path re-pointed: \(path)")
+            }
+            logMsg("shared channel: app group override = \(group)")
         }
 
         guard let wgConfig = config["wg_config"] as? String,
@@ -1553,7 +1572,7 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
         // an OFF switch as "possibly leaking" and reconnects the tunnel —
         // exactly what the user saw. Never the requested value: `applied` is
         // only moved by a successful apply.
-        for url in AppGroup.allContainerURLs {
+        for url in SharedChannel.allContainerURLs {
             DirectMirror.write(direct: applied, into: url)
         }
         writeDirectKeychain(applied)
@@ -1574,7 +1593,7 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
     private func directBecameReady(initial: Bool) {
         directSync = DirectRouteSync(applied: initial)
         directReady = true
-        for url in AppGroup.allContainerURLs {
+        for url in SharedChannel.allContainerURLs {
             DirectMirror.write(direct: initial, into: url)
         }
         writeDirectKeychain(initial)

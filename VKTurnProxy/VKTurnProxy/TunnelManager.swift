@@ -1186,6 +1186,11 @@ class TunnelManager: ObservableObject {
                 // Whether the number above was chosen by the user — see
                 // TunnelConfig.mtuExplicit for what it decides.
                 "mtu_explicit": config.mtuExplicit,
+                // The App Group THIS process lives in. The extension may be
+                // signed into a different set on a re-signed build; writing
+                // the stats/log/direct mirrors into the app's group is the
+                // only way the app can see them without IPC.
+                "app_group": AppGroup.current ?? "",
                 // WRAP-A: tells the extension to fetch the GETCONF-minted WG
                 // config (wgWaitWrapAProvision) and override wg_config +
                 // address/dns/mtu after bootstrap, since the user entered none.

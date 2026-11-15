@@ -7,7 +7,7 @@ import os.log
 class SharedLogger {
     static let shared = SharedLogger()
 
-    private let fileURL: URL?
+    private var fileURL: URL?
     private let queue = DispatchQueue(label: "com.vkturnproxy.logger", qos: .utility)
     // Per-file rotation threshold. When current vpn.log exceeds this size,
     // it's renamed to vpn.log.1 (atomic move; previous .1 is discarded) and
@@ -55,6 +55,16 @@ class SharedLogger {
             // a correctly signed build never pays for it.
             Self.logAppGroupFailure()
         }
+    }
+
+    /// Re-point the file at the APP's container, passed by the app through
+    /// `providerConfiguration`. Called once at extension start, before the
+    /// session writes anything: on a re-signed build the extension's own grant
+    /// may differ, and its file would otherwise be invisible to the app.
+    func adoptSharedGroup(_ identifier: String) {
+        guard let container = FileManager.default.containerURL(
+            forSecurityApplicationGroupIdentifier: identifier) else { return }
+        fileURL = container.appendingPathComponent("vpn.log")
     }
 
     /// Emit the App-Group diagnosis to this process's os_log subsystem.

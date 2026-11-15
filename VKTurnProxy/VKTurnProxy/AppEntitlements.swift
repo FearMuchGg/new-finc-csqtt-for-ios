@@ -588,6 +588,43 @@ enum AppGroup {
     }
 }
 
+// MARK: - Cross-process channel
+
+/// The container(s) the extension should write into so that the APP can read
+/// them.
+///
+/// The app passes its own App Group through `providerConfiguration` on every
+/// connect. On a correctly signed build this equals the extension's own group;
+/// on a re-signed one the two grants can differ, and a mirror written into the
+/// extension's own container is invisible to the app (the exported log shows
+/// exactly that: the app's file holds its own lines and none of the
+/// extension's). The override makes the extension write into the app's group
+/// as well — provided its signature grants it, which is the common case for a
+/// single re-signer.
+enum SharedChannel {
+    static var appGroupOverride: String?
+
+    static var containerURL: URL? {
+        if let id = appGroupOverride,
+           let url = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: id) {
+            return url
+        }
+        return AppGroup.containerURL
+    }
+
+    static var allContainerURLs: [URL] {
+        var urls: [URL] = []
+        if let id = appGroupOverride,
+           let url = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: id) {
+            urls.append(url)
+        }
+        for url in AppGroup.allContainerURLs where !urls.contains(url) {
+            urls.append(url)
+        }
+        return urls
+    }
+}
+
 // MARK: - Stats mirror
 
 /// A copy of the tunnel's statistics that the extension leaves in the shared

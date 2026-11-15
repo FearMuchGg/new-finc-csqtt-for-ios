@@ -570,3 +570,78 @@ enum StatsMirror {
         try? FileManager.default.removeItem(at: url)
     }
 }
+
+// MARK: - Direct mirror
+
+/// The routing state the extension actually put in force, parked in the shared
+/// App Group so the app can confirm a DIRECT switch when the provider channel
+/// is closed.
+///
+/// Why it exists: `setDirectMode` saves the profile, sends `set_direct:`, then
+/// waits for the extension to say what the routes really are. That answer
+/// arrives over `sendProviderMessage`, which a re-signed build is refused. The
+/// switch then lands on `.silent`, and the OFF direction treats "unknown" as
+/// "possibly leaking" and RECONNECTS the whole tunnel — the user's report:
+/// turning DIRECT off reconnected the VPN even though the tunnel was never in
+/// doubt.
+///
+/// The confirmation therefore has to survive the refused channel, exactly as
+/// the counters do. The extension writes what it applied after every settled
+/// apply; the app reads it only when the message round trips came back empty.
+///
+/// A FILE, not UserDefaults, for the same reason as the stats mirror: the
+/// write happens inside an apply and the read happens seconds later in the
+/// other process, so it must be visible the moment the write returns.
+///
+/// It is never the REQUESTED state: `direct` is `DirectRouteSync.applied`,
+/// set only by an apply that succeeded. A snapshot can confirm an apply; it
+/// can never confirm an intent.
+let directMirrorFileName = "direct-mirror.json"
+
+struct DirectMirrorSnapshot: Codable, Equatable {
+    let writtenAt: Double
+    let direct: Bool
+}
+
+enum DirectMirror {
+    /// How far apart two clocks on the same device may read. Not drift — the
+    /// app stamps its question and the extension its answer microseconds apart.
+    static let skew: TimeInterval = 1.0
+
+    static func fileURL(in container: URL?) -> URL? {
+        container?.appendingPathComponent(directMirrorFileName)
+    }
+
+    static func write(direct: Bool, into container: URL?, now: Date = Date()) {
+        guard let url = fileURL(in: container) else { return }
+        let snapshot = DirectMirrorSnapshot(writtenAt: now.timeIntervalSince1970, direct: direct)
+        guard let data = try? JSONEncoder().encode(snapshot) else { return }
+        try? data.write(to: url, options: .atomic)
+    }
+
+    /// The applied state, or nil when this snapshot does not answer the
+    /// question that was asked: never written, unreadable, written before the
+    /// app asked, from the future, or older than `maxAge`.
+    ///
+    /// `notBefore` is the point, not the age limit: DIRECT is a state a user
+    /// can sit in for hours, so an old snapshot is not stale — but one written
+    /// before the request predates the apply entirely, and answering with it
+    /// would report the previous outcome as this one's.
+    static func read(from container: URL?, notBefore: Date, now: Date = Date(),
+                     maxAge: TimeInterval = 300) -> Bool? {
+        guard let url = fileURL(in: container),
+              let data = try? Data(contentsOf: url),
+              let snapshot = try? JSONDecoder().decode(DirectMirrorSnapshot.self, from: data)
+        else { return nil }
+        let writtenAt = Date(timeIntervalSince1970: snapshot.writtenAt)
+        guard writtenAt >= notBefore.addingTimeInterval(-skew) else { return nil }
+        guard writtenAt <= now.addingTimeInterval(skew) else { return nil }
+        guard now.timeIntervalSince(writtenAt) <= maxAge else { return nil }
+        return snapshot.direct
+    }
+
+    static func clear(from container: URL?) {
+        guard let url = fileURL(in: container) else { return }
+        try? FileManager.default.removeItem(at: url)
+    }
+}

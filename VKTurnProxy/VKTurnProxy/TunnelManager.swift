@@ -1566,6 +1566,10 @@ class TunnelManager: ObservableObject {
         // landed, and undoing it would switch the routes a second time. So the
         // message is sent, its answer is WAITED for, and when it does not come
         // the extension is ASKED what the routes actually are.
+        // Stamp the question BEFORE the profile save and the message: KVO can
+        // apply the new routes during saveToPreferences, so an answer stamped
+        // after the message could be older than the apply it describes.
+        let askedAt = t0
         let ack = await confirmDirectApplied(direct)
         refreshDirectMode()
         // 🚨 THE TWO DIRECTIONS ARE NOT SYMMETRIC, which is why an unconfirmed
@@ -1617,6 +1621,27 @@ class TunnelManager: ObservableObject {
             return .unconfirmed(directModeError ?? "Routing could not be confirmed.")
         case .silent:
             note("⚠️ the extension did not answer, twice — the state of the routes is UNKNOWN")
+            // The reply channel is refused on a re-signed build. The extension
+            // parks the routes it ACTUALLY applied in the shared container;
+            // read that before treating "no answer" as "possibly leaking" and
+            // reconnecting the whole tunnel — the reconnect the user reported
+            // on every DIRECT → tunnelled switch.
+            if let applied = DirectMirror.read(from: AppGroup.containerURL, notBefore: askedAt) {
+                if applied == direct {
+                    directModeError = nil
+                    note("confirmed by the DirectMirror (App Group): routes are "
+                        + (applied ? "DIRECT — traffic goes around the tunnel" : "tunnelled"))
+                    return .confirmed
+                }
+                adoptDirectMode(applied)
+                await directChangeUnconfirmed(
+                    wanted: direct,
+                    message: direct
+                        ? "Routing did not switch — traffic is still going through the tunnel."
+                        : "Routing did not switch back — traffic was still going around the tunnel.",
+                    from: source)
+                return .unconfirmed(directModeError ?? "Routing could not be confirmed.")
+            }
             await directChangeUnconfirmed(
                 wanted: direct,
                 message: direct

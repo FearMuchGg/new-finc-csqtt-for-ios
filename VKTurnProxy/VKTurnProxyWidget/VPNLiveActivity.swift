@@ -135,8 +135,8 @@ struct VPNLiveActivity: Widget {
             } compactLeading: {
                 // No glow and no ring here: the compact pill shares the status
                 // bar, and a soft shadow reads as a smudge over the carrier
-                // glyphs. 8 pt keeps it inside its own space.
-                statusDot(context, size: 8, glow: false, ring: false)
+                // glyphs. 10 pt is the visible dot, no halo.
+                statusDot(context, size: 10, glow: false, ring: false)
             } compactTrailing: {
                 // 🚨 The `.frame` is load-bearing — never drop it. A live text
                 // (`style: .timer`, and `Text(timerInterval:)` too) asks for a
@@ -188,8 +188,9 @@ struct VPNLiveActivity: Widget {
             } minimal: {
                 // One dot, as the main screen uses. It no longer identifies the
                 // app by shape — the activity's own header and the Lock Screen
-                // card do — but it keeps the colour language consistent.
-                statusDot(context, size: 10, glow: false, ring: false)
+                // card do — but it keeps the colour language consistent. 12 pt:
+                // the minimal pill is the one place a dot can afford to read.
+                statusDot(context, size: 12, glow: false, ring: false)
             }
             .keylineTint(context.state.direct == true ? .orange : tint(context))
         }

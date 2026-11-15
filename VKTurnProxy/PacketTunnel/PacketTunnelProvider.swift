@@ -43,16 +43,20 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
 
     private func startStatsMirror() {
         statsMirrorTimer?.cancel()
-        let timer = DispatchSource.makeTimerSource(queue: .main)
-        timer.schedule(deadline: .now() + 1, repeating: 2, leeway: .milliseconds(250))
+        // A global queue, not `.main`: the extension's main run loop is also
+        // serving the Go bridge and the provider callbacks, and a utility timer
+        // here must not depend on it being idle. The reference implementation
+        // uses the same queue for the same reason.
+        let timer = DispatchSource.makeTimerSource(queue: DispatchQueue.global(qos: .utility))
+        timer.schedule(deadline: .now() + 2, repeating: 2, leeway: .milliseconds(250))
         timer.setEventHandler { [weak self] in
-            guard let self, let backend = self.backend, let json = backend.stats() else { return }
+            guard let self, !self.stopRequested else { return }
+            guard let backend = self.backend else { return }
+            // "{}" is what the Go side answers a handle it no longer knows —
+            // not a measurement. Writing it would overwrite a good snapshot
+            // with an undecodable one and blank the app's counters.
+            guard let json = backend.stats(), !json.isEmpty, json != "{}" else { return }
             let now = Date().timeIntervalSince1970
-            // The file mirror is the reference implementation's channel: an
-            // atomic write in the shared container is visible to the other
-            // process immediately, unlike a UserDefaults suite (cfprefsd
-            // flushes on its own schedule — the exact reason the counters
-            // stayed empty while the mirror "worked").
             if let container = AppGroup.containerURL {
                 StatsMirror.write(json: json, into: container)
             } else {
@@ -71,6 +75,7 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
         // current one; the reader also checks the age, but a deleted file is
         // unambiguous.
         StatsMirror.clear(from: AppGroup.containerURL)
+        DirectMirror.clear(from: AppGroup.containerURL)
         SharedKeychain.remove(account: "stats")
     }
 
@@ -1522,6 +1527,12 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
                 + "\(directSync.applied ? "DIRECT" : "tunnelled"). The app is told the ROUTES.")
         }
         let applied = directSync.applied
+        // Park the APPLIED state for the app. On a re-signed build the reply
+        // over providerMessage never arrives, and without this the app treats
+        // an OFF switch as "possibly leaking" and reconnects the tunnel —
+        // exactly what the user saw. Never the requested value: `applied` is
+        // only moved by a successful apply.
+        DirectMirror.write(direct: applied, into: AppGroup.containerURL)
         let waiters = directWaiters
         directWaiters.removeAll()
         for waiter in waiters { waiter(applied) }
@@ -1532,6 +1543,7 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
     private func directBecameReady(initial: Bool) {
         directSync = DirectRouteSync(applied: initial)
         directReady = true
+        DirectMirror.write(direct: initial, into: AppGroup.containerURL)
         logMsg("direct: the tunnel came up \(initial ? "DIRECT" : "tunnelled") "
             + "in its FIRST settings — no second apply needed")
         if let pending = directPendingBeforeReady {

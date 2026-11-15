@@ -266,6 +266,87 @@ final class ServerStore: ObservableObject {
         return p
     }
 
+    // MARK: - Subscriptions
+
+    /// Replace one subscription's servers with a freshly parsed set.
+    ///
+    /// Merge by `remoteKey`, never by name or index: a provider may rename or
+    /// reorder servers between refreshes, and matching by position would
+    /// silently swap the settings under the user's active profile. The
+    /// existing UUID is preserved for a key that survives, so the active
+    /// selection and any pushed screen referring to it stay valid.
+    ///
+    /// Returns true when the ACTIVE server changed (removed, or replaced by a
+    /// fallback), so the caller can refresh the Live Activity and the screen.
+    @discardableResult
+    func replaceSubscriptionServers(_ subscriptionId: UUID,
+                                    with incoming: [ServerProfile]) -> Bool {
+        var byKey: [String: ServerProfile] = [:]
+        for profile in incoming {
+            guard let key = profile.remoteKey, !key.isEmpty else { continue }
+            byKey[key] = profile
+        }
+
+        let others = servers.filter { $0.subscriptionId != subscriptionId }
+        let existing = servers.filter { $0.subscriptionId == subscriptionId }
+        var existingByKey: [String: ServerProfile] = [:]
+        for profile in existing {
+            if let key = profile.remoteKey { existingByKey[key] = profile }
+        }
+
+        var merged: [ServerProfile] = []
+        for (key, var profile) in byKey {
+            if let old = existingByKey[key] {
+                // Keep the identity the rest of the app already knows.
+                profile.id = old.id
+            }
+            merged.append(profile)
+        }
+        merged.sort { $0.serverName.localizedCaseInsensitiveCompare($1.serverName) == .orderedAscending }
+
+        let activeWasManaged = servers.first(where: { $0.id == activeServerId })?.subscriptionId == subscriptionId
+        let activeSurvives = merged.contains { $0.id == activeServerId }
+        servers = others + merged
+
+        var activeChanged = false
+        if activeWasManaged && !activeSurvives {
+            // The server the user was on vanished from the provider. Falling
+            // back to the first fresh one of the same subscription keeps them
+            // online; if the subscription is now empty, any other server wins.
+            if let next = merged.first ?? servers.first {
+                activeServerId = next.id
+                activeChanged = true
+            }
+        }
+        persist()
+        if activeChanged { projectToFlatKeys(activeServer) }
+        SharedLogger.shared.log("[AppDebug] subscription \(subscriptionId.uuidString.prefix(8)): "
+            + "\(incoming.count) server(s), \(merged.count) applied")
+        return activeChanged
+    }
+
+    func removeSubscriptionServers(_ subscriptionId: UUID) {
+        let removed = servers.filter { $0.subscriptionId == subscriptionId }
+        guard !removed.isEmpty else { return }
+        let activeWasManaged = removed.contains { $0.id == activeServerId }
+        servers.removeAll { $0.subscriptionId == subscriptionId }
+        if servers.isEmpty {
+            // Never leave the app without a profile: an empty set breaks
+            // activeServer's `servers[0]` and every screen behind it.
+            let fallback = ServerProfile()
+            servers = [fallback]
+            activeServerId = fallback.id
+        } else if activeWasManaged, let first = servers.first {
+            activeServerId = first.id
+        }
+        persist()
+        projectToFlatKeys(activeServer)
+    }
+
+    func servers(for subscriptionId: UUID) -> [ServerProfile] {
+        servers.filter { $0.subscriptionId == subscriptionId }
+    }
+
     // MARK: - Naming helpers
 
     private func nextDefaultName() -> String {

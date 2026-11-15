@@ -314,8 +314,13 @@ private struct ActiveServerControls: View {
         // shared rule, driven by fixtures. → SessionServer.swift.
         let caption = tunnel.serverCaption
         return VStack(spacing: 16) {
+            // The picker is the primary “which server” control: a menu on the
+            // main screen, not a row buried in Settings. The caption under it
+            // keeps the session-vs-selection truth (SessionServer.swift).
+            ServerPickerMenu(tunnel: tunnel)
+
             Text(caption.subtitle)
-                .font(.subheadline)
+                .font(.caption)
                 .foregroundColor(.secondary)
 
             // The selection differs from what is running — say so, or the screen
@@ -704,6 +709,14 @@ struct SettingsView: View {
                 Text("VK Account Auth")
             } footer: {
                 Text("Non-anonymous fallback for when VK disables anonymous call join. Log in to a VK account (a burner is recommended) in an embedded browser — 2FA works. Only the session cookies are stored, in the Keychain, never in a backup. When ON the app uses ONLY this path (no anonymous fallback). Turning it OFF keeps the saved cookies for later.")
+            }
+
+            Section {
+                NavigationLink(destination: SubscriptionsView()) {
+                    Label("Subscriptions", systemImage: "arrow.triangle.2.circlepath")
+                }
+            } footer: {
+                Text("One subscription uses one device for all of its servers.")
             }
 
             Section {

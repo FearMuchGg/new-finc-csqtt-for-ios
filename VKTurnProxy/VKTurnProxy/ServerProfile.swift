@@ -15,6 +15,15 @@ struct ServerProfile: Codable, Identifiable, Equatable {
     var id: UUID = UUID()
     var serverName: String = "Server1"
 
+    /// Which subscription produced this server, if any. nil = created by hand.
+    /// A profile from a subscription is MANAGED: the subscription refresh owns
+    /// its settings and may remove it when the provider drops the server.
+    var subscriptionId: UUID? = nil
+    /// Stable identity inside one subscription — the normalized connection
+    /// link. Refresh merges by THIS, never by name or index: names are display
+    /// strings and providers reorder servers freely.
+    var remoteKey: String? = nil
+
     // WireGuard identity — used by SRTP / SRTP-WRAP / SRTP-WRAP-S. Unused by
     // SRTP-WRAP-A, whose WG keys are minted by the server via GETCONF.
     var privateKey: String = ""
@@ -108,6 +117,7 @@ struct ServerProfile: Codable, Identifiable, Equatable {
     /// from `init(from:)` silently decodes as its default.
     enum CodingKeys: String, CodingKey {
         case id, serverName
+        case subscriptionId, remoteKey
         case privateKey, peerPublicKey, presharedKey, tunnelAddress, peerAddress
         case dnsServers, numConnections, credPoolCooldownSeconds, turnServerOverride
         case useUDP, useDTLS
@@ -136,6 +146,8 @@ extension ServerProfile {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         if let v = try c.decodeIfPresent(UUID.self, forKey: .id) { id = v }
         if let v = try c.decodeIfPresent(String.self, forKey: .serverName) { serverName = v }
+        if let v = try c.decodeIfPresent(UUID.self, forKey: .subscriptionId) { subscriptionId = v }
+        if let v = try c.decodeIfPresent(String.self, forKey: .remoteKey) { remoteKey = v }
         if let v = try c.decodeIfPresent(String.self, forKey: .privateKey) { privateKey = v }
         if let v = try c.decodeIfPresent(String.self, forKey: .peerPublicKey) { peerPublicKey = v }
         if let v = try c.decodeIfPresent(String.self, forKey: .presharedKey) { presharedKey = v }

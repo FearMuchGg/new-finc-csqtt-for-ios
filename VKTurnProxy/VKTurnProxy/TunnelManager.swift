@@ -380,6 +380,12 @@ class TunnelManager: ObservableObject {
             live.statsChannelDown = false
             debugLog("stats channel recovered via App Group mirror")
         }
+        // A live mirror is a live tunnel: extend the Live Activity's freshness
+        // on the same cadence as an IPC reply. Without this the counters kept
+        // updating while the card aged past staleDate and turned grey after
+        // 15 minutes — the exact "stale island" the user saw on a build whose
+        // IPC channel is refused. The controller throttles re-publishes.
+        syncLiveActivity()
         return true
     }
 

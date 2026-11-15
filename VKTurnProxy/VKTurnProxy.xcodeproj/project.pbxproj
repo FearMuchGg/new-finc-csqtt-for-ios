@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		D32A0000000000000000B001 /* Subscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = D32A0000000000000000A001 /* Subscription.swift */; };
+		D32A0000000000000000B002 /* SubscriptionParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = D32A0000000000000000A002 /* SubscriptionParser.swift */; };
+		D32A0000000000000000B003 /* SubscriptionStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = D32A0000000000000000A003 /* SubscriptionStore.swift */; };
+		D32A0000000000000000B004 /* ServerPickerMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = D32A0000000000000000A004 /* ServerPickerMenu.swift */; };
+		D32A0000000000000000B005 /* SubscriptionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D32A0000000000000000A005 /* SubscriptionsView.swift */; };
 		D31A0000000000000000B001 /* CSQTTTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = D31A0000000000000000A002 /* CSQTTTheme.swift */; };
 		D31A0000000000000000B002 /* CSQTTComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = D31A0000000000000000A003 /* CSQTTComponents.swift */; };
 		D31A0000000000000000B003 /* CSQTTOnboarding.swift in Sources */ = {isa = PBXBuildFile; fileRef = D31A0000000000000000A004 /* CSQTTOnboarding.swift */; };
@@ -125,6 +130,11 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		D32A0000000000000000A001 /* Subscription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Subscription.swift; sourceTree = "<group>"; };
+		D32A0000000000000000A002 /* SubscriptionParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionParser.swift; sourceTree = "<group>"; };
+		D32A0000000000000000A003 /* SubscriptionStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionStore.swift; sourceTree = "<group>"; };
+		D32A0000000000000000A004 /* ServerPickerMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ServerPickerMenu.swift; sourceTree = "<group>"; };
+		D32A0000000000000000A005 /* SubscriptionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SubscriptionsView.swift; sourceTree = "<group>"; };
 		D31A0000000000000000A002 /* CSQTTTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CSQTTTheme.swift; sourceTree = "<group>"; };
 		D31A0000000000000000A003 /* CSQTTComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CSQTTComponents.swift; sourceTree = "<group>"; };
 		D31A0000000000000000A004 /* CSQTTOnboarding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CSQTTOnboarding.swift; sourceTree = "<group>"; };
@@ -277,6 +287,11 @@
 		9C68AA12FFBB168491B35540 /* VKTurnProxy */ = {
 			isa = PBXGroup;
 			children = (
+				D32A0000000000000000A001 /* Subscription.swift */,
+				D32A0000000000000000A002 /* SubscriptionParser.swift */,
+				D32A0000000000000000A003 /* SubscriptionStore.swift */,
+				D32A0000000000000000A004 /* ServerPickerMenu.swift */,
+				D32A0000000000000000A005 /* SubscriptionsView.swift */,
 				D31A0000000000000000A001 /* Design */,
 				AC23EC10E8345DCDF502ACA0 /* AdvancedView.swift */,
 				AD358E048E7135E1596359E1 /* AppConfig.swift */,
@@ -523,6 +538,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D32A0000000000000000B001 /* Subscription.swift in Sources */,
+				D32A0000000000000000B002 /* SubscriptionParser.swift in Sources */,
+				D32A0000000000000000B003 /* SubscriptionStore.swift in Sources */,
+				D32A0000000000000000B004 /* ServerPickerMenu.swift in Sources */,
+				D32A0000000000000000B005 /* SubscriptionsView.swift in Sources */,
 				D31A0000000000000000B001 /* CSQTTTheme.swift in Sources */,
 				D31A0000000000000000B002 /* CSQTTComponents.swift in Sources */,
 				D31A0000000000000000B003 /* CSQTTOnboarding.swift in Sources */,
@@ -603,7 +623,7 @@
 		1551285F9714F8A1EA2F3F46 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CURRENT_PROJECT_VERSION = 491;
+				CURRENT_PROJECT_VERSION = 492;
 				INFOPLIST_FILE = VKTurnProxyWidget/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -623,7 +643,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = PacketTunnel/PacketTunnel.entitlements;
-				CURRENT_PROJECT_VERSION = 491;
+				CURRENT_PROJECT_VERSION = 492;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/../WireGuardBridge/build",
@@ -653,7 +673,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = VKTurnProxy/VKTurnProxy.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 491;
+				CURRENT_PROJECT_VERSION = 492;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/../WireGuardBridge/build",
@@ -679,7 +699,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = PacketTunnel/PacketTunnel.entitlements;
-				CURRENT_PROJECT_VERSION = 491;
+				CURRENT_PROJECT_VERSION = 492;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/../WireGuardBridge/build",
@@ -774,7 +794,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = VKTurnProxy/VKTurnProxy.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 491;
+				CURRENT_PROJECT_VERSION = 492;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/../WireGuardBridge/build",
@@ -799,7 +819,7 @@
 		C9EC52049256F969AB0E71C8 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CURRENT_PROJECT_VERSION = 491;
+				CURRENT_PROJECT_VERSION = 492;
 				INFOPLIST_FILE = VKTurnProxyWidget/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				LD_RUNPATH_SEARCH_PATHS = (

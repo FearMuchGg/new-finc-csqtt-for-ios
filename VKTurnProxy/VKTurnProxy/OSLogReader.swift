@@ -88,35 +88,4 @@ enum OSLogReader {
             return ""
         }
     }
-
-    /// The most recent `CSQTT_STATS <json>` line from the SYSTEM store.
-    ///
-    /// `OSLogStore(scope: .system)` is the one cross-process channel that does
-    /// not depend on App Groups or shared keychain groups — neither of which a
-    /// re-signed build necessarily grants (the exported log shows `-34018` and
-    /// an extension writing into a different container). iOS may refuse the
-    /// scope without an entitlement; the caller treats nil as "no data" and
-    /// keeps every other fallback.
-    static func latestStatsJSON(maxAge: TimeInterval = 20) -> String? {
-        do {
-            let store = try OSLogStore(scope: .system)
-            let position = store.position(date: Date(timeIntervalSinceNow: -maxAge))
-            let predicate = NSPredicate(
-                format: "subsystem == %@ AND category == %@",
-                "com.vkturnproxy.tunnel", "StatsMirror"
-            )
-            let entries = try store.getEntries(at: position, matching: predicate)
-            var latest: String?
-            for entry in entries {
-                guard let logEntry = entry as? OSLogEntryLog else { continue }
-                let message = logEntry.composedMessage
-                if let range = message.range(of: "CSQTT_STATS ") {
-                    latest = String(message[range.upperBound...])
-                }
-            }
-            return latest
-        } catch {
-            return nil
-        }
-    }
 }

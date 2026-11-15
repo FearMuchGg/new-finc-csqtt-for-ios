@@ -308,7 +308,6 @@ class TunnelManager: ObservableObject {
     /// time-based check for a channel that was never actually asked.
     private var missedStatsPolls = 0
     private var statsChannelLoggedReason: String?
-    private var lastOSLogStatsProbe = Date.distantPast
 
     /// Flip the stats channel to "down" and say why — once per reason, since
     /// the poll runs every 2s and would otherwise flood the log.
@@ -358,15 +357,6 @@ class TunnelManager: ObservableObject {
            let writtenAt = Double(text[..<newline]),
            Date().timeIntervalSince1970 - writtenAt <= maxAge {
             json = String(text[text.index(after: newline)...])
-        }
-        // Last resort, and the only one that needs no entitlement: the
-        // extension mirrors the same JSON into os_log; the system store can be
-        // read from here. Throttled — the store query is not cheap.
-        if json == nil, Date().timeIntervalSince(lastOSLogStatsProbe) > 4 {
-            lastOSLogStatsProbe = Date()
-            if let value = OSLogReader.latestStatsJSON(maxAge: 20) {
-                json = value
-            }
         }
         guard let json,
               let data = json.data(using: .utf8),

@@ -234,7 +234,10 @@ extension View {
     @ViewBuilder
     func csqttPrimaryButton(tint: Color) -> some View {
         if #available(iOS 26.0, *) {
-            self.buttonStyle(.glassProminent).tint(tint)
+            // `.large` is the documented control size for a screen's primary
+            // action; without it the glass button came out a size smaller than
+            // the app's own filled button did (build 501 → 502).
+            self.buttonStyle(.glassProminent).controlSize(.large).tint(tint)
         } else {
             self.buttonStyle(CSQTTFilledButtonStyle(tint: tint))
         }

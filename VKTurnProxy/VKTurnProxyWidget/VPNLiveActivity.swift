@@ -55,6 +55,10 @@ import WidgetKit
 private struct IslandBrandPill: View {
     let color: Color
     let stale: Bool
+    /// DIRECT routing mark. The bare status dot used to carry it as a small
+    /// amber dot next to the tunnel colour; the capsule must keep that signal
+    /// (build 502 — it was lost when the dot became a pill).
+    let direct: Bool
 
     var body: some View {
         Image(systemName: stale ? "shield.slash.fill" : "checkmark.shield.fill")
@@ -74,7 +78,27 @@ private struct IslandBrandPill: View {
                 Capsule(style: .continuous)
                     .strokeBorder(Color.white.opacity(0.28), lineWidth: 0.6)
             }
-            .accessibilityLabel(stale ? "Tunnel status: last known" : "Tunnel status")
+            .overlay(alignment: .bottomTrailing) {
+                // On the capsule's corner, not beside it: the compact region's
+                // width is the system's, and a dot in the layout would either
+                // widen the pill or push it into the clip.
+                if direct {
+                    Circle()
+                        .fill(Color.yellow)
+                        .frame(width: 6, height: 6)
+                        .overlay {
+                            Circle().strokeBorder(Color.black.opacity(0.45), lineWidth: 0.5)
+                        }
+                        .offset(x: 1.5, y: 1.5)
+                }
+            }
+            .accessibilityLabel(accessibilityText)
+    }
+
+    private var accessibilityText: String {
+        var parts = [stale ? "Tunnel status: last known" : "Tunnel status"]
+        if direct { parts.append("Direct routing") }
+        return parts.joined(separator: ", ")
     }
 }
 
@@ -189,7 +213,9 @@ struct VPNLiveActivity: Widget {
                 // data › Support presentations with reduced width), so the same
                 // view survives landscape, iPhone Duo and a second Live
                 // Activity instead of being clipped by the region.
-                IslandBrandPill(color: dotColor(context), stale: context.isStale)
+                IslandBrandPill(color: dotColor(context),
+                                stale: context.isStale,
+                                direct: isDirect(context))
                     .offset(x: -1)
             } compactTrailing: {
                 // 🚨 The `.frame` is load-bearing — never drop it. A live text

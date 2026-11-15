@@ -460,6 +460,10 @@ private struct ActiveServerControls: View {
             }
             .csqttPrimaryButton(tint: buttonColor)
             .frame(maxWidth: .infinity)
+            // The app's own primary was 52 pt tall; the system glass button is
+            // shorter, so the frame restores the original height instead of the
+            // slimmer one build 501 shipped.
+            .frame(minHeight: 56)
             .padding(.horizontal)
             .padding(.top, 8)
             // Block Connect when a required field for the active mode is

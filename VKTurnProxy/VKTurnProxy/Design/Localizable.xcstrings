@@ -1,0 +1,228 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "csqtt.appearance.title" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Appearance" } },
+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Внешний вид" } }
+      }
+    },
+    "csqtt.appearance.system" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "System" } },
+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Системная" } }
+      }
+    },
+    "csqtt.appearance.light" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Light" } },
+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Светлая" } }
+      }
+    },
+    "csqtt.appearance.dark" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Dark" } },
+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Тёмная" } }
+      }
+    },
+    "csqtt.appearance.glass" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Liquid glass surfaces" } },
+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Стеклянные поверхности" } }
+      }
+    },
+    "csqtt.appearance.animations" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Animations" } },
+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Анимации" } }
+      }
+    },
+    "csqtt.appearance.haptics" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Haptic feedback" } },
+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Тактильный отклик" } }
+      }
+    },
+    "csqtt.appearance.footer" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Glass surfaces follow the system material, so they stay legible in both schemes and with Increase Contrast. Animations and haptics are honoured only when Reduce Motion and System Haptics allow them." } },
+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Стеклянные поверхности используют системный материал и остаются читаемыми в обеих темах и при повышенной контрастности. Анимации и тактильный отклик соблюдают настройки «Уменьшение движения» и системной тактильной отдачи." } }
+      }
+    },
+    "csqtt.onboarding.welcome.title" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "A tunnel that looks like a call" } },
+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Туннель, похожий на звонок" } }
+      }
+    },
+    "csqtt.onboarding.welcome.body" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "CSQTT carries your traffic through a TURN relay and shapes it as media, so restrictive networks see a call instead of a VPN." } },
+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "CSQTT передаёт трафик через TURN-ретранслятор и маскирует его под медиа: ограничивающие сети видят звонок, а не VPN." } }
+      }
+    },
+    "csqtt.onboarding.features.title" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "What you get" } },
+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Что вы получаете" } }
+      }
+    },
+    "csqtt.onboarding.feature.speed.title" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Parallel streams" } },
+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Параллельные потоки" } }
+      }
+    },
+    "csqtt.onboarding.feature.speed.body" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "The client keeps several streams to one server and restarts only the one that stalls." } },
+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Клиент держит несколько потоков к одному серверу и перезапускает только зависший." } }
+      }
+    },
+    "csqtt.onboarding.feature.privacy.title" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Keys from a handshake" } },
+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Ключи из рукопожатия" } }
+      }
+    },
+    "csqtt.onboarding.feature.privacy.body" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "DTLS-SRTP derives fresh session keys; if the server answers no handshake, the password-derived keys keep the tunnel up." } },
+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "DTLS-SRTP выводит свежие ключи сессии; если сервер не отвечает рукопожатием, туннель продолжает работать на ключах из пароля." } }
+      }
+    },
+    "csqtt.onboarding.feature.control.title" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Control from the Lock Screen" } },
+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Управление с экрана блокировки" } }
+      }
+    },
+    "csqtt.onboarding.feature.control.body" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "The Live Activity shows the state and, on iOS 17+, can disconnect, switch server or bypass the tunnel." } },
+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Live Activity показывает состояние и на iOS 17+ позволяет отключиться, сменить сервер или пустить трафик мимо туннеля." } }
+      }
+    },
+    "csqtt.onboarding.ready.title" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Add a server to start" } },
+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Добавьте сервер, чтобы начать" } }
+      }
+    },
+    "csqtt.onboarding.ready.body" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Open Settings, add your server profile (or paste a csqtt:// link), then tap Connect on the main screen." } },
+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Откройте «Настройки», добавьте профиль сервера (или вставьте ссылку csqtt://), затем нажмите «Подключить» на главном экране." } }
+      }
+    },
+    "csqtt.onboarding.skip" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Skip" } },
+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Пропустить" } }
+      }
+    },
+    "csqtt.onboarding.next" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Continue" } },
+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Продолжить" } }
+      }
+    },
+    "csqtt.onboarding.start" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Get started" } },
+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Начать" } }
+      }
+    },
+    "csqtt.empty.servers.title" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "No servers yet" } },
+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Серверов пока нет" } }
+      }
+    },
+    "csqtt.empty.servers.message" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Add a server profile or paste a connection link to get started." } },
+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Добавьте профиль сервера или вставьте ссылку подключения." } }
+      }
+    },
+    "csqtt.empty.logs.title" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Nothing logged yet" } },
+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Записей пока нет" } }
+      }
+    },
+    "csqtt.empty.logs.message" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Connect once and the app will start reporting what the tunnel does." } },
+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Подключитесь один раз — и приложение начнёт рассказывать, что делает туннель." } }
+      }
+    },
+    "csqtt.common.retry" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Retry" } },
+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Повторить" } }
+      }
+    },
+    "csqtt.common.close" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Close" } },
+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Закрыть" } }
+      }
+    },
+    "csqtt.common.copied" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Copied" } },
+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Скопировано" } }
+      }
+    },
+    "csqtt.status.connected" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Connected" } },
+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Подключено" } }
+      }
+    },
+    "csqtt.status.connecting" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Connecting…" } },
+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Подключение…" } }
+      }
+    },
+    "csqtt.status.disconnecting" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Disconnecting…" } },
+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Отключение…" } }
+      }
+    },
+    "csqtt.status.disconnected" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Disconnected" } },
+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Отключено" } }
+      }
+    },
+    "csqtt.status.preparing" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Preparing…" } },
+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Подготовка…" } }
+      }
+    },
+    "csqtt.status.reasserting" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Reconnecting…" } },
+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Переподключение…" } }
+      }
+    },
+    "csqtt.status.invalid" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Invalid configuration" } },
+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Неверная конфигурация" } }
+      }
+    },
+    "csqtt.status.unknown" : {
+      "localizations" : {
+        "en" : { "stringUnit" : { "state" : "translated", "value" : "Unknown state" } },
+        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Неизвестное состояние" } }
+      }
+    }
+  },
+  "version" : "1.0"
+}

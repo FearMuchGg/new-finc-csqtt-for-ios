@@ -1,0 +1,141 @@
+name: ios-unsigned
+
+# Builds the app UNSIGNED and publishes a ready-to-sign .ipa.
+#
+# Why unsigned: the project ships a Network Extension (PacketTunnel), and a
+# signed build needs an Apple team, a certificate and a provisioning profile
+# with the Network Extension capability. Those belong to whoever installs the
+# app, not to CI. The artifact here is a Payload/ zip — an .ipa in everything
+# but the signature — so it can be signed with AltStore, Sideloadly, Esign or
+# an Xcode-managed profile without a Mac in the loop.
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ios-unsigned-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Unsigned IPA (macOS)
+    runs-on: macos-15
+    timeout-minutes: 75
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Toolchain
+        run: |
+          xcodebuild -version
+          swift --version
+          go version
+          xcodebuild -showsdks | tail -n 5
+
+      - name: Build the Go xcframework
+        # The project links ../WireGuardBridge/build/WireGuardTURN.xcframework.
+        # The target is built for arm64 device and arm64 simulator and packed
+        # with xcodebuild -create-xcframework.
+        run: |
+          set -o pipefail
+          make -C WireGuardBridge xcframework 2>&1 | tee build-xcframework.log
+
+      - name: Build the app (unsigned)
+        run: |
+          set -o pipefail
+          xcodebuild \
+            -project VKTurnProxy/VKTurnProxy.xcodeproj \
+            -scheme VKTurnProxy \
+            -configuration Release \
+            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath build/DerivedData \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            DEVELOPMENT_TEAM="" \
+            PROVISIONING_PROFILE_SPECIFIER="" \
+            build 2>&1 | tee build-xcodebuild.log
+
+      - name: Package IPA, app, dSYM and entitlements
+        run: |
+          set -euo pipefail
+
+          APP="build/DerivedData/Build/Products/Release-iphoneos/VKTurnProxy.app"
+          test -d "$APP" || { echo "::error::VKTurnProxy.app was not produced"; exit 1; }
+
+          # The .ipa contract: a zip whose root contains Payload/<App>.app.
+          rm -rf build/ipa
+          mkdir -p build/ipa/Payload
+          cp -R "$APP" build/ipa/Payload/
+          ditto -c -k --sequesterRsrc --keepParent build/ipa/Payload build/VKTurnProxy-unsigned.ipa
+
+          # The bare app, for tools that take one.
+          ditto -c -k --sequesterRsrc --keepParent "$APP" build/VKTurnProxy-unsigned.app.zip
+
+          # dSYMs, if Xcode produced any (it does for a Release build).
+          DSYM_DIR="build/DerivedData/Build/Products/Release-iphoneos"
+          if compgen -G "$DSYM_DIR/*.dSYM" > /dev/null; then
+            (cd "$DSYM_DIR" && zip -qry "$GITHUB_WORKSPACE/build/VKTurnProxy-dSYM.zip" ./*.dSYM)
+          fi
+
+          mkdir -p build/entitlements
+          cp VKTurnProxy/VKTurnProxy/VKTurnProxy.entitlements build/entitlements/ 2>/dev/null || true
+          cp VKTurnProxy/PacketTunnel/PacketTunnel.entitlements build/entitlements/ 2>/dev/null || true
+
+          (
+            cd build
+            shasum -a 256 ./*.ipa ./*.app.zip 2>/dev/null > SHA256SUMS.txt || true
+            cat SHA256SUMS.txt
+          )
+
+      - name: Inspect the artifact
+        run: |
+          set -euo pipefail
+          echo "— IPA size:"
+          ls -lh build/*.ipa
+          echo "— Payload:"
+          unzip -l build/VKTurnProxy-unsigned.ipa | head -n 20
+          echo "— Architectures of the main binary:"
+          lipo -info build/DerivedData/Build/Products/Release-iphoneos/VKTurnProxy.app/VKTurnProxy
+          echo "— Signature (expected: none):"
+          codesign -dv build/DerivedData/Build/Products/Release-iphoneos/VKTurnProxy.app 2>&1 || true
+          echo "— Embedded extensions:"
+          ls build/DerivedData/Build/Products/Release-iphoneos/VKTurnProxy.app/PlugIns || true
+
+      - name: Upload
+        uses: actions/upload-artifact@v4
+        with:
+          name: VKTurnProxy-unsigned-ipa
+          path: |
+            build/*.ipa
+            build/*.app.zip
+            build/*.dSYM.zip
+            build/entitlements/*.entitlements
+            build/SHA256SUMS.txt
+          if-no-files-found: error
+          retention-days: 14
+
+      - name: Upload build logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-logs
+          path: |
+            build-xcframework.log
+            build-xcodebuild.log
+          if-no-files-found: ignore
+          retention-days: 7

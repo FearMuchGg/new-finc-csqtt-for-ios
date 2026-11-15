@@ -59,14 +59,13 @@ private struct CSQTTPulseModifier: ViewModifier {
     var active: Bool
     var color: Color
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @AppStorage(CSQTTTheme.Key.animations) private var animations = true
 
     @State private var pulsing = false
 
     func body(content: Content) -> some View {
         content
             .overlay {
-                if active && animations && !reduceMotion {
+                if active && !reduceMotion {
                     Circle()
                         .stroke(color.opacity(0.45), lineWidth: 2)
                         .scaleEffect(pulsing ? 1.8 : 1.0)
@@ -313,12 +312,11 @@ struct CSQTTSkeleton: View {
     var corner: CGFloat? = nil
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @AppStorage(CSQTTTheme.Key.animations) private var animations = true
 
     var body: some View {
         let shape = RoundedRectangle(cornerRadius: corner ?? height / 2, style: .continuous)
-        TimelineView(.animation(minimumInterval: 1.0 / 30.0, paused: reduceMotion || !animations)) { context in
-            let phase = reduceMotion || !animations
+        TimelineView(.animation(minimumInterval: 1.0 / 30.0, paused: reduceMotion)) { context in
+            let phase = reduceMotion
                 ? 0.0
                 : (context.date.timeIntervalSinceReferenceDate * 0.9).truncatingRemainder(dividingBy: 2.0)
             shape
@@ -443,10 +441,10 @@ struct CSQTTTabBar: View {
 
     @Namespace private var pill
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @AppStorage(CSQTTTheme.Key.glass) private var glassEnabled = true
-    @AppStorage(CSQTTTheme.Key.animations) private var animationsEnabled = true
-
-    private var motion: Bool { !reduceMotion && animationsEnabled }
+    // Neither glass nor motion is a preference any more (build 503): the system
+    // owns both, and this bar is the iOS 15-18 fallback only.
+    private let glassEnabled = true
+    private var motion: Bool { !reduceMotion }
 
     /// The selected tab's capsule as a LENS rather than a solid chip: the
     /// accent stays, but the fill is translucent at its edges, a specular dot

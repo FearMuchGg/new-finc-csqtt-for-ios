@@ -29,8 +29,6 @@ struct AdvancedView: View {
     /// the design modifiers for the rest, so every switch takes effect on the
     /// next render rather than at relaunch.
     @AppStorage(CSQTTTheme.Key.appearance) private var appearance = CSQTTAppearance.system.rawValue
-    @AppStorage(CSQTTTheme.Key.glass) private var glassEnabled = true
-    @AppStorage(CSQTTTheme.Key.animations) private var animations = true
     @AppStorage(CSQTTTheme.Key.haptics) private var haptics = true
 
     /// Live Activity master switch (GitHub issue #64). Default OFF — the feature
@@ -88,8 +86,6 @@ struct AdvancedView: View {
                 }
                 .pickerStyle(.segmented)
 
-                Toggle("csqtt.appearance.glass", isOn: $glassEnabled)
-                Toggle("csqtt.appearance.animations", isOn: $animations)
                 Toggle("csqtt.appearance.haptics", isOn: $haptics)
                     // Only persist here. Do NOT play a confirmation tap when
                     // switched ON: the user tests the switch by toggling it,

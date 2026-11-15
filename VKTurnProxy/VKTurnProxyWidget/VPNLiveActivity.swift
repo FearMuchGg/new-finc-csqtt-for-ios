@@ -55,42 +55,28 @@ import WidgetKit
 private struct IslandBrandPill: View {
     let color: Color
     let stale: Bool
-    /// DIRECT routing mark. The bare status dot used to carry it as a small
-    /// amber dot next to the tunnel colour; the capsule must keep that signal
-    /// (build 502 — it was lost when the dot became a pill).
+    /// DIRECT routing. When on, the WHOLE capsule takes the DIRECT colour — rim
+    /// and glyph together — because the chosen variant (G) is an outline: with
+    /// no fill, colour is the only carrier of state.
     let direct: Bool
+
+    private var tint: Color {
+        if stale { return .gray }
+        return direct ? .yellow : color
+    }
 
     var body: some View {
         Image(systemName: stale ? "shield.slash.fill" : "checkmark.shield.fill")
             .font(.system(size: 11, weight: .bold))
-            .foregroundStyle(Color.white)
+            .foregroundStyle(tint)
             .frame(width: 28, height: 22)
             .background {
                 Capsule(style: .continuous)
-                    .fill(LinearGradient(
-                        colors: stale
-                            ? [Color.gray.opacity(0.60), Color.gray.opacity(0.32)]
-                            : [color.opacity(0.95), color.opacity(0.55)],
-                        startPoint: .top,
-                        endPoint: .bottom))
+                    .fill(tint.opacity(stale ? 0.05 : 0.14))
             }
             .overlay {
                 Capsule(style: .continuous)
-                    .strokeBorder(Color.white.opacity(0.28), lineWidth: 0.6)
-            }
-            .overlay(alignment: .bottomTrailing) {
-                // On the capsule's corner, not beside it: the compact region's
-                // width is the system's, and a dot in the layout would either
-                // widen the pill or push it into the clip.
-                if direct {
-                    Circle()
-                        .fill(Color.yellow)
-                        .frame(width: 6, height: 6)
-                        .overlay {
-                            Circle().strokeBorder(Color.black.opacity(0.45), lineWidth: 0.5)
-                        }
-                        .offset(x: 1.5, y: 1.5)
-                }
+                    .strokeBorder(tint.opacity(stale ? 0.35 : 0.95), lineWidth: 1.2)
             }
             .accessibilityLabel(accessibilityText)
     }
@@ -286,46 +272,60 @@ struct VPNLiveActivity: Widget {
     @available(iOS 17.0, *)
     @ViewBuilder
     private func controls(_ context: ActivityViewContext<VPNActivityAttributes>) -> some View {
-        // A floating bottom bar, like the app's own tab bar: a capsule of
-        // icon buttons plus one round action, all at the BOTTOM of the card.
-        // Rule (b) still holds — the island's bottom region fits three
-        // controls, and this is exactly three (power, DIRECT, switch).
-        HStack(spacing: 10) {
-            HStack(spacing: 2) {
-                Button(intent: DisconnectIntent()) {
-                    Image(systemName: "power")
-                        .font(.system(size: 15, weight: .semibold))
-                        .frame(width: 42, height: 34)
-                        .foregroundStyle(.red)
-                }
-                .buttonStyle(.plain)
-                .disabled(context.state.status == .disconnecting)
-
-                Button(intent: SetDirectIntent(direct: !isDirect(context))) {
-                    Image(systemName: "arrow.triangle.branch")
-                        .font(.system(size: 15, weight: .semibold))
-                        .frame(width: 42, height: 34)
-                        .foregroundStyle(isDirect(context) ? Color.orange : Color.primary)
-                }
-                .buttonStyle(.plain)
-                .disabled(context.state.status != .connected)
+        // Variant F: three labelled capsules. The WORD states the action, the
+        // COLOUR states the mode, the icon is a reminder — nobody has to guess
+        // what a bare glyph means. Still exactly THREE controls, because the
+        // island's bottom region clips anything past that (rule b).
+        HStack(spacing: 6) {
+            Button(intent: DisconnectIntent()) {
+                controlCapsule("Disconnect", icon: "power",
+                               tint: .red, active: false)
             }
-            .padding(.horizontal, 6)
-            .padding(.vertical, 3)
-            .background(Capsule(style: .continuous).fill(.ultraThinMaterial))
-            .overlay(Capsule(style: .continuous)
-                .strokeBorder(Color.white.opacity(0.18), lineWidth: 1))
+            .buttonStyle(.plain)
+            .disabled(context.state.status == .disconnecting)
+
+            Button(intent: SetDirectIntent(direct: !isDirect(context))) {
+                controlCapsule("Direct", icon: "arrow.triangle.branch",
+                               tint: isDirect(context) ? .yellow : .orange,
+                               active: isDirect(context))
+            }
+            .buttonStyle(.plain)
+            .disabled(context.state.status != .connected)
 
             Button(intent: EnterPickerIntent()) {
-                Image(systemName: "arrow.triangle.2.circlepath")
-                    .font(.system(size: 15, weight: .semibold))
-                    .frame(width: 40, height: 40)
-                    .background(Circle().fill(.ultraThinMaterial))
-                    .overlay(Circle().strokeBorder(Color.white.opacity(0.18), lineWidth: 1))
+                controlCapsule("Server", icon: "arrow.triangle.2.circlepath",
+                               tint: .gray, active: false)
             }
             .buttonStyle(.plain)
         }
         .frame(maxWidth: .infinity, alignment: .center)
+    }
+
+    /// One action as a capsule of tinted material: icon and word share the
+    /// action's colour. 10 pt text with a 0.8 floor keeps three of these inside
+    /// the island's width even with the longest Russian label.
+    private func controlCapsule(_ title: LocalizedStringKey,
+                                icon: String,
+                                tint: Color,
+                                active: Bool) -> some View {
+        HStack(spacing: 4) {
+            Image(systemName: icon)
+                .font(.system(size: 11, weight: .bold))
+            Text(title)
+                .font(.system(size: 10, weight: .semibold))
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
+        }
+        .foregroundStyle(tint)
+        .padding(.horizontal, 9)
+        .padding(.vertical, 6)
+        .background {
+            Capsule(style: .continuous).fill(tint.opacity(active ? 0.30 : 0.16))
+        }
+        .overlay {
+            Capsule(style: .continuous)
+                .strokeBorder(tint.opacity(active ? 0.95 : 0.55), lineWidth: 0.8)
+        }
     }
 
     /// nil means "published before this field existed" and reads as tunnelled —

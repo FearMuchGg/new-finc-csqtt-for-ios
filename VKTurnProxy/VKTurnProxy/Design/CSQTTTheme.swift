@@ -26,8 +26,6 @@ enum CSQTTTheme {
     /// preferences mirror cannot disagree about a spelling.
     enum Key {
         static let appearance = "csqttAppearance"
-        static let glass = "csqttGlassEnabled"
-        static let animations = "csqttAnimationsEnabled"
         static let haptics = "csqttHapticsEnabled"
         static let onboardingDone = "csqttOnboardingDone"
     }
@@ -160,40 +158,29 @@ private struct CSQTTGlassModifier: ViewModifier {
     var elevated: Bool
     var padding: CGFloat
 
-    @AppStorage(CSQTTTheme.Key.glass) private var glassEnabled = true
-
+    // The "Liquid Glass" toggle is GONE (build 503). On iOS 26 glass is the
+    // system's material, not an app preference; on older releases it is the
+    // only surface the cards have. A switch that could only make the app look
+    // worse, on a system where the look is not ours to turn off, was clutter.
     @ViewBuilder
     func body(content: Content) -> some View {
-        if glassEnabled {
-            if #available(iOS 26.0, *) {
-                // The SYSTEM material, not our imitation of it. Apple ships
-                // Liquid Glass as the material of the functional layer and
-                // renders it with the device's own optics (light, refraction,
-                // legibility over any background) — reproducing that by hand
-                // is what this project did until build 497. `regular` is the
-                // documented variant for components that carry text; the
-                // rounded rectangle is the documented shape for cards.
-                content
-                    .padding(padding)
-                    .glassEffect(.regular.tint(tint.opacity(0.14)),
-                                 in: RoundedRectangle(cornerRadius: corner, style: .continuous))
-            } else {
-                content
-                    .padding(padding)
-                    .background {
-                        CSQTTGlassSurface(corner: corner, tint: tint, elevated: elevated)
-                    }
-            }
+        if #available(iOS 26.0, *) {
+            // The SYSTEM material, not our imitation of it. Apple ships
+            // Liquid Glass as the material of the functional layer and
+            // renders it with the device's own optics (light, refraction,
+            // legibility over any background) — reproducing that by hand is
+            // what this project did until build 497. `regular` is the
+            // documented variant for components that carry text; the rounded
+            // rectangle is the documented shape for cards.
+            content
+                .padding(padding)
+                .glassEffect(.regular.tint(tint.opacity(0.14)),
+                             in: RoundedRectangle(cornerRadius: corner, style: .continuous))
         } else {
             content
                 .padding(padding)
                 .background {
-                    RoundedRectangle(cornerRadius: corner, style: .continuous)
-                        .fill(Color(.secondarySystemBackground))
-                        .overlay {
-                            RoundedRectangle(cornerRadius: corner, style: .continuous)
-                                .strokeBorder(Color.primary.opacity(0.08), lineWidth: 1)
-                        }
+                    CSQTTGlassSurface(corner: corner, tint: tint, elevated: elevated)
                 }
         }
     }
@@ -282,25 +269,9 @@ struct CSQTTFilledButtonStyle: ButtonStyle {
     }
 }
 
-/// Secondary, glass-backed button (sheet actions, "skip", toolbar items).
-struct CSQTTGhostButtonStyle: ButtonStyle {
-    var tint: Color = CSQTTTheme.accent
-
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .font(.system(.subheadline, design: .rounded).weight(.semibold))
-            .foregroundStyle(tint)
-            .padding(.horizontal, 16)
-            .padding(.vertical, 10)
-            .background {
-                Capsule(style: .continuous)
-                    .fill(.ultraThinMaterial)
-                    .overlay { Capsule().strokeBorder(tint.opacity(0.35), lineWidth: 1) }
-            }
-            .opacity(configuration.isPressed ? 0.7 : 1)
-            .animation(.easeOut(duration: 0.15), value: configuration.isPressed)
-    }
-}
+// CSQTTGhostButtonStyle lived here with zero call sites: every "secondary"
+// action in the app uses .buttonStyle(.plain) or the system glass capsule.
+// Removed in build 503 with the dead glass switch.
 
 // MARK: - Colour helper
 

@@ -1985,22 +1985,6 @@
         }
       }
     },
-    "csqtt.appearance.animations": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Animations"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Анимации"
-          }
-        }
-      }
-    },
     "csqtt.appearance.dark": {
       "localizations": {
         "en": {
@@ -2029,22 +2013,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Стеклянные поверхности используют системный материал и остаются читаемыми в обеих темах и при повышенной контрастности. Анимации и тактильный отклик соблюдают настройки «Уменьшение движения» и системной тактильной отдачи."
-          }
-        }
-      }
-    },
-    "csqtt.appearance.glass": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Liquid glass surfaces"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Стеклянные поверхности"
           }
         }
       }

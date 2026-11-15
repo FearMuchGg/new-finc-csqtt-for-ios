@@ -102,7 +102,7 @@ final class ServerStore: ObservableObject {
     /// ID was cleared by hand is repaired too — an empty device ID is never
     /// valid for GETCONF.
     private static var legacyWrapADeviceID: String? {
-        let v = UserDefaults(suiteName: "group.com.vkturnproxy.app")?.string(forKey: "wrapADeviceID")
+        let v = UserDefaults(suiteName: AppEntitlements.sharedGroup)?.string(forKey: "wrapADeviceID")
         return (v?.isEmpty == false) ? v : nil
     }
 

@@ -65,6 +65,38 @@ struct AppEntitlements: Sendable {
     /// Parsed once per process, lazily, on first use.
     static let current: AppEntitlements = load()
 
+    /// The App Group this build is signed for.
+    ///
+    /// The group identifier is not a secret and is not derived from the
+    /// certificate at runtime — an App Group is a container Apple registers
+    /// for a team, and it appears in the provisioning profile the IPA is
+    /// signed with, not in the .p12 identity. What this constant records is
+    /// the group from the profile this build was prepared against
+    /// (`TD7NS5K83C`, `group.e7646f4c0fb134c4.1`).
+    ///
+    /// `sharedGroup` below still prefers whatever this binary was ACTUALLY
+    /// signed with: a re-signer substitutes its own groups, and using one of
+    /// them is the difference between a working stats mirror and a silent
+    /// container failure.
+    static let preferredAppGroup = "group.e7646f4c0fb134c4.1"
+
+    /// The historical group every earlier build asked for.
+    static let legacyAppGroup = "group.com.vkturnproxy.app"
+
+    /// The group to use for the shared container: the preferred one when the
+    /// signature grants it, otherwise the legacy one when present, otherwise
+    /// the first group the signature grants, otherwise the preferred name
+    /// (which then simply fails to resolve, as before).
+    static var sharedGroup: String {
+        let granted = current.applicationGroups
+        if granted.contains(preferredAppGroup) { return preferredAppGroup }
+        if let legacy = granted.first(where: { $0.hasSuffix("com.vkturnproxy.app") }) {
+            return legacy
+        }
+        if let first = granted.first { return first }
+        return preferredAppGroup
+    }
+
     func hasAppGroup(_ identifier: String) -> Bool {
         applicationGroups.contains(identifier)
     }

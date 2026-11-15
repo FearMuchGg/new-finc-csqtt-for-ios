@@ -77,7 +77,7 @@ struct VPNLiveActivity: Widget {
                             .lineLimit(1)
                             .minimumScaleFactor(0.7)
                     } icon: {
-                        shield(context)
+                        statusDot(context, size: 12)
                     }
                     .foregroundStyle(context.isStale ? .secondary : .primary)
                     }
@@ -129,7 +129,7 @@ struct VPNLiveActivity: Widget {
                     }
                 }
             } compactLeading: {
-                breathingShield(context)
+                statusDot(context, size: 12)
             } compactTrailing: {
                 // 🚨 The `.frame` is load-bearing — never drop it. A live text
                 // (`style: .timer`, and `Text(timerInterval:)` too) asks for a
@@ -179,9 +179,10 @@ struct VPNLiveActivity: Widget {
                         .foregroundStyle(.secondary)
                 }
             } minimal: {
-                // Several activities collapse to this single glyph, so it has to
-                // identify the app on its own — a bare dot could be anyone's.
-                shield(context)
+                // One dot, as the main screen uses. It no longer identifies the
+                // app by shape — the activity's own header and the Lock Screen
+                // card do — but it keeps the colour language consistent.
+                statusDot(context, size: 14)
             }
             .keylineTint(context.state.direct == true ? .orange : tint(context))
         }
@@ -197,44 +198,46 @@ struct VPNLiveActivity: Widget {
     @available(iOS 17.0, *)
     @ViewBuilder
     private func controls(_ context: ActivityViewContext<VPNActivityAttributes>) -> some View {
-        HStack(spacing: 8) {
-            Button(intent: DisconnectIntent()) {
-                Label(context.state.status == .disconnecting ? "Disconnecting…" : "Disconnect",
-                      systemImage: "power")
-                    .font(.caption)
+        // A floating bottom bar, like the app's own tab bar: a capsule of
+        // icon buttons plus one round action, all at the BOTTOM of the card.
+        // Rule (b) still holds — the island's bottom region fits three
+        // controls, and this is exactly three (power, DIRECT, switch).
+        HStack(spacing: 10) {
+            HStack(spacing: 2) {
+                Button(intent: DisconnectIntent()) {
+                    Image(systemName: "power")
+                        .font(.system(size: 15, weight: .semibold))
+                        .frame(width: 42, height: 34)
+                        .foregroundStyle(.red)
+                }
+                .buttonStyle(.plain)
+                .disabled(context.state.status == .disconnecting)
+
+                Button(intent: SetDirectIntent(direct: !isDirect(context))) {
+                    Image(systemName: "arrow.triangle.branch")
+                        .font(.system(size: 15, weight: .semibold))
+                        .frame(width: 42, height: 34)
+                        .foregroundStyle(isDirect(context) ? Color.orange : Color.primary)
+                }
+                .buttonStyle(.plain)
+                .disabled(context.state.status != .connected)
             }
-            .buttonStyle(.bordered)
-            .tint(.red)
-            // Already on its way down — a second tap has nothing to add.
-            .disabled(context.state.status == .disconnecting)
+            .padding(.horizontal, 6)
+            .padding(.vertical, 3)
+            .background(Capsule(style: .continuous).fill(.ultraThinMaterial))
+            .overlay(Capsule(style: .continuous)
+                .strokeBorder(Color.white.opacity(0.18), lineWidth: 1))
 
             Button(intent: EnterPickerIntent()) {
-                Label("Switch", systemImage: "arrow.triangle.2.circlepath")
-                    .font(.caption)
+                Image(systemName: "arrow.triangle.2.circlepath")
+                    .font(.system(size: 15, weight: .semibold))
+                    .frame(width: 40, height: 40)
+                    .background(Circle().fill(.ultraThinMaterial))
+                    .overlay(Circle().strokeBorder(Color.white.opacity(0.18), lineWidth: 1))
             }
-            .buttonStyle(.bordered)
-
-            // 🚨 THE THIRD AND LAST BUTTON. Rule (b) in this file's header: the
-            // island's expanded .bottom region fits THREE and silently CLIPS
-            // anything after. A fourth would not fail to build, it would simply
-            // not be there.
-            //
-            // The label says what the TAP DOES, like its neighbours — so it reads
-            // "DIRECT" while tunnelled and "Via VPN" while bypassed. The tint
-            // carries the state as well, because a user who leaves this on has
-            // turned the kill switch off.
-            Button(intent: SetDirectIntent(direct: !isDirect(context))) {
-                Label(isDirect(context) ? "Via VPN" : "DIRECT",
-                      systemImage: "arrow.triangle.branch")
-                    .font(.caption)
-                    .lineLimit(1)
-            }
-            .buttonStyle(.bordered)
-            .tint(isDirect(context) ? .orange : nil)
-            // Mid-teardown the routing change would be pointless: the profile is
-            // rebuilt on the next connect and puts the kill switch back.
-            .disabled(context.state.status != .connected)
+            .buttonStyle(.plain)
         }
+        .frame(maxWidth: .infinity, alignment: .center)
     }
 
     /// nil means "published before this field existed" and reads as tunnelled —
@@ -301,8 +304,7 @@ struct VPNLiveActivity: Widget {
     private func lockScreen(_ context: ActivityViewContext<VPNActivityAttributes>) -> some View {
         VStack(alignment: .leading, spacing: 8) {
         HStack(spacing: 12) {
-            shield(context)
-                .font(.title3)
+            statusDot(context, size: 16)
             VStack(alignment: .leading, spacing: 2) {
                 Text(statusText(context))
                     .font(.headline)
@@ -352,33 +354,48 @@ struct VPNLiveActivity: Widget {
 
     // MARK: - Pieces
 
-    /// Status glyph. Grey whenever the content is stale — at that point the
-    /// colour would be a claim we can't back. A small orange dot marks DIRECT:
-    /// the compact island has no room for a label, and routing around the
-    /// tunnel is exactly the thing a user must not have to guess.
-    private func shield(_ context: ActivityViewContext<VPNActivityAttributes>) -> some View {
-        Image(systemName: symbol(context.state.status))
-            .foregroundStyle(tint(context))
-            .symbolRenderingMode(.hierarchical)
-            .overlay(alignment: .bottomTrailing) {
-                if context.state.direct == true {
-                    Circle()
-                        .fill(Color.orange)
-                        .frame(width: 6, height: 6)
-                        .overlay(Circle().strokeBorder(Color.black.opacity(0.25), lineWidth: 0.5))
-                }
+    /// Status indicator: a dot, the same language as the app's main screen.
+    /// Grey whenever the content is stale — at that point the colour would be
+    /// a claim we can't back. A small orange dot marks DIRECT: the compact
+    /// island has no room for a label, and routing around the tunnel is
+    /// exactly the thing a user must not have to guess. While connecting, a
+    /// ring around the dot says "in progress" without an animation.
+    private func statusDot(_ context: ActivityViewContext<VPNActivityAttributes>,
+                           size: CGFloat = 12) -> some View {
+        let color = dotColor(context)
+        return ZStack {
+            if context.state.status == .connecting && !context.isStale {
+                Circle()
+                    .strokeBorder(color.opacity(0.35), lineWidth: 2)
+                    .frame(width: size * 1.8, height: size * 1.8)
             }
+            Circle()
+                .fill(RadialGradient(colors: [color, color.opacity(0.7)],
+                                     center: .center,
+                                     startRadius: 0,
+                                     endRadius: size))
+                .frame(width: size, height: size)
+                .overlay(Circle().strokeBorder(Color.white.opacity(0.35), lineWidth: 0.6))
+                .shadow(color: color.opacity(0.6), radius: size * 0.55)
+                .overlay(alignment: .bottomTrailing) {
+                    if context.state.direct == true {
+                        Circle()
+                            .fill(Color.orange)
+                            .frame(width: max(4, size * 0.55), height: max(4, size * 0.55))
+                            .overlay(Circle().strokeBorder(Color.black.opacity(0.25), lineWidth: 0.5))
+                            .offset(x: size * 0.15, y: size * 0.15)
+                    }
+                }
+        }
+        .frame(width: size, height: size)
     }
 
-    /// The glyph, breathing while the tunnel is transitional (iOS 17+ only:
-    /// symbol effects do not exist below it, and the widget's floor is 16.2).
-    @ViewBuilder
-    private func breathingShield(_ context: ActivityViewContext<VPNActivityAttributes>) -> some View {
-        if #available(iOS 17.0, *), context.state.status == .connecting {
-            shield(context)
-                .symbolEffect(.pulse, options: .repeating)
-        } else {
-            shield(context)
+    private func dotColor(_ context: ActivityViewContext<VPNActivityAttributes>) -> Color {
+        guard !context.isStale else { return .gray }
+        switch context.state.status {
+        case .connected: return .green
+        case .connecting, .disconnecting: return .orange
+        case .disconnected: return .gray
         }
     }
 

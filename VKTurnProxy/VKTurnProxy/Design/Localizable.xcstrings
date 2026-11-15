@@ -1,228 +1,2182 @@
 {
-  "sourceLanguage" : "en",
-  "strings" : {
-    "csqtt.appearance.title" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Appearance" } },
-        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Внешний вид" } }
+  "sourceLanguage": "en",
+  "strings": {
+    "2.1.9 and 2.5 are different protocols: a server answers the wrong one with silence, so a tunnel that never comes up is what a wrong choice here looks like.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "2.1.9 and 2.5 are different protocols: a server answers the wrong one with silence, so a tunnel that never comes up is what a wrong choice here looks like."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "2.1.9 и 2.5 — разные протоколы: сервер отвечает на чужой молчанием, поэтому неверный выбор выглядит как туннель, который никак не поднимается."
+          }
+        }
       }
     },
-    "csqtt.appearance.system" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "System" } },
-        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Системная" } }
+    "Advanced": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Advanced"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Дополнительно"
+          }
+        }
       }
     },
-    "csqtt.appearance.light" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Light" } },
-        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Светлая" } }
+    "Auto (nearest)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auto (nearest)"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Авто (ближайший)"
+          }
+        }
       }
     },
-    "csqtt.appearance.dark" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Dark" } },
-        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Тёмная" } }
+    "Auto-scroll": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auto-scroll"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Автопрокрутка"
+          }
+        }
       }
     },
-    "csqtt.appearance.glass" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Liquid glass surfaces" } },
-        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Стеклянные поверхности" } }
+    "Backup & Restore": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Backup & Restore"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Резервная копия и восстановление"
+          }
+        }
       }
     },
-    "csqtt.appearance.animations" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Animations" } },
-        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Анимации" } }
+    "Backup contains all settings, WireGuard keys, TURN credentials, and the captured browser profile. Treat the exported file as a secret.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Backup contains all settings, WireGuard keys, TURN credentials, and the captured browser profile. Treat the exported file as a secret."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Копия содержит все настройки, ключи WireGuard, учётные данные TURN и сохранённый профиль браузера. Считайте экспортированный файл секретом."
+          }
+        }
       }
     },
-    "csqtt.appearance.haptics" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Haptic feedback" } },
-        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Тактильный отклик" } }
+    "Both": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Both"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Оба"
+          }
+        }
       }
     },
-    "csqtt.appearance.footer" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Glass surfaces follow the system material, so they stay legible in both schemes and with Increase Contrast. Animations and haptics are honoured only when Reduce Motion and System Haptics allow them." } },
-        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Стеклянные поверхности используют системный материал и остаются читаемыми в обеих темах и при повышенной контрастности. Анимации и тактильный отклик соблюдают настройки «Уменьшение движения» и системной тактильной отдачи." } }
+    "Bounded relay writes": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bounded relay writes"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ограниченные записи в ретранслятор"
+          }
+        }
       }
     },
-    "csqtt.onboarding.welcome.title" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "A tunnel that looks like a call" } },
-        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Туннель, похожий на звонок" } }
+    "Cancel": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancel"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отмена"
+          }
+        }
       }
     },
-    "csqtt.onboarding.welcome.body" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "CSQTT carries your traffic through a TURN relay and shapes it as media, so restrictive networks see a call instead of a VPN." } },
-        "ru" : { "stringUnit" : { "state" : "translated", "value" : "CSQTT передаёт трафик через TURN-ретранслятор и маскирует его под медиа: ограничивающие сети видят звонок, а не VPN." } }
+    "Clear": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Очистить"
+          }
+        }
       }
     },
-    "csqtt.onboarding.features.title" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "What you get" } },
-        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Что вы получаете" } }
+    "Clear search": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clear search"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Очистить поиск"
+          }
+        }
       }
     },
-    "csqtt.onboarding.feature.speed.title" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Parallel streams" } },
-        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Параллельные потоки" } }
+    "Client ID": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Client ID"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ID клиента"
+          }
+        }
       }
     },
-    "csqtt.onboarding.feature.speed.body" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "The client keeps several streams to one server and restarts only the one that stalls." } },
-        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Клиент держит несколько потоков к одному серверу и перезапускает только зависший." } }
+    "Copy server": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copy server"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Копировать сервер"
+          }
+        }
       }
     },
-    "csqtt.onboarding.feature.privacy.title" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Keys from a handshake" } },
-        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Ключи из рукопожатия" } }
+    "Could not switch routing": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Could not switch routing"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не удалось переключить маршрутизацию"
+          }
+        }
       }
     },
-    "csqtt.onboarding.feature.privacy.body" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "DTLS-SRTP derives fresh session keys; if the server answers no handshake, the password-derived keys keep the tunnel up." } },
-        "ru" : { "stringUnit" : { "state" : "translated", "value" : "DTLS-SRTP выводит свежие ключи сессии; если сервер не отвечает рукопожатием, туннель продолжает работать на ключах из пароля." } }
+    "DIRECT": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DIRECT"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Напрямую"
+          }
+        }
       }
     },
-    "csqtt.onboarding.feature.control.title" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Control from the Lock Screen" } },
-        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Управление с экрана блокировки" } }
+    "DNS Servers": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DNS Servers"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DNS-серверы"
+          }
+        }
       }
     },
-    "csqtt.onboarding.feature.control.body" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "The Live Activity shows the state and, on iOS 17+, can disconnect, switch server or bypass the tunnel." } },
-        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Live Activity показывает состояние и на iOS 17+ позволяет отключиться, сменить сервер или пустить трафик мимо туннеля." } }
+    "Delete": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Удалить"
+          }
+        }
       }
     },
-    "csqtt.onboarding.ready.title" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Add a server to start" } },
-        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Добавьте сервер, чтобы начать" } }
+    "Delete saved cookies": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete saved cookies"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Удалить сохранённые cookie"
+          }
+        }
       }
     },
-    "csqtt.onboarding.ready.body" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Open Settings, add your server profile (or paste a csqtt:// link), then tap Connect on the main screen." } },
-        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Откройте «Настройки», добавьте профиль сервера (или вставьте ссылку csqtt://), затем нажмите «Подключить» на главном экране." } }
+    "Delete saved cookies?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete saved cookies?"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Удалить сохранённые cookie?"
+          }
+        }
       }
     },
-    "csqtt.onboarding.skip" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Skip" } },
-        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Пропустить" } }
+    "Delete server": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete server"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Удалить сервер"
+          }
+        }
       }
     },
-    "csqtt.onboarding.next" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Continue" } },
-        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Продолжить" } }
+    "Deletes the cached TURN credentials. The pool will be rebuilt on next connect via the regular VK API + captcha flow.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deletes the cached TURN credentials. The pool will be rebuilt on next connect via the regular VK API + captcha flow."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Удаляет кэшированные учётные данные TURN. Пул будет создан заново при следующем подключении через обычный VK API и капчу."
+          }
+        }
       }
     },
-    "csqtt.onboarding.start" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Get started" } },
-        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Начать" } }
+    "Deletes the captured browser fingerprint used by the auto-PoW captcha solver. Until the next manual captcha solve, the solver will use generated values which VK detects as bot far more often.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deletes the captured browser fingerprint used by the auto-PoW captcha solver. Until the next manual captcha solve, the solver will use generated values which VK detects as bot far more often."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Удаляет сохранённый отпечаток браузера, который использует авторешатель PoW-капчи. До следующего ручного решения капчи решатель будет использовать сгенерированные значения, которые VK гораздо чаще считает ботом."
+          }
+        }
       }
     },
-    "csqtt.empty.servers.title" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "No servers yet" } },
-        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Серверов пока нет" } }
+    "Detailed log every second": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Detailed log every second"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Подробный лог каждую секунду"
+          }
+        }
       }
     },
-    "csqtt.empty.servers.message" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Add a server profile or paste a connection link to get started." } },
-        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Добавьте профиль сервера или вставьте ссылку подключения." } }
+    "Device ID": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Device ID"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ID устройства"
+          }
+        }
       }
     },
-    "csqtt.empty.logs.title" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Nothing logged yet" } },
-        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Записей пока нет" } }
+    "Diagnostics": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Diagnostics"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Диагностика"
+          }
+        }
       }
     },
-    "csqtt.empty.logs.message" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Connect once and the app will start reporting what the tunnel does." } },
-        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Подключитесь один раз — и приложение начнёт рассказывать, что делает туннель." } }
+    "Direction": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Direction"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Направление"
+          }
+        }
       }
     },
-    "csqtt.common.retry" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Retry" } },
-        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Повторить" } }
+    "Done": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Done"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Готово"
+          }
+        }
       }
     },
-    "csqtt.common.close" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Close" } },
-        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Закрыть" } }
+    "Download": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Download"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Скачать"
+          }
+        }
       }
     },
-    "csqtt.common.copied" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Copied" } },
-        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Скопировано" } }
+    "Enable": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Enable"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Включить"
+          }
+        }
       }
     },
-    "csqtt.status.connected" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Connected" } },
-        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Подключено" } }
+    "Export Full Backup…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Export Full Backup…"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Экспорт полной копии…"
+          }
+        }
       }
     },
-    "csqtt.status.connecting" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Connecting…" } },
-        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Подключение…" } }
+    "Failed to load VPN config": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Failed to load VPN config"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не удалось загрузить конфигурацию VPN"
+          }
+        }
       }
     },
-    "csqtt.status.disconnecting" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Disconnecting…" } },
-        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Отключение…" } }
+    "Force legacy captcha path": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Force legacy captcha path"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Принудительно старый путь капчи"
+          }
+        }
       }
     },
-    "csqtt.status.disconnected" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Disconnected" } },
-        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Отключено" } }
+    "Found by searching Ookla — NOT necessarily near you": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Found by searching Ookla — NOT necessarily near you"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Найдено поиском в Ookla — не обязательно рядом с вами"
+          }
+        }
       }
     },
-    "csqtt.status.preparing" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Preparing…" } },
-        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Подготовка…" } }
+    "Get VK call URL": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Get VK call URL"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Получить ссылку на звонок VK"
+          }
+        }
       }
     },
-    "csqtt.status.reasserting" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Reconnecting…" } },
-        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Переподключение…" } }
+    "Import": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Импорт"
+          }
+        }
       }
     },
-    "csqtt.status.invalid" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Invalid configuration" } },
-        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Неверная конфигурация" } }
+    "Import Backup?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import Backup?"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Импортировать копию?"
+          }
+        }
       }
     },
-    "csqtt.status.unknown" : {
-      "localizations" : {
-        "en" : { "stringUnit" : { "state" : "translated", "value" : "Unknown state" } },
-        "ru" : { "stringUnit" : { "state" : "translated", "value" : "Неизвестное состояние" } }
+    "Import Connection Link?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import Connection Link?"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Импортировать ссылку подключения?"
+          }
+        }
+      }
+    },
+    "Import Full Backup…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import Full Backup…"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Импорт полной копии…"
+          }
+        }
+      }
+    },
+    "Import from Connection Link…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import from Connection Link…"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Импорт из ссылки подключения…"
+          }
+        }
+      }
+    },
+    "Loading captcha…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loading captcha…"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Загрузка капчи…"
+          }
+        }
+      }
+    },
+    "Loading…": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Loading…"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Загрузка…"
+          }
+        }
+      }
+    },
+    "Logging": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Logging"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Логирование"
+          }
+        }
+      }
+    },
+    "Logs": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Logs"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Логи"
+          }
+        }
+      }
+    },
+    "New creates a server with default settings. Copy duplicates this one. The last server can't be deleted. vkLink and VK account auth are global (Settings screen), not per-server.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New creates a server with default settings. Copy duplicates this one. The last server can't be deleted. vkLink and VK account auth are global (Settings screen), not per-server."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "«Новый» создаёт сервер с настройками по умолчанию. «Копировать» дублирует текущий. Последний сервер удалить нельзя. vkLink и авторизация VK-аккаунта — глобальные (экран «Настройки»), а не для каждого сервера."
+          }
+        }
+      }
+    },
+    "New server": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "New server"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Новый сервер"
+          }
+        }
+      }
+    },
+    "OK": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ОК"
+          }
+        }
+      }
+    },
+    "Obfuscation profile": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Obfuscation profile"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Профиль обфускации"
+          }
+        }
+      }
+    },
+    "Pace the uplink": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pace the uplink"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ограничивать исходящий поток"
+          }
+        }
+      }
+    },
+    "Peer Public Key (base64)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Peer Public Key (base64)"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Публичный ключ пира (base64)"
+          }
+        }
+      }
+    },
+    "Preshared Key (base64)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Preshared Key (base64)"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Общий ключ (base64)"
+          }
+        }
+      }
+    },
+    "Private Key (base64)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Private Key (base64)"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Приватный ключ (base64)"
+          }
+        }
+      }
+    },
+    "Proxy Server (host:port)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Proxy Server (host:port)"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Прокси-сервер (host:port)"
+          }
+        }
+      }
+    },
+    "Reload for this route": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reload for this route"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Обновить для этого маршрута"
+          }
+        }
+      }
+    },
+    "Removes the stored VK session cookies. You'll need to log in again to use VK account auth.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Removes the stored VK session cookies. You'll need to log in again to use VK account auth."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Удаляет сохранённые cookie сессии VK. Для авторизации через VK-аккаунт потребуется войти снова."
+          }
+        }
+      }
+    },
+    "Research mode": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Research mode"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Исследовательский режим"
+          }
+        }
+      }
+    },
+    "Reset": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reset"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сбросить"
+          }
+        }
+      }
+    },
+    "Reset Captured Browser Profile": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reset Captured Browser Profile"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сбросить сохранённый профиль браузера"
+          }
+        }
+      }
+    },
+    "Reset Captured Browser Profile?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reset Captured Browser Profile?"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сбросить сохранённый профиль браузера?"
+          }
+        }
+      }
+    },
+    "Reset TURN Cache": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reset TURN Cache"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сбросить кэш TURN"
+          }
+        }
+      }
+    },
+    "Reset TURN Cache?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reset TURN Cache?"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сбросить кэш TURN?"
+          }
+        }
+      }
+    },
+    "Result": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Result"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Результат"
+          }
+        }
+      }
+    },
+    "Run": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Run"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Запустить"
+          }
+        }
+      }
+    },
+    "Search again": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Search again"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Искать снова"
+          }
+        }
+      }
+    },
+    "Send traffic around the tunnel": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Send traffic around the tunnel"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Пускать трафик мимо туннеля"
+          }
+        }
+      }
+    },
+    "Server": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Server"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сервер"
+          }
+        }
+      }
+    },
+    "Server mode": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Server mode"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Режим сервера"
+          }
+        }
+      }
+    },
+    "Server name": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Server name"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Имя сервера"
+          }
+        }
+      }
+    },
+    "Server password": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Server password"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Пароль сервера"
+          }
+        }
+      }
+    },
+    "Server version": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Server version"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Версия сервера"
+          }
+        }
+      }
+    },
+    "Servers": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Servers"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Серверы"
+          }
+        }
+      }
+    },
+    "Session": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Session"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сессия"
+          }
+        }
+      }
+    },
+    "Session time in collapsed island": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Session time in collapsed island"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Время сессии в свёрнутом острове"
+          }
+        }
+      }
+    },
+    "Set MTU manually": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Set MTU manually"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Задать MTU вручную"
+          }
+        }
+      }
+    },
+    "Settings": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Settings"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Настройки"
+          }
+        }
+      }
+    },
+    "Share": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Share"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Поделиться"
+          }
+        }
+      }
+    },
+    "Solve Captcha": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Solve Captcha"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Решить капчу"
+          }
+        }
+      }
+    },
+    "Speed test": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Speed test"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Тест скорости"
+          }
+        }
+      }
+    },
+    "Statistics unavailable — the app can't reach the tunnel extension. The VPN itself is unaffected; see Logs for the reason.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Statistics unavailable — the app can't reach the tunnel extension. The VPN itself is unaffected; see Logs for the reason."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Статистика недоступна — приложение не может связаться с расширением туннеля. Сам VPN не затронут; причину смотрите в логах."
+          }
+        }
+      }
+    },
+    "Stop": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Stop"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Остановить"
+          }
+        }
+      }
+    },
+    "Switch server": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Switch server"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сменить сервер"
+          }
+        }
+      }
+    },
+    "TURN servers (host:port[:quota[:pace]] or $vkurls, comma-separated, optional)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TURN servers (host:port[:quota[:pace]] or $vkurls, comma-separated, optional)"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TURN-серверы (host:port[:quota[:pace]] или $vkurls, через запятую, необязательно)"
+          }
+        }
+      }
+    },
+    "Tap the circle to make a server active; tap the name to edit it. The active server's settings are used when you connect.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tap the circle to make a server active; tap the name to edit it. The active server's settings are used when you connect."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Нажмите на кружок, чтобы выбрать сервер; нажмите на имя, чтобы изменить. При подключении используются настройки активного сервера."
+          }
+        }
+      }
+    },
+    "Test": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Test"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Тест"
+          }
+        }
+      }
+    },
+    "The list comes from the address the internet sees for this device,": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The list comes from the address the internet sees for this device,"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Список построен по адресу, который интернет видит для этого устройства,"
+          }
+        }
+      }
+    },
+    "The tunnel had stopped": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The tunnel had stopped"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Туннель остановился"
+          }
+        }
+      }
+    },
+    "The tunnel stopped": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The tunnel stopped"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Туннель остановлен"
+          }
+        }
+      }
+    },
+    "These came from a search of Ookla's whole list, so the distance is": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "These came from a search of Ookla's whole list, so the distance is"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Это результаты поиска по всему списку Ookla, поэтому расстояние"
+          }
+        }
+      }
+    },
+    "Threads": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Threads"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Потоки"
+          }
+        }
+      }
+    },
+    "Transport": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Transport"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Транспорт"
+          }
+        }
+      }
+    },
+    "Try again": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Try again"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Попробовать снова"
+          }
+        }
+      }
+    },
+    "Tunnel": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tunnel"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Туннель"
+          }
+        }
+      }
+    },
+    "Tunnel Address": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tunnel Address"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Адрес туннеля"
+          }
+        }
+      }
+    },
+    "Uplink": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Uplink"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Исходящий поток"
+          }
+        }
+      }
+    },
+    "Upload": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Upload"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отдача"
+          }
+        }
+      }
+    },
+    "Use UDP transport to TURN": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use UDP transport to TURN"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Использовать UDP до TURN"
+          }
+        }
+      }
+    },
+    "Use VK account (cookie) auth": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use VK account (cookie) auth"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Авторизация через VK-аккаунт (cookie)"
+          }
+        }
+      }
+    },
+    "VK Account Auth": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VK Account Auth"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Авторизация VK-аккаунта"
+          }
+        }
+      }
+    },
+    "VK Call Link": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VK Call Link"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ссылка на звонок VK"
+          }
+        }
+      }
+    },
+    "WRAP key (64 hex chars)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "WRAP key (64 hex chars)"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ключ WRAP (64 hex-символа)"
+          }
+        }
+      }
+    },
+    "csqtt.appearance.animations": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Animations"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Анимации"
+          }
+        }
+      }
+    },
+    "csqtt.appearance.dark": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dark"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Тёмная"
+          }
+        }
+      }
+    },
+    "csqtt.appearance.footer": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Glass surfaces follow the system material, so they stay legible in both schemes and with Increase Contrast. Animations and haptics are honoured only when Reduce Motion and System Haptics allow them."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Стеклянные поверхности используют системный материал и остаются читаемыми в обеих темах и при повышенной контрастности. Анимации и тактильный отклик соблюдают настройки «Уменьшение движения» и системной тактильной отдачи."
+          }
+        }
+      }
+    },
+    "csqtt.appearance.glass": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Liquid glass surfaces"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Стеклянные поверхности"
+          }
+        }
+      }
+    },
+    "csqtt.appearance.haptics": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Haptic feedback"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Тактильный отклик"
+          }
+        }
+      }
+    },
+    "csqtt.appearance.light": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Light"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Светлая"
+          }
+        }
+      }
+    },
+    "csqtt.appearance.system": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "System"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Системная"
+          }
+        }
+      }
+    },
+    "csqtt.appearance.title": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Appearance"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Внешний вид"
+          }
+        }
+      }
+    },
+    "csqtt.common.close": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Close"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Закрыть"
+          }
+        }
+      }
+    },
+    "csqtt.common.copied": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Copied"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Скопировано"
+          }
+        }
+      }
+    },
+    "csqtt.common.retry": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Retry"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Повторить"
+          }
+        }
+      }
+    },
+    "csqtt.empty.logs.message": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connect once and the app will start reporting what the tunnel does."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Подключитесь один раз — и приложение начнёт рассказывать, что делает туннель."
+          }
+        }
+      }
+    },
+    "csqtt.empty.logs.title": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nothing logged yet"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Записей пока нет"
+          }
+        }
+      }
+    },
+    "csqtt.empty.servers.message": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add a server profile or paste a connection link to get started."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Добавьте профиль сервера или вставьте ссылку подключения."
+          }
+        }
+      }
+    },
+    "csqtt.empty.servers.title": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No servers yet"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Серверов пока нет"
+          }
+        }
+      }
+    },
+    "csqtt.onboarding.feature.control.body": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The Live Activity shows the state and, on iOS 17+, can disconnect, switch server or bypass the tunnel."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Live Activity показывает состояние и на iOS 17+ позволяет отключиться, сменить сервер или пустить трафик мимо туннеля."
+          }
+        }
+      }
+    },
+    "csqtt.onboarding.feature.control.title": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Control from the Lock Screen"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Управление с экрана блокировки"
+          }
+        }
+      }
+    },
+    "csqtt.onboarding.feature.privacy.body": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DTLS-SRTP derives fresh session keys; if the server answers no handshake, the password-derived keys keep the tunnel up."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "DTLS-SRTP выводит свежие ключи сессии; если сервер не отвечает рукопожатием, туннель продолжает работать на ключах из пароля."
+          }
+        }
+      }
+    },
+    "csqtt.onboarding.feature.privacy.title": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Keys from a handshake"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ключи из рукопожатия"
+          }
+        }
+      }
+    },
+    "csqtt.onboarding.feature.speed.body": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "The client keeps several streams to one server and restarts only the one that stalls."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Клиент держит несколько потоков к одному серверу и перезапускает только зависший."
+          }
+        }
+      }
+    },
+    "csqtt.onboarding.feature.speed.title": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Parallel streams"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Параллельные потоки"
+          }
+        }
+      }
+    },
+    "csqtt.onboarding.features.title": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "What you get"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Что вы получаете"
+          }
+        }
+      }
+    },
+    "csqtt.onboarding.next": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Continue"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Продолжить"
+          }
+        }
+      }
+    },
+    "csqtt.onboarding.ready.body": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open Settings, add your server profile (or paste a csqtt:// link), then tap Connect on the main screen."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Откройте «Настройки», добавьте профиль сервера (или вставьте ссылку csqtt://), затем нажмите «Подключить» на главном экране."
+          }
+        }
+      }
+    },
+    "csqtt.onboarding.ready.title": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add a server to start"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Добавьте сервер, чтобы начать"
+          }
+        }
+      }
+    },
+    "csqtt.onboarding.skip": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skip"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Пропустить"
+          }
+        }
+      }
+    },
+    "csqtt.onboarding.start": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Get started"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Начать"
+          }
+        }
+      }
+    },
+    "csqtt.onboarding.welcome.body": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CSQTT carries your traffic through a TURN relay and shapes it as media, so restrictive networks see a call instead of a VPN."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "CSQTT передаёт трафик через TURN-ретранслятор и маскирует его под медиа: ограничивающие сети видят звонок, а не VPN."
+          }
+        }
+      }
+    },
+    "csqtt.onboarding.welcome.title": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A tunnel that looks like a call"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Туннель, похожий на звонок"
+          }
+        }
+      }
+    },
+    "csqtt.status.connected": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connected"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Подключено"
+          }
+        }
+      }
+    },
+    "csqtt.status.connecting": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connecting…"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Подключение…"
+          }
+        }
+      }
+    },
+    "csqtt.status.disconnected": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Disconnected"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отключено"
+          }
+        }
+      }
+    },
+    "csqtt.status.disconnecting": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Disconnecting…"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отключение…"
+          }
+        }
+      }
+    },
+    "csqtt.status.invalid": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Invalid configuration"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Неверная конфигурация"
+          }
+        }
+      }
+    },
+    "csqtt.status.preparing": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Preparing…"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Подготовка…"
+          }
+        }
+      }
+    },
+    "csqtt.status.reasserting": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reconnecting…"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Переподключение…"
+          }
+        }
+      }
+    },
+    "csqtt.status.unknown": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unknown state"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Неизвестное состояние"
+          }
+        }
       }
     }
   },
-  "version" : "1.0"
+  "version": "1.0"
 }

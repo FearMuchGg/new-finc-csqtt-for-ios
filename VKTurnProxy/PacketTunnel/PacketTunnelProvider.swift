@@ -30,6 +30,40 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
         }
     }
 
+    /// A mirror of the stats JSON in the shared App Group.
+    ///
+    /// The main app asks for these over providerMessage, but a third-party
+    /// re-signed IPA is refused that channel and every counter then stays at
+    /// zero while the tunnel is genuinely up. Writing the same JSON into the
+    /// shared container gives the app a second source that does not depend on
+    /// IPC; TunnelManager reads it when the channel is down.
+    private var statsMirrorTimer: DispatchSourceTimer?
+    private static let statsMirrorKey = "csqtt.stats.snapshot"
+    private static let statsMirrorAtKey = "csqtt.stats.snapshot.at"
+
+    private func startStatsMirror() {
+        statsMirrorTimer?.cancel()
+        let timer = DispatchSource.makeTimerSource(queue: .main)
+        timer.schedule(deadline: .now() + 1, repeating: 2, leeway: .milliseconds(250))
+        timer.setEventHandler { [weak self] in
+            guard let self, let backend = self.backend, let json = backend.stats() else { return }
+            guard let suite = UserDefaults(suiteName: AppEntitlements.sharedGroup) else { return }
+            suite.set(json, forKey: Self.statsMirrorKey)
+            suite.set(Date().timeIntervalSince1970, forKey: Self.statsMirrorAtKey)
+        }
+        timer.resume()
+        statsMirrorTimer = timer
+    }
+
+    private func stopStatsMirror() {
+        statsMirrorTimer?.cancel()
+        statsMirrorTimer = nil
+        // Drop the timestamp so a stale snapshot can never be read as live;
+        // the reader also checks the age, but a missing key is unambiguous.
+        UserDefaults(suiteName: AppEntitlements.sharedGroup)?
+            .removeObject(forKey: Self.statsMirrorAtKey)
+    }
+
     /// Clears the backend only if it is still the one the caller owns: a
     /// failure branch of a start that runs after stopTunnel already cleared
     /// it (the bridge's -7, a bootstrap wait woken by the stop) must not clear
@@ -226,7 +260,7 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
     // machinery still carries TURN IP, so current builds behave the same
     // whether serverAddress matches or not. After Step 4, excludedRoutes
     // is ignored and serverAddress becomes the only mechanism.
-    private static let sharedDefaultsSuiteName = "group.com.vkturnproxy.app"
+    private static var sharedDefaultsSuiteName: String { AppEntitlements.sharedGroup }
     private static let turnServerIPKey = "lastTurnServerIP"
 
     private func persistTurnServerIP(_ ip: String) {
@@ -370,6 +404,7 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
         _stopRequested = false
         backendLock.unlock()
         startPathMonitoring()
+        startStatsMirror()
 
         // Set Go timezone BEFORE wgSetLogFilePath so the first Go log line
         // ("wgSetLogFilePath: ...") gets a local-time timestamp. Reversed
@@ -892,6 +927,7 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
         stopPathMonitoring()
         stopAuthErrorWatchdog()
         stopCsqttWatchdog()
+        stopStatsMirror()
 
         // Safety net: ensure completionHandler is called exactly once
         // within 3 seconds even if wgTurnOff hangs. Without this, iOS

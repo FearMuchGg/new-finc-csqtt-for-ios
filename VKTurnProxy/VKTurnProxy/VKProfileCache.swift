@@ -32,7 +32,7 @@ struct VKProfileEntry: Codable {
 }
 
 enum VKProfileCache {
-    private static let appGroupID = "group.com.vkturnproxy.app"
+    private static var appGroupID: String { AppEntitlements.sharedGroup }
     private static let filename = "vk_profile.json"
 
     /// File URL inside the shared App Group container. Returns nil if

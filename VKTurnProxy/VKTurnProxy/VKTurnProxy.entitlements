@@ -8,7 +8,7 @@
 	</array>
 	<key>com.apple.security.application-groups</key>
 	<array>
-		<string>group.com.vkturnproxy.app</string>
+		<string>group.e7646f4c0fb134c4.1</string>
 	</array>
 	<!-- Shared keychain group for the VKAuth logged-in cookie (VKCookieStore).
 	     Same group in PacketTunnel.entitlements so the extension can read it.

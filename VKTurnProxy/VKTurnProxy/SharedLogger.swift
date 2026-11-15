@@ -29,7 +29,7 @@ class SharedLogger {
         dateFormatter.locale = Locale(identifier: "en_US_POSIX")
 
         if let container = FileManager.default.containerURL(
-            forSecurityApplicationGroupIdentifier: "group.com.vkturnproxy.app"
+            forSecurityApplicationGroupIdentifier: AppEntitlements.sharedGroup
         ) {
             fileURL = container.appendingPathComponent("vpn.log")
         } else {
@@ -47,7 +47,7 @@ class SharedLogger {
     private static func logAppGroupFailure() {
         let who = Bundle.main.bundlePath.hasSuffix(".appex") ? "extension" : "main app"
         logDiagnostic("App Group unavailable to \(who). "
-                    + AppEntitlements.appGroupDiagnosis(required: "group.com.vkturnproxy.app"),
+                    + AppEntitlements.appGroupDiagnosis(required: AppEntitlements.sharedGroup),
                       category: "AppGroup")
     }
 

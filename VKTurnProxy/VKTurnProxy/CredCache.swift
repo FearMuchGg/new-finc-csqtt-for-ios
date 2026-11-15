@@ -158,7 +158,7 @@ enum CredCache {
     /// and the Go-side `filepath.Dir(logFilePath) + "/creds-pool.json"`.
     static var cacheURL: URL? {
         FileManager.default.containerURL(
-            forSecurityApplicationGroupIdentifier: "group.com.vkturnproxy.app"
+            forSecurityApplicationGroupIdentifier: AppEntitlements.sharedGroup
         )?.appendingPathComponent("creds-pool.json")
     }
 

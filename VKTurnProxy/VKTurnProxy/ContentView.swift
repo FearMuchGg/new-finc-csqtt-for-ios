@@ -2107,7 +2107,7 @@ struct LogsView: View {
                 // really has. See AppEntitlements.swift for why this is the
                 // common case (GitHub #7, #8, #59).
                 reason = "App Group container unavailable to main app.\n"
-                       + AppEntitlements.appGroupDiagnosis(required: "group.com.vkturnproxy.app")
+                       + AppEntitlements.appGroupDiagnosis(required: AppEntitlements.sharedGroup)
             } else if !status.currentExists && !status.archivedExists {
                 reason = "Log file doesn't exist yet at \(status.containerPath)/vpn.log (fresh install or container reset)"
             } else if status.currentBytes == 0 && status.archivedBytes <= 0 {

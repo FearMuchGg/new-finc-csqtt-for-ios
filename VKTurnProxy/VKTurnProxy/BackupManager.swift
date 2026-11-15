@@ -62,7 +62,7 @@ enum BackupManager {
     /// computes the path differently.
     private static var credsPoolURL: URL? {
         FileManager.default.containerURL(
-            forSecurityApplicationGroupIdentifier: "group.com.vkturnproxy.app"
+            forSecurityApplicationGroupIdentifier: AppEntitlements.sharedGroup
         )?.appendingPathComponent("creds-pool.json")
     }
 

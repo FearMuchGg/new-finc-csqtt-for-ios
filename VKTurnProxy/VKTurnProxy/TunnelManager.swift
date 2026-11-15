@@ -320,6 +320,48 @@ class TunnelManager: ObservableObject {
         if !live.statsChannelDown { live.statsChannelDown = true }
     }
 
+    // MARK: - App Group stats mirror
+
+    private static let statsMirrorKey = "csqtt.stats.snapshot"
+    private static let statsMirrorAtKey = "csqtt.stats.snapshot.at"
+
+    /// Adopt the extension's shared-container snapshot when IPC cannot answer.
+    ///
+    /// A re-signed IPA is refused `sendProviderMessage` by the OS, so the
+    /// counters stay at zero although the tunnel is up. The extension writes
+    /// the same JSON into the App Group every two seconds; this is the reader.
+    /// Freshness is enforced (8 s) so a snapshot from a previous session can
+    /// never be presented as the current one.
+    @discardableResult
+    private func adoptSharedStatsIfFresh(maxAge: TimeInterval = 8) -> Bool {
+        guard let suite = UserDefaults(suiteName: AppEntitlements.sharedGroup),
+              let json = suite.string(forKey: Self.statsMirrorKey),
+              let at = suite.object(forKey: Self.statsMirrorAtKey) as? Double,
+              Date().timeIntervalSince1970 - at <= maxAge,
+              let data = json.data(using: .utf8),
+              let newStats = try? JSONDecoder().decode(TunnelStats.self, from: data)
+        else { return false }
+
+        let now = Date()
+        let dt = now.timeIntervalSince(prevTime)
+        if dt > 0 && prevTx > 0 {
+            live.txRate = Double(newStats.txBytes - prevTx) / dt
+            live.rxRate = Double(newStats.rxBytes - prevRx) / dt
+        }
+        prevTx = newStats.txBytes
+        prevRx = newStats.rxBytes
+        prevTime = now
+        live.stats = newStats
+        live.statsReceivedOnce = true
+        missedStatsPolls = 0
+        statsChannelLoggedReason = nil
+        if live.statsChannelDown {
+            live.statsChannelDown = false
+            debugLog("stats channel recovered via App Group mirror")
+        }
+        return true
+    }
+
     private var manager: NETunnelProviderManager?
     private var statusObserver: NSObjectProtocol?
     private var foregroundObserver: NSObjectProtocol?
@@ -593,7 +635,7 @@ class TunnelManager: ObservableObject {
                 // login WebView if missing/expired), push it into the main-app
                 // Go runtime, then do ONE cookie-probe to validate it + seed the
                 // first TURN cred. NO anonymous fallback (matches the Go side).
-                UserDefaults(suiteName: "group.com.vkturnproxy.app")?.removeObject(forKey: "vkauth_error")
+                UserDefaults(suiteName: AppEntitlements.sharedGroup)?.removeObject(forKey: "vkauth_error")
 
                 if !VKCookieStore.isValid() {
                     SharedLogger.shared.log("[AppDebug] VKAuth: no valid cookie — presenting login WebView")
@@ -1080,7 +1122,7 @@ class TunnelManager: ObservableObject {
             //      pre-bootstrap somehow didn't run (defensive; normally we
             //      always have seeded.address here).
             //   3. The VPS peerAddress as last-resort fallback.
-            let shared = UserDefaults(suiteName: "group.com.vkturnproxy.app")
+            let shared = UserDefaults(suiteName: AppEntitlements.sharedGroup)
             let savedTurnIP = shared?.string(forKey: "lastTurnServerIP") ?? ""
             // Parse host from seeded.address ("host:port" format).
             let seededHost: String = {
@@ -2311,7 +2353,7 @@ class TunnelManager: ObservableObject {
                     // If the extension self-stopped due to a rejected VKAuth
                     // cookie, it wrote the reason to the App Group before
                     // cancelling — surface it (and clear it so it shows once).
-                    if let shared = UserDefaults(suiteName: "group.com.vkturnproxy.app"),
+                    if let shared = UserDefaults(suiteName: AppEntitlements.sharedGroup),
                        let ae = shared.string(forKey: "vkauth_error"), !ae.isEmpty {
                         self.errorMessage = "Сессия VK отклонена или истекла. Войдите заново в Настройках."
                         shared.removeObject(forKey: "vkauth_error")
@@ -2543,7 +2585,12 @@ class TunnelManager: ObservableObject {
     }
 
     private func fetchStats() {
-        guard let session = manager?.connection as? NETunnelProviderSession else { return }
+        guard let session = manager?.connection as? NETunnelProviderSession else {
+            // No IPC endpoint at all (the re-signed case): the mirror is the
+            // only source. Same freshness rule as every other fallback path.
+            adoptSharedStatsIfFresh()
+            return
+        }
         guard let msg = "get_stats".data(using: .utf8) else { return }
         // Watchdog: sendProviderMessage can fail two ways — it throws (caught
         // below), or it is accepted and the reply never arrives. On a
@@ -2566,12 +2613,20 @@ class TunnelManager: ObservableObject {
             missedStatsPolls += 1
             if missedStatsPolls >= 5 {
                 noteStatsChannelDown("no reply to \(missedStatsPolls) consecutive polls")
+                // The channel is refused; the App Group mirror is the only
+                // source left. Try it on every subsequent poll.
+                adoptSharedStatsIfFresh()
             }
         }
         do {
             try session.sendProviderMessage(msg) { [weak self] response in
                 Task { @MainActor in
-                    guard let self = self, let data = response else { return }
+                    guard let self = self else { return }
+                    guard let data = response else {
+                        // Accepted but unanswered: same refusal, same fallback.
+                        self.adoptSharedStatsIfFresh()
+                        return
+                    }
                     if let newStats = try? JSONDecoder().decode(TunnelStats.self, from: data) {
                         self.missedStatsPolls = 0
                         self.live.statsReceivedOnce = true
@@ -2895,7 +2950,7 @@ class TunnelManager: ObservableObject {
     /// Still NOT included in connection links: device identity, not deployment
     /// config, so two devices never collide on the server's WG-peer pool.
     private func wrapADeviceID() -> String {
-        let suite = UserDefaults(suiteName: "group.com.vkturnproxy.app")
+        let suite = UserDefaults(suiteName: AppEntitlements.sharedGroup)
         if let existing = suite?.string(forKey: "wrapADeviceID"), !existing.isEmpty {
             return existing
         }
@@ -2912,7 +2967,7 @@ class TunnelManager: ObservableObject {
     /// connect would work exactly once and then be DENIED:device_mismatch
     /// (user-caught 2026-09-06); this is WRAP-A's wrapADeviceID() for csqtt.
     private func csqttFallbackDeviceID() -> String {
-        let suite = UserDefaults(suiteName: "group.com.vkturnproxy.app")
+        let suite = UserDefaults(suiteName: AppEntitlements.sharedGroup)
         if let existing = suite?.string(forKey: "csqttDeviceID"), !existing.isEmpty {
             return existing
         }

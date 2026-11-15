@@ -39,9 +39,7 @@ enum VKProfileCache {
     /// the App Group entitlement isn't granted (shouldn't happen in
     /// production builds; defensive against misconfigured dev profiles).
     private static var fileURL: URL? {
-        guard let container = FileManager.default.containerURL(
-            forSecurityApplicationGroupIdentifier: appGroupID
-        ) else {
+        guard let container = AppGroup.containerURL else {
             return nil
         }
         return container.appendingPathComponent(filename)

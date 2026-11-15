@@ -2,11 +2,6 @@ import SwiftUI
 
 @main
 struct VKTurnProxyApp: App {
-    /// Cosmetic preferences, read here so a change in Settings re-renders the
-    /// whole window: the scheme and the accent are window-level decisions.
-    @AppStorage(CSQTTTheme.Key.appearance) private var appearance = CSQTTAppearance.system.rawValue
-    @AppStorage(CSQTTTheme.Key.onboardingDone) private var onboardingDone = false
-
     init() {
         // Version comes from Bundle's CFBundleVersion = $(CURRENT_PROJECT_VERSION)
         // (per project.yml info.properties). Both main app and PacketTunnel
@@ -54,22 +49,11 @@ struct VKTurnProxyApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                // Cosmetic layer (Design/): one accent for the whole app and an
-                // explicit scheme when the user picked one. The onboarding is a
-                // full-screen cover on first launch only.
-                .tint(CSQTTTheme.accent)
-                .preferredColorScheme(CSQTTAppearance(rawValue: appearance)?.colorScheme)
-                .fullScreenCover(
-                    isPresented: Binding(
-                        get: { !onboardingDone },
-                        set: { shown in if !shown { onboardingDone = true } }
-                    )
-                ) {
-                    CSQTTOnboardingView {
-                        onboardingDone = true
-                    }
-                }
+            // The cosmetic preferences live in a tiny root view, not here: an
+            // @AppStorage in `App` re-renders the ContentView host, and in this
+            // project re-rendering that host tears down whatever screen is
+            // pushed (build 177 / #65).
+            CSQTTRootView()
                 // Capture vkturnproxy://, wdtt:// AND freeturn:// URLs at the
                 // WindowGroup level so cold-launch via URL-tap works regardless
                 // of which page SettingsView is currently on. wdtt:// is
@@ -89,5 +73,29 @@ struct VKTurnProxyApp: App {
                 // attached once here for every screen instead.
                 .background(KeyboardDismisser())
         }
+    }
+}
+
+/// The window root: owns the cosmetic @AppStorage and applies the scheme and
+/// accent. Kept separate so a theme change re-renders THIS view without
+/// rebuilding ContentView and the NavigationView it hosts.
+struct CSQTTRootView: View {
+    @AppStorage(CSQTTTheme.Key.appearance) private var appearance = CSQTTAppearance.system.rawValue
+    @AppStorage(CSQTTTheme.Key.onboardingDone) private var onboardingDone = false
+
+    var body: some View {
+        ContentView()
+            .tint(CSQTTTheme.accent)
+            .preferredColorScheme(CSQTTAppearance(rawValue: appearance)?.colorScheme)
+            .fullScreenCover(
+                isPresented: Binding(
+                    get: { !onboardingDone },
+                    set: { shown in if !shown { onboardingDone = true } }
+                )
+            ) {
+                CSQTTOnboardingView {
+                    onboardingDone = true
+                }
+            }
     }
 }

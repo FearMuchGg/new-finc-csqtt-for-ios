@@ -410,6 +410,8 @@ enum CSQTTTab: Int, CaseIterable, Identifiable {
 
 /// Press feedback for a tab item: a soft squash and a glassy highlight.
 private struct CSQTTTabItemStyle: ButtonStyle {
+    var animated: Bool = true
+
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .scaleEffect(configuration.isPressed ? 0.94 : 1)
@@ -418,7 +420,7 @@ private struct CSQTTTabItemStyle: ButtonStyle {
                     .fill(Color.white.opacity(configuration.isPressed ? 0.12 : 0))
                     .allowsHitTesting(false)
             }
-            .animation(.spring(response: 0.26, dampingFraction: 0.62),
+            .animation(animated ? .spring(response: 0.26, dampingFraction: 0.62) : nil,
                        value: configuration.isPressed)
     }
 }
@@ -427,19 +429,22 @@ private struct CSQTTTabItemStyle: ButtonStyle {
 /// own control, not a system TabView — the floating shape is the design and
 /// UITabBar cannot be reshaped into it.
 ///
-/// The surface is the "liquid glass" recipe: system material, a specular
-/// gradient over it, a hairline gradient border and a wet top edge. The
-/// selection pill is one shape animated between tabs with
-/// matchedGeometryEffect, so the glass appears to flow rather than jump.
+/// Both cosmetic switches are honoured HERE, not only in the modifiers: the
+/// bar is the most visible glass surface in the app and the most visible
+/// animation, so a switch that changed nothing else looked dead.
 struct CSQTTTabBar: View {
     @Binding var selection: CSQTTTab
 
     @Namespace private var pill
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @AppStorage(CSQTTTheme.Key.glass) private var glassEnabled = true
+    @AppStorage(CSQTTTheme.Key.animations) private var animationsEnabled = true
+
+    private var motion: Bool { !reduceMotion && animationsEnabled }
 
     @ViewBuilder
     private func tabIcon(_ tab: CSQTTTab) -> some View {
-        if #available(iOS 17.0, *), !reduceMotion {
+        if #available(iOS 17.0, *), motion {
             Image(systemName: tab.icon)
                 .font(.system(size: 16, weight: .semibold))
                 .symbolEffect(.bounce, value: selection == tab)
@@ -454,7 +459,7 @@ struct CSQTTTabBar: View {
             ForEach(CSQTTTab.allCases) { tab in
                 Button {
                     CSQTTHaptic.selection()
-                    withAnimation(reduceMotion ? nil : .spring(response: 0.38, dampingFraction: 0.72)) {
+                    withAnimation(motion ? .spring(response: 0.38, dampingFraction: 0.72) : nil) {
                         selection = tab
                     }
                 } label: {
@@ -476,55 +481,73 @@ struct CSQTTTabBar: View {
                                     startPoint: .top,
                                     endPoint: .bottom))
                                 .overlay {
-                                    Capsule(style: .continuous)
-                                        .fill(LinearGradient(
-                                            colors: [Color.white.opacity(0.28), Color.clear],
-                                            startPoint: .top,
-                                            endPoint: .center))
+                                    if glassEnabled {
+                                        Capsule(style: .continuous)
+                                            .fill(LinearGradient(
+                                                colors: [Color.white.opacity(0.28), Color.clear],
+                                                startPoint: .top,
+                                                endPoint: .center))
+                                    }
                                 }
                                 .overlay {
                                     Capsule(style: .continuous)
-                                        .strokeBorder(Color.white.opacity(0.35), lineWidth: 0.8)
+                                        .strokeBorder(Color.white.opacity(glassEnabled ? 0.35 : 0),
+                                                      lineWidth: 0.8)
                                 }
-                                .shadow(color: CSQTTTheme.accent.opacity(0.45), radius: 8, x: 0, y: 3)
+                                .shadow(color: CSQTTTheme.accent.opacity(glassEnabled ? 0.45 : 0.25),
+                                        radius: glassEnabled ? 8 : 4, x: 0, y: 3)
                                 .matchedGeometryEffect(id: "selected", in: pill)
                         }
                     }
                 }
-                .buttonStyle(CSQTTTabItemStyle())
+                .buttonStyle(CSQTTTabItemStyle(animated: motion))
                 .accessibilityLabel(tab.title)
             }
         }
         .padding(4)
         .background {
-            ZStack {
-                Capsule(style: .continuous).fill(.ultraThinMaterial)
-                Capsule(style: .continuous)
-                    .fill(LinearGradient(
-                        colors: [Color.white.opacity(0.12), Color.clear, Color.white.opacity(0.05)],
-                        startPoint: .topLeading,
-                        endPoint: .bottomTrailing))
+            if glassEnabled {
+                ZStack {
+                    Capsule(style: .continuous).fill(.ultraThinMaterial)
+                    Capsule(style: .continuous)
+                        .fill(LinearGradient(
+                            colors: [Color.white.opacity(0.12), Color.clear, Color.white.opacity(0.05)],
+                            startPoint: .topLeading,
+                            endPoint: .bottomTrailing))
+                }
+            } else {
+                Capsule(style: .continuous).fill(Color(.secondarySystemBackground))
             }
         }
         .overlay {
-            Capsule(style: .continuous)
-                .strokeBorder(LinearGradient(
-                    colors: [Color.white.opacity(0.38), Color.white.opacity(0.06)],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing), lineWidth: 1)
+            if glassEnabled {
+                Capsule(style: .continuous)
+                    .strokeBorder(LinearGradient(
+                        colors: [Color.white.opacity(0.38), Color.white.opacity(0.06)],
+                        startPoint: .topLeading,
+                        endPoint: .bottomTrailing), lineWidth: 1)
+            } else {
+                Capsule(style: .continuous)
+                    .strokeBorder(Color.primary.opacity(0.08), lineWidth: 1)
+            }
         }
         .overlay(alignment: .top) {
-            // The wet line that makes glass read as glass.
-            Capsule(style: .continuous)
-                .fill(Color.white.opacity(0.22))
-                .frame(height: 0.8)
-                .padding(.horizontal, 26)
-                .blur(radius: 0.5)
+            if glassEnabled {
+                // The wet line that makes glass read as glass.
+                Capsule(style: .continuous)
+                    .fill(Color.white.opacity(0.22))
+                    .frame(height: 0.8)
+                    .padding(.horizontal, 26)
+                    .blur(radius: 0.5)
+            }
         }
-        .shadow(color: Color.black.opacity(0.22), radius: 22, x: 0, y: 12)
-        .shadow(color: CSQTTTheme.accent.opacity(0.10), radius: 6, x: 0, y: 2)
+        .shadow(color: Color.black.opacity(glassEnabled ? 0.22 : 0.10),
+                radius: glassEnabled ? 22 : 8,
+                x: 0, y: glassEnabled ? 12 : 4)
+        .shadow(color: CSQTTTheme.accent.opacity(glassEnabled ? 0.10 : 0),
+                radius: 6, x: 0, y: 2)
         .padding(.horizontal, 16)
         .padding(.bottom, 4)
-        .animation(reduceMotion ? nil : .spring(response: 0.4, dampingFraction: 0.8), value: selection)
+        .animation(motion ? .spring(response: 0.4, dampingFraction: 0.8) : nil, value: selection)
     }
 }

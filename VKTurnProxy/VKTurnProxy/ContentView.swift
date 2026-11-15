@@ -352,7 +352,7 @@ private struct ActiveServerControls: View {
         ConnectButtonAction.forTap(status: tunnel.status, preBootstrapInProgress: tunnel.preBootstrapInProgress)
     }
 
-    private var buttonText: String { buttonAction.label }
+    private var buttonText: LocalizedStringKey { buttonAction.label }
 
     private var buttonColor: Color {
         if connectBlocked { return .gray }
@@ -451,8 +451,15 @@ private struct ActiveServerControls: View {
                 }
             }) {
                 Text(buttonText)
+                    // Full width again. `glassProminent` sizes itself to its
+                    // label, so without this the app's primary action shrank to
+                    // the width of the word and sat in the middle of the screen
+                    // (build 498). The frame belongs on BOTH the label (so the
+                    // glass fills it) and the button (so the tap area matches).
+                    .frame(maxWidth: .infinity)
             }
             .csqttPrimaryButton(tint: buttonColor)
+            .frame(maxWidth: .infinity)
             .padding(.horizontal)
             .padding(.top, 8)
             // Block Connect when a required field for the active mode is
@@ -964,14 +971,17 @@ struct SettingsView: View {
         // Result alert — shared across export/import/reset success and
         // error paths since the message is what differs, not the
         // presentation. Dismiss is just OK.
-        .alert(alertTitle, isPresented: Binding(
+        // LocalizedStringKey, not String: the titles below are English literals
+        // assigned to `alertTitle`, and a plain String is shown verbatim —
+        // never looked up in the string catalog (build 500).
+        .alert(LocalizedStringKey(alertTitle), isPresented: Binding(
             get: { alertMessage != nil },
             set: { if !$0 { alertMessage = nil } }
         )) {
             Button("OK", role: .cancel) {}
         } message: {
             if let msg = alertMessage {
-                Text(msg)
+                Text(LocalizedStringKey(msg))
             }
         }
         // 🚫 The inbox is not consumed here — the alert above is the PASTE

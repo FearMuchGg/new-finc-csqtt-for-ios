@@ -29,7 +29,10 @@ enum ConnectButtonAction: Equatable {
         }
     }
 
-    var label: String {
+    /// A LOCALIZED key, not a plain String. `Text(String)` is never looked up
+    /// in the string catalog — that is why the button read "Connect" in an
+    /// otherwise Russian UI until build 500.
+    var label: LocalizedStringKey {
         switch self {
         case .connect: return "Connect"
         case .disconnect: return "Disconnect"

@@ -23,6 +23,19 @@ class SharedLogger {
     private let maxFileSize = 20 * 1024 * 1024 // 20 MB
     private let dateFormatter: DateFormatter
 
+    /// Keychain mirror used when there is no App Group container: the last
+    /// ~3.5 KB of the log, so the Logs screen still has something to show on
+    /// a re-signed build. Written at most twice a second, batched.
+    private var keychainPending: [String] = []
+    private var keychainLastFlush = Date.distantPast
+    private static let keychainLogLimit = 3500
+
+    /// One key per process, so the app's lines do not overwrite the
+    /// extension's in the single keychain item the channel carries.
+    private static var keychainAccount: String {
+        Bundle.main.bundlePath.hasSuffix(".appex") ? "log.tunnel" : "log.app"
+    }
+
     private init() {
         dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss.SSS"
@@ -75,11 +88,35 @@ class SharedLogger {
 
     /// Append a timestamped log line to the shared log file.
     func log(_ message: String) {
-        guard let url = fileURL else { return }
+        guard let url = fileURL else {
+            let ts = dateFormatter.string(from: Date())
+            appendToKeychain("[\(ts)] \(message)\n")
+            return
+        }
         let ts = dateFormatter.string(from: Date())
         let line = "[\(ts)] \(message)\n"
         queue.async { [self] in
             appendData(line.data(using: .utf8)!, to: url)
+        }
+    }
+
+    /// The keychain mirror: batched, bounded, and only used when the shared
+    /// file cannot exist. `queue` serialises it with the file writer.
+    private func appendToKeychain(_ text: String) {
+        queue.async { [self] in
+            keychainPending.append(text)
+            let now = Date()
+            guard now.timeIntervalSince(keychainLastFlush) >= 2
+                    || keychainPending.count >= 50 else { return }
+            keychainLastFlush = now
+            let chunk = keychainPending.joined()
+            keychainPending.removeAll()
+            var data = SharedKeychain.read(account: Self.keychainAccount) ?? Data()
+            data.append(chunk.data(using: .utf8) ?? Data())
+            if data.count > Self.keychainLogLimit {
+                data = data.suffix(Self.keychainLogLimit)
+            }
+            SharedKeychain.write(data, account: Self.keychainAccount)
         }
     }
 
@@ -99,7 +136,10 @@ class SharedLogger {
 
     /// Append raw data (used by Go bridge for already-timestamped log lines).
     func logRaw(_ data: Data) {
-        guard let url = fileURL else { return }
+        guard let url = fileURL else {
+            appendToKeychain(String(decoding: data, as: UTF8.self))
+            return
+        }
         queue.async { [self] in
             appendData(data, to: url)
         }
@@ -242,6 +282,8 @@ class SharedLogger {
 
     /// Delete all log contents (current and rotated).
     func clearLogs() {
+        SharedKeychain.remove(account: "log.app")
+        SharedKeychain.remove(account: "log.tunnel")
         guard let url = fileURL else { return }
         let archive = rotatedURL(for: url)
         queue.async {

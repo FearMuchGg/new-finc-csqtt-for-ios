@@ -77,7 +77,7 @@ struct VPNLiveActivity: Widget {
                             .lineLimit(1)
                             .minimumScaleFactor(0.7)
                     } icon: {
-                        statusDot(context, size: 12)
+                        statusDot(context, size: 11)
                     }
                     .foregroundStyle(context.isStale ? .secondary : .primary)
                     }
@@ -129,7 +129,10 @@ struct VPNLiveActivity: Widget {
                     }
                 }
             } compactLeading: {
-                statusDot(context, size: 12)
+                // No glow and no ring here: the compact pill shares the status
+                // bar, and a soft shadow reads as a smudge over the carrier
+                // glyphs. 8 pt keeps it inside its own space.
+                statusDot(context, size: 8, glow: false, ring: false)
             } compactTrailing: {
                 // 🚨 The `.frame` is load-bearing — never drop it. A live text
                 // (`style: .timer`, and `Text(timerInterval:)` too) asks for a
@@ -182,7 +185,7 @@ struct VPNLiveActivity: Widget {
                 // One dot, as the main screen uses. It no longer identifies the
                 // app by shape — the activity's own header and the Lock Screen
                 // card do — but it keeps the colour language consistent.
-                statusDot(context, size: 14)
+                statusDot(context, size: 10, glow: false, ring: false)
             }
             .keylineTint(context.state.direct == true ? .orange : tint(context))
         }
@@ -250,17 +253,27 @@ struct VPNLiveActivity: Widget {
     @available(iOS 17.0, *)
     private func serverButton(_ choice: ServerChoice, busy: Bool) -> some View {
         Button(intent: SelectServerIntent(serverId: choice.id)) {
-            HStack(spacing: 4) {
-                if busy { Image(systemName: "circle.dotted").font(.caption2) }
+            HStack(spacing: 8) {
+                Circle()
+                    .fill(busy ? Color.green : Color.secondary.opacity(0.45))
+                    .frame(width: 7, height: 7)
                 Text(choice.name)
-                    .font(.caption)
+                    .font(.caption.weight(.semibold))
                     .lineLimit(1)
                     .truncationMode(.middle)
+                Spacer(minLength: 0)
+                Image(systemName: busy ? "hourglass" : "chevron.right")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
             }
-            .frame(maxWidth: .infinity)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 9)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(Capsule(style: .continuous).fill(.ultraThinMaterial))
+            .overlay(Capsule(style: .continuous)
+                .strokeBorder(Color.white.opacity(0.16), lineWidth: 1))
         }
-        .buttonStyle(.bordered)
-        .tint(busy ? .green : nil)
+        .buttonStyle(.plain)
     }
 
     /// The picker, Lock Screen edition. Roomier than the island, so the chrome
@@ -274,16 +287,25 @@ struct VPNLiveActivity: Widget {
                 if #available(iOS 17.0, *) {
                     HStack(spacing: 6) {
                         Button(intent: ExitPickerIntent()) {
-                            Image(systemName: "xmark").font(.caption2)
+                            Image(systemName: "xmark")
+                                .font(.caption2.weight(.bold))
+                                .frame(width: 26, height: 26)
+                                .background(Circle().fill(.ultraThinMaterial))
+                                .overlay(Circle().strokeBorder(Color.white.opacity(0.16), lineWidth: 1))
                         }
-                        .buttonStyle(.bordered)
+                        .buttonStyle(.plain)
                         if context.state.pageCount > 1 {
                             Button(intent: NextPageIntent()) {
                                 Label("More (\(context.state.page + 1)/\(context.state.pageCount))",
                                       systemImage: "chevron.right")
-                                    .font(.caption2)
+                                    .font(.caption2.weight(.semibold))
+                                    .padding(.horizontal, 10)
+                                    .padding(.vertical, 6)
+                                    .background(Capsule(style: .continuous).fill(.ultraThinMaterial))
+                                    .overlay(Capsule(style: .continuous)
+                                        .strokeBorder(Color.white.opacity(0.16), lineWidth: 1))
                             }
-                            .buttonStyle(.bordered)
+                            .buttonStyle(.plain)
                         }
                     }
                 }
@@ -304,7 +326,7 @@ struct VPNLiveActivity: Widget {
     private func lockScreen(_ context: ActivityViewContext<VPNActivityAttributes>) -> some View {
         VStack(alignment: .leading, spacing: 8) {
         HStack(spacing: 12) {
-            statusDot(context, size: 16)
+            statusDot(context, size: 15)
             VStack(alignment: .leading, spacing: 2) {
                 Text(statusText(context))
                     .font(.headline)
@@ -356,18 +378,27 @@ struct VPNLiveActivity: Widget {
 
     /// Status indicator: a dot, the same language as the app's main screen.
     /// Grey whenever the content is stale — at that point the colour would be
-    /// a claim we can't back. A small orange dot marks DIRECT: the compact
-    /// island has no room for a label, and routing around the tunnel is
-    /// exactly the thing a user must not have to guess. While connecting, a
-    /// ring around the dot says "in progress" without an animation.
+    /// a claim we can't back. A small orange dot marks DIRECT.
+    ///
+    /// `glow` and `ring` are OFF in the compact island on purpose: the pill is
+    /// measured against the status bar, and a soft shadow there reads as a
+    /// smudge over the signal/battery glyphs. The ring is also what made the
+    /// dot look clipped in the expanded region — it was drawn outside the
+    /// view's frame. `side` now reserves the ring's diameter, so nothing is
+    /// cut off when connecting.
     private func statusDot(_ context: ActivityViewContext<VPNActivityAttributes>,
-                           size: CGFloat = 12) -> some View {
+                           size: CGFloat = 12,
+                           glow: Bool = true,
+                           ring: Bool = true) -> some View {
         let color = dotColor(context)
+        let showRing = ring && context.state.status == .connecting && !context.isStale
+        let ringSize = size * 1.9
+        let side = showRing ? ringSize : size
         return ZStack {
-            if context.state.status == .connecting && !context.isStale {
+            if showRing {
                 Circle()
                     .strokeBorder(color.opacity(0.35), lineWidth: 2)
-                    .frame(width: size * 1.8, height: size * 1.8)
+                    .frame(width: ringSize, height: ringSize)
             }
             Circle()
                 .fill(RadialGradient(colors: [color, color.opacity(0.7)],
@@ -376,7 +407,8 @@ struct VPNLiveActivity: Widget {
                                      endRadius: size))
                 .frame(width: size, height: size)
                 .overlay(Circle().strokeBorder(Color.white.opacity(0.35), lineWidth: 0.6))
-                .shadow(color: color.opacity(0.6), radius: size * 0.55)
+                .shadow(color: glow ? color.opacity(0.6) : .clear,
+                        radius: glow ? size * 0.5 : 0)
                 .overlay(alignment: .bottomTrailing) {
                     if context.state.direct == true {
                         Circle()
@@ -387,7 +419,7 @@ struct VPNLiveActivity: Widget {
                     }
                 }
         }
-        .frame(width: size, height: size)
+        .frame(width: side, height: side)
     }
 
     private func dotColor(_ context: ActivityViewContext<VPNActivityAttributes>) -> Color {

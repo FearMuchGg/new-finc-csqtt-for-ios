@@ -2101,6 +2101,21 @@ struct LogsView: View {
         // lag. So: cache the result for `fallbackTTL` seconds, refresh
         // in a background task, and only one fetch may be in flight at
         // a time.
+        // Keychain mirror: the only channel that survives a re-signed build
+        // (no App Group, no providerMessage). Prefer it to the os_log
+        // fallback — it is the extension's own tail, not only ours. Two
+        // accounts, one per process.
+        let mirroredApp = SharedKeychain.read(account: "log.app")
+            .flatMap { String(data: $0, encoding: .utf8) } ?? ""
+        let mirroredTunnel = SharedKeychain.read(account: "log.tunnel")
+            .flatMap { String(data: $0, encoding: .utf8) } ?? ""
+        if !mirroredApp.isEmpty || !mirroredTunnel.isEmpty {
+            usingOSLogFallback = false
+            logText = truncated("[keychain mirror — App Group unavailable]\n"
+                                + mirroredApp + mirroredTunnel)
+            return
+        }
+
         usingOSLogFallback = true
 
         // Show last-cached content immediately if we have any; otherwise

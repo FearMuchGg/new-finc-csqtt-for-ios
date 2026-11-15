@@ -47,9 +47,19 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
         timer.schedule(deadline: .now() + 1, repeating: 2, leeway: .milliseconds(250))
         timer.setEventHandler { [weak self] in
             guard let self, let backend = self.backend, let json = backend.stats() else { return }
-            guard let suite = UserDefaults(suiteName: AppEntitlements.sharedGroup) else { return }
-            suite.set(json, forKey: Self.statsMirrorKey)
-            suite.set(Date().timeIntervalSince1970, forKey: Self.statsMirrorAtKey)
+            let now = Date().timeIntervalSince1970
+            // Prefer the App Group when this build is actually entitled to
+            // one; otherwise fall back to the keychain channel, which a
+            // re-signed build still shares through the keychain-access-group.
+            if FileManager.default.containerURL(
+                forSecurityApplicationGroupIdentifier: AppEntitlements.sharedGroup) != nil,
+               let suite = UserDefaults(suiteName: AppEntitlements.sharedGroup) {
+                suite.set(json, forKey: Self.statsMirrorKey)
+                suite.set(now, forKey: Self.statsMirrorAtKey)
+            } else {
+                let payload = "\(now)\n\(json)"
+                SharedKeychain.write(Data(payload.utf8), account: "stats")
+            }
         }
         timer.resume()
         statsMirrorTimer = timer

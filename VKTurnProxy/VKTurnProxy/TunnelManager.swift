@@ -334,9 +334,25 @@ class TunnelManager: ObservableObject {
     /// never be presented as the current one.
     @discardableResult
     private func adoptSharedStatsIfFresh(maxAge: TimeInterval = 8) -> Bool {
-        guard let suite = UserDefaults(suiteName: AppEntitlements.sharedGroup),
-              let json = suite.string(forKey: Self.statsMirrorKey),
-              let at = suite.object(forKey: Self.statsMirrorAtKey) as? Double,
+        var json: String?
+        var at: Double?
+        if let suite = UserDefaults(suiteName: AppEntitlements.sharedGroup),
+           let j = suite.string(forKey: Self.statsMirrorKey),
+           let a = suite.object(forKey: Self.statsMirrorAtKey) as? Double {
+            json = j
+            at = a
+        }
+        // Second source: the keychain channel. It survives a re-signed build
+        // where the App Group was replaced by the signer's own.
+        if json == nil,
+           let data = SharedKeychain.read(account: "stats"),
+           let text = String(data: data, encoding: .utf8),
+           let newline = text.firstIndex(of: "\n"),
+           let a = Double(text[..<newline]) {
+            at = a
+            json = String(text[text.index(after: newline)...])
+        }
+        guard let json, let at,
               Date().timeIntervalSince1970 - at <= maxAge,
               let data = json.data(using: .utf8),
               let newStats = try? JSONDecoder().decode(TunnelStats.self, from: data)

@@ -44,6 +44,7 @@
 // inside a NetworkExtension, where a crash takes the user's VPN down.
 
 import Foundation
+import Security
 
 struct AppEntitlements: Sendable {
     /// e.g. "CDMQ33VFQC.com.vkturnproxy.app". The part before the first dot is
@@ -411,5 +412,60 @@ struct AppEntitlements: Sendable {
             return data.subdata(in: (data.startIndex + payloadStart)..<(data.startIndex + payloadEnd))
         }
         return nil
+    }
+}
+
+/// A tiny keychain-backed channel between the app and the tunnel extension.
+///
+/// It exists for ONE case: a re-signed IPA whose App Group is missing (the
+/// re-signer substitutes its own team and groups) and whose providerMessage
+/// IPC is refused. Then neither the shared log file nor the stats channel can
+/// cross the process boundary, and the app shows empty logs and zeroed
+/// counters over a healthy tunnel.
+///
+/// The keychain item is shared through the keychain-access-group both
+/// entitlements already declare: `<team>.com.vkturnproxy.shared`. The team is
+/// read from the signature, not hardcoded, so the item lands in the group the
+/// profile actually granted.
+///
+/// Deliberately small: the stats JSON (~1 KB) and the last ~3.5 KB of the log.
+enum SharedKeychain {
+    private static let service = "com.vkturnproxy.bridge"
+
+    private static var accessGroup: String? {
+        guard let team = AppEntitlements.current.effectiveTeam, !team.isEmpty else { return nil }
+        return "\(team).com.vkturnproxy.shared"
+    }
+
+    private static func baseQuery(account: String) -> [String: Any] {
+        var query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: service,
+            kSecAttrAccount as String: account
+        ]
+        if let group = accessGroup { query[kSecAttrAccessGroup as String] = group }
+        return query
+    }
+
+    static func write(_ data: Data, account: String) {
+        let query = baseQuery(account: account)
+        SecItemDelete(query as CFDictionary)
+        var add = query
+        add[kSecValueData as String] = data
+        add[kSecAttrAccessible as String] = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
+        SecItemAdd(add as CFDictionary, nil)
+    }
+
+    static func read(account: String) -> Data? {
+        var query = baseQuery(account: account)
+        query[kSecReturnData as String] = true
+        query[kSecMatchLimit as String] = kSecMatchLimitOne
+        var item: CFTypeRef?
+        guard SecItemCopyMatching(query as CFDictionary, &item) == errSecSuccess else { return nil }
+        return item as? Data
+    }
+
+    static func remove(account: String) {
+        SecItemDelete(baseQuery(account: account) as CFDictionary)
     }
 }

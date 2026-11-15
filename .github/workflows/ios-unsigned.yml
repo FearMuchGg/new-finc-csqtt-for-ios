@@ -68,6 +68,7 @@ jobs:
             CODE_SIGN_IDENTITY="" \
             DEVELOPMENT_TEAM="" \
             PROVISIONING_PROFILE_SPECIFIER="" \
+            DEBUG_INFORMATION_FORMAT=dwarf-with-dsym \
             build 2>&1 | tee build-xcodebuild.log
 
       - name: Package IPA, app, dSYM and entitlements

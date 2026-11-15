@@ -94,29 +94,21 @@ struct ContentView: View {
                         }
                     case .logs:
                         LogsView(tunnel: tunnel)
+                            // Its own bottom bar (Auto-scroll / Clear / Share)
+                            // lives at the bottom edge: keep it above the
+                            // floating tab bar instead of under it.
+                            .padding(.bottom, 104)
                     case .speed:
                         SpeedTestView(tunnel: tunnel)
+                            .padding(.bottom, 104)
                     case .settings:
                         SettingsView()
+                            .padding(.bottom, 104)
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
 
-                CSQTTTabBar(
-                    selection: $tab,
-                    actionColor: statusColor,
-                    isConnected: tunnel.status == .connected
-                ) {
-                    // The round action mirrors the main Connect button: one
-                    // control, reachable from every tab.
-                    CSQTTHaptic.tap(.medium)
-                    if tunnel.status == .connected {
-                        tunnel.disconnect()
-                    } else {
-                        let active = ServerStore.shared.activeServer
-                        Task { await tunnel.connect(config: TunnelConfig.make(for: active)) }
-                    }
-                }
+                CSQTTTabBar(selection: $tab)
             }
             .navigationTitle("VK Turn Proxy")
             .navigationBarTitleDisplayMode(.inline)

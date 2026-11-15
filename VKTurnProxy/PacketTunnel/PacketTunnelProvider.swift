@@ -73,6 +73,12 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
             // channel both signatures share.
             let payload = "\(now)\n\(json)"
             SharedKeychain.write(Data(payload.utf8), account: "stats")
+            // The one channel that needs no entitlement at all: the app reads
+            // it from the system os_log store when App Groups differ and the
+            // keychain is refused (-34018).
+            os_log("CSQTT_STATS %{public}s",
+                   log: OSLog(subsystem: "com.vkturnproxy.tunnel", category: "StatsMirror"),
+                   json)
         }
         timer.resume()
         statsMirrorTimer = timer

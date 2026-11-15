@@ -66,8 +66,9 @@ struct ServerPickerMenu: View {
                 Button {
                     Task { await subscriptions.refreshAll(force: true) }
                 } label: {
-                    Label(subscriptions.refreshing.isEmpty ? "Refresh subscriptions"
-                          : "Refreshing…",
+                    Label(subscriptions.refreshing.isEmpty
+                          ? LocalizedStringKey("Refresh subscriptions")
+                          : LocalizedStringKey("Refreshing…"),
                           systemImage: "arrow.clockwise")
                 }
                 .disabled(!subscriptions.refreshing.isEmpty)

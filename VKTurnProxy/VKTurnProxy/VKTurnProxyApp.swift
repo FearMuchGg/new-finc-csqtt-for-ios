@@ -34,6 +34,11 @@ struct VKTurnProxyApp: App {
         // TunnelManager read.
         _ = ServerStore.shared
 
+        // Subscriptions refresh in the background at launch when their last
+        // success is older than six hours; the server menu refreshes sooner on
+        // open. One request per subscription, never on the main thread.
+        Task { await SubscriptionStore.shared.refreshIfStale(maxAge: 6 * 60 * 60) }
+
         // Live Activity buttons (issue #64 stage 2). The intents live in a file
         // compiled into the widget too, so they cannot reference TunnelManager
         // directly; the app installs the sink they forward to. Gated because

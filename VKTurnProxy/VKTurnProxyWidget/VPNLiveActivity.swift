@@ -71,8 +71,12 @@ private struct IslandBrandPill: View {
             .foregroundStyle(tint)
             .frame(width: 28, height: 22)
             .background {
+                // A neutral wash, never the tint colour: only the RIM and the
+                // SHIELD may turn yellow, and only when DIRECT is on. A tinted
+                // fill made the whole capsule look yellow, which read as a
+                // different control rather than as a mode.
                 Capsule(style: .continuous)
-                    .fill(tint.opacity(stale ? 0.05 : 0.14))
+                    .fill(Color.white.opacity(stale ? 0.03 : 0.06))
             }
             .overlay {
                 Capsule(style: .continuous)

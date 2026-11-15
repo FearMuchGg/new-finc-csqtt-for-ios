@@ -269,9 +269,27 @@ struct CSQTTFilledButtonStyle: ButtonStyle {
     }
 }
 
-// CSQTTGhostButtonStyle lived here with zero call sites: every "secondary"
-// action in the app uses .buttonStyle(.plain) or the system glass capsule.
-// Removed in build 503 with the dead glass switch.
+// CSQTTGhostButtonStyle is NOT dead: CSQTTEmptyStateView uses it for its single
+// action (build 503 removed it and the build failed at that call site). Kept.
+/// Secondary, glass-backed button (empty-state action).
+struct CSQTTGhostButtonStyle: ButtonStyle {
+    var tint: Color = CSQTTTheme.accent
+
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(.system(.subheadline, design: .rounded).weight(.semibold))
+            .foregroundStyle(tint)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 10)
+            .background {
+                Capsule(style: .continuous)
+                    .fill(.ultraThinMaterial)
+                    .overlay { Capsule().strokeBorder(tint.opacity(0.35), lineWidth: 1) }
+            }
+            .opacity(configuration.isPressed ? 0.7 : 1)
+            .animation(.easeOut(duration: 0.15), value: configuration.isPressed)
+    }
+}
 
 // MARK: - Colour helper
 

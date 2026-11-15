@@ -30,6 +30,19 @@ struct Subscription: Codable, Identifiable, Equatable {
     /// Optional so a store written before the field existed decodes.
     var deviceID: String? = nil
 
+    /// Connections ("conn") applied to EVERY server this subscription
+    /// produces. `nil` is the "Auto" state: the subscription does not touch a
+    /// server's own value (the profile default, or whatever the panel's link
+    /// carried), so importing a subscription never silently rewrites a number
+    /// the user set elsewhere. A number here wins on every refresh, which is
+    /// what a provider that ships one link per server expects: the person
+    /// tunes connections once, for the whole subscription.
+    ///
+    /// Stored on the SUBSCRIPTION, not on each profile, for the same reason
+    /// `deviceID` is: a refresh replaces the profiles, and a per-profile value
+    /// would be lost the next time the subscription is pulled.
+    var numConnections: Int? = nil
+
     var shortIdentity: String {
         String((deviceID ?? "").prefix(8))
     }

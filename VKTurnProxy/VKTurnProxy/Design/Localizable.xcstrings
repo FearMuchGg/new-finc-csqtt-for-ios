@@ -81,6 +81,54 @@
         }
       }
     },
+    "Applies to every server of this subscription. Auto keeps each server's own value.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Applies to every server of this subscription. Auto keeps each server's own value."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Применяется ко всем серверам подписки. «Авто» сохраняет собственное значение каждого сервера."
+          }
+        }
+      }
+    },
+    "Auto": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Auto"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Авто"
+          }
+        }
+      }
+    },
+    "Connections": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connections"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Подключения"
+          }
+        }
+      }
+    },
     "Auto (nearest)": {
       "localizations": {
         "en": {

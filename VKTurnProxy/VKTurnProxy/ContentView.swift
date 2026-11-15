@@ -88,9 +88,12 @@ struct ContentView: View {
                             }
                             .frame(maxWidth: .infinity)
                             .padding(.top, 8)
-                            // Room for the floating bar: the last control must
-                            // scroll clear of it, not sit under it.
-                            .padding(.bottom, 104)
+                            // No bottom padding any more: the bar's band is
+                            // reserved ONCE for every tab by the safeAreaInset
+                            // below. Two sources of truth drifted apart — this
+                            // screen had 104pt, Logs had 84pt, and Settings and
+                            // Speed test had none, which is exactly why the
+                            // last rows of Settings sat under the glass.
                         }
                     case .logs:
                         LogsView(tunnel: tunnel)
@@ -101,6 +104,19 @@ struct ContentView: View {
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
+                // Reserve the floating bar's band INSIDE the safe area, once,
+                // for every tab. Its scroll views (ScrollView here, List in
+                // Subscriptions, Form in Settings and Speed test) then end
+                // their content above the glass by themselves — while the bar
+                // itself still draws OVER the content, because it stays the
+                // ZStack's sibling below. This replaces the per-screen numbers
+                // (home 104, logs 84, settings/speed: none), which is exactly
+                // how the last settings rows ended up cut off by the bar.
+                .safeAreaInset(edge: .bottom, spacing: 0) {
+                    Color.clear
+                        .frame(height: CSQTTTabBar.bandHeight)
+                        .accessibilityHidden(true)
+                }
 
                 CSQTTTabBar(selection: $tab)
             }
@@ -2008,10 +2024,9 @@ struct LogsView: View {
             }
             .padding(.horizontal)
             .padding(.vertical, 8)
-            // The floating tab bar overlays the bottom edge: keep this row of
-            // controls above it while the log text still runs underneath (the
-            // Telegram-style card, not a black band).
-            .padding(.bottom, 84)
+            // The floating bar's clearance comes from the root safeAreaInset
+            // now (see ContentView). This row used to carry its own 84pt and
+            // would add a second, taller gap on top of it.
         }
         .navigationTitle("Logs")
         .onAppear { loadLogs() }

@@ -41,7 +41,9 @@ final class SubscriptionStore: ObservableObject {
 
     // MARK: - Add / remove
 
-    func add(url: String, name: String? = nil) async throws -> Subscription {
+    func add(url: String,
+             name: String? = nil,
+             numConnections: Int? = nil) async throws -> Subscription {
         let trimmed = url.trimmingCharacters(in: .whitespacesAndNewlines)
         guard let parsedURL = URL(string: trimmed), let scheme = parsedURL.scheme?.lowercased()
         else { throw SubscriptionError.badURL }
@@ -54,14 +56,20 @@ final class SubscriptionStore: ObservableObject {
         var sub = Subscription(name: "", url: trimmed)
         sub.name = (name?.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty == false
                     ? name! : (parsedURL.host ?? "Subscription"))
+        // The "conn" the sheet asked for, clamped the way connect() clamps the
+        // anonymous path — a subscription must not promise a number the tunnel
+        // will refuse.
+        sub.numConnections = numConnections.map { min(max($0, 1), TunnelConfig.anonConnCap) }
         // One identity for the whole subscription. If a link already carries a
         // provider-bound device id, adopt that one so the provider recognises
         // the device it minted; otherwise mint one.
-        let seed = profiles(from: parsed, subscription: sub.id, identity: nil)
+        let seed = profiles(from: parsed, subscription: sub.id, identity: nil,
+                            connections: sub.numConnections)
         sub.deviceID = identity(in: seed) ?? UUID().uuidString
         sub.lastUpdated = Date()
 
-        let final = profiles(from: parsed, subscription: sub.id, identity: sub.deviceID)
+        let final = profiles(from: parsed, subscription: sub.id, identity: sub.deviceID,
+                             connections: sub.numConnections)
         guard ServerStore.shared.replaceSubscriptionServers(sub.id, with: final) || !final.isEmpty else {
             throw SubscriptionError.empty
         }
@@ -94,11 +102,13 @@ final class SubscriptionStore: ObservableObject {
 
             var identity = sub.deviceID
             if identity == nil || identity!.isEmpty {
-                identity = self.identity(in: profiles(from: parsed, subscription: id, identity: nil))
+                identity = self.identity(in: profiles(from: parsed, subscription: id, identity: nil,
+                                                      connections: sub.numConnections))
                     ?? UUID().uuidString
                 subscriptions[index].deviceID = identity
             }
-            let final = profiles(from: parsed, subscription: id, identity: identity)
+            let final = profiles(from: parsed, subscription: id, identity: identity,
+                                 connections: sub.numConnections)
             _ = ServerStore.shared.replaceSubscriptionServers(id, with: final)
             subscriptions[index].lastUpdated = Date()
             subscriptions[index].lastError = nil
@@ -151,7 +161,8 @@ final class SubscriptionStore: ObservableObject {
 
     private func profiles(from servers: [SubscriptionServer],
                           subscription id: UUID,
-                          identity: String?) -> [ServerProfile] {
+                          identity: String?,
+                          connections: Int? = nil) -> [ServerProfile] {
         var out: [ServerProfile] = []
         for server in servers {
             guard let link = try? BackupManager.parseConnectionLinkString(server.link) else {
@@ -163,6 +174,14 @@ final class SubscriptionStore: ObservableObject {
             if profile.serverName.isEmpty { profile.serverName = "Server" }
             profile.subscriptionId = id
             profile.remoteKey = server.remoteKey
+            // The subscription's own "conn" overrides whatever the link or the
+            // profile default said. A link carries no connections today, but
+            // the override is applied AFTER ServerProfile(link:) on purpose:
+            // the number belongs to the subscription, and a future link field
+            // must not quietly win over the value the user chose here.
+            if let connections, connections > 0 {
+                profile.numConnections = min(max(connections, 1), TunnelConfig.anonConnCap)
+            }
             if let identity, !identity.isEmpty {
                 profile.deviceID = identity
                 profile.csqttDeviceID = identity
@@ -170,6 +189,30 @@ final class SubscriptionStore: ObservableObject {
             out.append(profile)
         }
         return out
+    }
+
+    /// Set (or clear, with nil) the "conn" applied to every server of a
+    /// subscription. The change lands on the profiles the subscription already
+    /// owns, so the user sees it at once instead of waiting for the next
+    /// refresh — and it survives the refresh because the value lives on the
+    /// subscription, not on the profiles.
+    ///
+    /// Clearing to "Auto" deliberately does NOT rewrite the profiles: their
+    /// current value is the only remaining record of what they had, and
+    /// picking a number here is a deliberate act, not a default worth losing.
+    /// The next refresh then re-reads each server's own value.
+    func setNumConnections(_ id: UUID, _ value: Int?) {
+        guard let index = subscriptions.firstIndex(where: { $0.id == id }) else { return }
+        let clamped = value.map { min(max($0, 1), TunnelConfig.anonConnCap) }
+        subscriptions[index].numConnections = clamped
+        for var profile in ServerStore.shared.servers(for: id) {
+            if let clamped { profile.numConnections = clamped }
+            ServerStore.shared.update(profile)
+        }
+        save()
+        SharedLogger.shared.log("[AppDebug] subscription conn: \(subscriptions[index].hostLabel) → "
+            + (clamped.map(String.init) ?? "auto")
+            + " for \(ServerStore.shared.servers(for: id).count) server(s)")
     }
 
     private func identity(in profiles: [ServerProfile]) -> String? {

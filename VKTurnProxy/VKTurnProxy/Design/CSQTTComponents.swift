@@ -435,12 +435,95 @@ private struct CSQTTTabItemStyle: ButtonStyle {
 struct CSQTTTabBar: View {
     @Binding var selection: CSQTTTab
 
+    /// The band the bar occupies, shadow bleed included. ContentView reserves
+    /// this inside the bottom safe area (build 496), so no tab screen carries a
+    /// bottom padding of its own — the two that did each guessed a different
+    /// number and Settings had none, which is how its last rows ended up under
+    /// the glass.
+    static let bandHeight: CGFloat = 96
+
     @Namespace private var pill
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @AppStorage(CSQTTTheme.Key.glass) private var glassEnabled = true
     @AppStorage(CSQTTTheme.Key.animations) private var animationsEnabled = true
 
     private var motion: Bool { !reduceMotion && animationsEnabled }
+
+    /// The selected tab's capsule as a LENS rather than a solid chip: the
+    /// accent stays, but the fill is translucent at its edges, a specular dot
+    /// sits near the top, the rim is brighter than the fill, and a hairline of
+    /// black under it gives the drop an underside. The bar's own backdrop
+    /// therefore reads as something the drop is sitting ON, not something it is
+    /// painted over.
+    private var selectedLens: some View {
+        Capsule(style: .continuous)
+            .fill(LinearGradient(
+                colors: [CSQTTTheme.accent.opacity(glassEnabled ? 0.92 : 1),
+                         CSQTTTheme.accentDeep.opacity(glassEnabled ? 0.86 : 1)],
+                startPoint: .top,
+                endPoint: .bottom))
+            .overlay {
+                Capsule(style: .continuous)
+                    .fill(LinearGradient(
+                        colors: [Color.white.opacity(glassEnabled ? 0.46 : 0),
+                                 Color.white.opacity(glassEnabled ? 0.08 : 0),
+                                 Color.clear],
+                        startPoint: .top,
+                        endPoint: .center))
+            }
+            .overlay {
+                // The lamp: a small radial highlight where light enters the
+                // drop. Kept on one side so the capsule has a direction.
+                Capsule(style: .continuous)
+                    .fill(RadialGradient(colors: [Color.white.opacity(glassEnabled ? 0.50 : 0),
+                                                  Color.clear],
+                                         center: UnitPoint(x: 0.5, y: 0.12),
+                                         startRadius: 0,
+                                         endRadius: 46))
+                    .blendMode(.plusLighter)
+            }
+            .overlay {
+                Capsule(style: .continuous)
+                    .strokeBorder(LinearGradient(
+                        colors: [Color.white.opacity(glassEnabled ? 0.78 : 0),
+                                 Color.white.opacity(glassEnabled ? 0.16 : 0)],
+                        startPoint: .top,
+                        endPoint: .bottom), lineWidth: 0.9)
+            }
+            .shadow(color: CSQTTTheme.accent.opacity(glassEnabled ? 0.55 : 0.25),
+                    radius: glassEnabled ? 10 : 4, x: 0, y: glassEnabled ? 5 : 3)
+            .shadow(color: Color.black.opacity(glassEnabled ? 0.20 : 0),
+                    radius: 1.5, x: 0, y: -1)
+            .matchedGeometryEffect(id: "selected", in: pill)
+    }
+
+    /// The bar's own glass: frosted material, a diagonal tint (white entering
+    /// top-left, brand colour gathering bottom-right), a radial "lamp" near the
+    /// top edge and a darker lower band for thickness. Clipped to the capsule so
+    /// no highlight spills past the rim.
+    private var glassBackdrop: some View {
+        ZStack {
+            Capsule(style: .continuous).fill(.ultraThinMaterial)
+            Capsule(style: .continuous)
+                .fill(LinearGradient(
+                    colors: [Color.white.opacity(0.22),
+                             Color.white.opacity(0.04),
+                             CSQTTTheme.accent.opacity(0.14)],
+                    startPoint: .topLeading,
+                    endPoint: .bottomTrailing))
+            Capsule(style: .continuous)
+                .fill(RadialGradient(colors: [Color.white.opacity(0.24), Color.clear],
+                                     center: UnitPoint(x: 0.30, y: 0.02),
+                                     startRadius: 0,
+                                     endRadius: 120))
+                .blendMode(.plusLighter)
+            Capsule(style: .continuous)
+                .fill(LinearGradient(colors: [Color.clear, Color.black.opacity(0.20)],
+                                     startPoint: .center,
+                                     endPoint: .bottom))
+        }
+        .clipShape(Capsule(style: .continuous))
+    }
 
     @ViewBuilder
     private func tabIcon(_ tab: CSQTTTab) -> some View {
@@ -475,28 +558,7 @@ struct CSQTTTabBar: View {
                     .foregroundStyle(selection == tab ? Color.white : Color.secondary)
                     .background {
                         if selection == tab {
-                            Capsule(style: .continuous)
-                                .fill(LinearGradient(
-                                    colors: [CSQTTTheme.accent, CSQTTTheme.accentDeep],
-                                    startPoint: .top,
-                                    endPoint: .bottom))
-                                .overlay {
-                                    if glassEnabled {
-                                        Capsule(style: .continuous)
-                                            .fill(LinearGradient(
-                                                colors: [Color.white.opacity(0.28), Color.clear],
-                                                startPoint: .top,
-                                                endPoint: .center))
-                                    }
-                                }
-                                .overlay {
-                                    Capsule(style: .continuous)
-                                        .strokeBorder(Color.white.opacity(glassEnabled ? 0.35 : 0),
-                                                      lineWidth: 0.8)
-                                }
-                                .shadow(color: CSQTTTheme.accent.opacity(glassEnabled ? 0.45 : 0.25),
-                                        radius: glassEnabled ? 8 : 4, x: 0, y: 3)
-                                .matchedGeometryEffect(id: "selected", in: pill)
+                            selectedLens
                         }
                     }
                 }
@@ -504,28 +566,30 @@ struct CSQTTTabBar: View {
                 .accessibilityLabel(tab.title)
             }
         }
-        .padding(4)
+        .padding(5)
         .background {
             if glassEnabled {
-                ZStack {
-                    Capsule(style: .continuous).fill(.ultraThinMaterial)
-                    Capsule(style: .continuous)
-                        .fill(LinearGradient(
-                            colors: [Color.white.opacity(0.12), Color.clear, Color.white.opacity(0.05)],
-                            startPoint: .topLeading,
-                            endPoint: .bottomTrailing))
-                }
+                glassBackdrop
             } else {
                 Capsule(style: .continuous).fill(Color(.secondarySystemBackground))
             }
         }
         .overlay {
             if glassEnabled {
+                // Two concentric strokes read as THICKNESS; one alone reads as
+                // a sticker. The outer rim is brightest at the top-left — the
+                // side the light comes from — and the inner hairline catches
+                // the refraction just inside the edge.
                 Capsule(style: .continuous)
                     .strokeBorder(LinearGradient(
-                        colors: [Color.white.opacity(0.38), Color.white.opacity(0.06)],
+                        colors: [Color.white.opacity(0.55),
+                                 Color.white.opacity(0.14),
+                                 Color.white.opacity(0.34)],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing), lineWidth: 1)
+                Capsule(style: .continuous)
+                    .strokeBorder(Color.white.opacity(0.11), lineWidth: 0.6)
+                    .padding(1.7)
             } else {
                 Capsule(style: .continuous)
                     .strokeBorder(Color.primary.opacity(0.08), lineWidth: 1)
@@ -533,20 +597,26 @@ struct CSQTTTabBar: View {
         }
         .overlay(alignment: .top) {
             if glassEnabled {
-                // The wet line that makes glass read as glass.
+                // The wet line along the top edge, faded at both ends: the one
+                // detail that turned the flat capsule into a lens.
                 Capsule(style: .continuous)
-                    .fill(Color.white.opacity(0.22))
-                    .frame(height: 0.8)
-                    .padding(.horizontal, 26)
-                    .blur(radius: 0.5)
+                    .fill(LinearGradient(colors: [Color.clear,
+                                                  Color.white.opacity(0.60),
+                                                  Color.clear],
+                                         startPoint: .leading,
+                                         endPoint: .trailing))
+                    .frame(height: 1)
+                    .blur(radius: 0.7)
+                    .padding(.horizontal, 28)
+                    .offset(y: 0.5)
             }
         }
-        .shadow(color: Color.black.opacity(glassEnabled ? 0.22 : 0.10),
-                radius: glassEnabled ? 22 : 8,
-                x: 0, y: glassEnabled ? 12 : 4)
-        .shadow(color: CSQTTTheme.accent.opacity(glassEnabled ? 0.10 : 0),
-                radius: 6, x: 0, y: 2)
-        .padding(.horizontal, 16)
+        .shadow(color: Color.black.opacity(glassEnabled ? 0.34 : 0.10),
+                radius: glassEnabled ? 26 : 8,
+                x: 0, y: glassEnabled ? 14 : 4)
+        .shadow(color: CSQTTTheme.accent.opacity(glassEnabled ? 0.16 : 0),
+                radius: 12, x: 0, y: 4)
+        .padding(.horizontal, 14)
         .padding(.bottom, 4)
         .animation(motion ? .spring(response: 0.4, dampingFraction: 0.8) : nil, value: selection)
     }

@@ -15,8 +15,18 @@ struct SubscriptionsView: View {
     @State private var showAdd = false
     @State private var url = ""
     @State private var name = ""
+    /// Chosen "conn" for the subscription being added. nil = Auto.
+    @State private var connections: Int? = nil
     @State private var busy = false
     @State private var error: String?
+
+    /// The offered values. Dense at the low end (where a phone actually lives)
+    /// and stopping at TunnelConfig.anonConnCap, so no menu entry can promise a
+    /// number the tunnel will refuse.
+    private var connChoices: [Int] {
+        [1, 2, 3, 4, 6, 8, 10, 12, 16, 20, 24, 30, 40, 50, TunnelConfig.anonConnCap]
+            .filter { $0 <= TunnelConfig.anonConnCap }
+    }
 
     var body: some View {
         List {
@@ -53,6 +63,35 @@ struct SubscriptionsView: View {
                         Text(sub.shortIdentity)
                             .font(.caption.monospaced())
                             .foregroundStyle(.secondary)
+                    }
+
+                    // "conn" for the whole subscription. Choosing a number here
+                    // rewrites it on every server the subscription owns, at
+                    // once (SubscriptionStore.setNumConnections) — a provider
+                    // that ships one link per server is tuned in one place
+                    // instead of once per server. "Auto" hands each server back
+                    // to its own value on the next refresh.
+                    Menu {
+                        Button("Auto") { store.setNumConnections(sub.id, nil) }
+                        ForEach(connChoices, id: \.self) { n in
+                            Button("\(n)") { store.setNumConnections(sub.id, n) }
+                        }
+                    } label: {
+                        HStack {
+                            Text("Connections")
+                            Spacer()
+                            if let value = sub.numConnections {
+                                Text("\(value)")
+                                    .foregroundStyle(.secondary)
+                                    .monospacedDigit()
+                            } else {
+                                Text("Auto")
+                                    .foregroundStyle(.secondary)
+                            }
+                            Image(systemName: "chevron.up.chevron.down")
+                                .font(.caption2)
+                                .foregroundStyle(.tertiary)
+                        }
                     }
 
                     if let failure = sub.lastError {
@@ -110,8 +149,36 @@ struct SubscriptionsView: View {
                         .keyboardType(.URL)
                     TextField("Name (optional)", text: $name)
                         .textInputAutocapitalization(.never)
+
+                    // Chosen BEFORE the URL is fetched, then stamped onto every
+                    // server the subscription produces and stored on the
+                    // subscription itself, so refreshing it later keeps the
+                    // number instead of losing it with the old profiles.
+                    Menu {
+                        Button("Auto") { connections = nil }
+                        ForEach(connChoices, id: \.self) { n in
+                            Button("\(n)") { connections = n }
+                        }
+                    } label: {
+                        HStack {
+                            Text("Connections")
+                            Spacer()
+                            if let value = connections {
+                                Text("\(value)")
+                                    .foregroundStyle(.secondary)
+                                    .monospacedDigit()
+                            } else {
+                                Text("Auto")
+                                    .foregroundStyle(.secondary)
+                            }
+                            Image(systemName: "chevron.up.chevron.down")
+                                .font(.caption2)
+                                .foregroundStyle(.tertiary)
+                        }
+                    }
                 } footer: {
                     Text("The URL is a secret: anyone holding it can pull the servers. It is never logged.")
+                    Text("Applies to every server of this subscription. Auto keeps each server's own value.")
                 }
 
                 if let error {
@@ -151,9 +218,10 @@ struct SubscriptionsView: View {
         busy = true
         error = nil
         do {
-            _ = try await store.add(url: url, name: name)
+            _ = try await store.add(url: url, name: name, numConnections: connections)
             url = ""
             name = ""
+            connections = nil
             showAdd = false
         } catch {
             self.error = error.localizedDescription

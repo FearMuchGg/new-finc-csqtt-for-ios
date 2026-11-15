@@ -41,7 +41,7 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
     private static let statsMirrorKey = "csqtt.stats.snapshot"
     private static let statsMirrorAtKey = "csqtt.stats.snapshot.at"
 
-    private func startStatsMirror() {
+    private func startStatsMirror(_ backend: TunnelBackend) {
         statsMirrorTimer?.cancel()
         // A global queue, not `.main`: the extension's main run loop is also
         // serving the Go bridge and the provider callbacks, and a utility timer
@@ -51,14 +51,20 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
         timer.schedule(deadline: .now() + 2, repeating: 2, leeway: .milliseconds(250))
         timer.setEventHandler { [weak self] in
             guard let self, !self.stopRequested else { return }
-            guard let backend = self.backend else { return }
+            // Bound to the backend this mirror was started for: a stop (or a
+            // newer start) may have taken it out from under the timer, and a
+            // stopped handle answers "" — never a measurement.
+            guard let live = self.backend, live == backend else { return }
             // "{}" is what the Go side answers a handle it no longer knows —
             // not a measurement. Writing it would overwrite a good snapshot
             // with an undecodable one and blank the app's counters.
-            guard let json = backend.stats(), !json.isEmpty, json != "{}" else { return }
+            guard let json = live.stats(), !json.isEmpty, json != "{}" else { return }
             let now = Date().timeIntervalSince1970
-            if let container = AppGroup.containerURL {
-                StatsMirror.write(json: json, into: container)
+            // Write the file into EVERY granted container: the app and the
+            // extension can be signed into different sets, and one known
+            // intersection is what the fallback needs.
+            for url in AppGroup.allContainerURLs {
+                StatsMirror.write(json: json, into: url)
             }
             // ALWAYS mirror into the keychain as well: a re-signed build can
             // hand the app and the extension DIFFERENT App Group containers
@@ -70,6 +76,7 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
         }
         timer.resume()
         statsMirrorTimer = timer
+        logMsg("stats mirror: started (container=\(AppGroup.containerURL?.lastPathComponent ?? "nil"))")
     }
 
     private func stopStatsMirror() {
@@ -80,7 +87,12 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
         // unambiguous.
         StatsMirror.clear(from: AppGroup.containerURL)
         DirectMirror.clear(from: AppGroup.containerURL)
+        for url in AppGroup.allContainerURLs {
+            StatsMirror.clear(from: url)
+            DirectMirror.clear(from: url)
+        }
         SharedKeychain.remove(account: "stats")
+        SharedKeychain.remove(account: "direct")
     }
 
     /// Clears the backend only if it is still the one the caller owns: a
@@ -400,6 +412,7 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
         logMsg(stopped ? "\(stage): the tunnel was stopped during the start — tearing down whatever stopTunnel has not yet" : line)
         stopAuthErrorWatchdog()
         stopPathMonitoring()
+        stopStatsMirror()
         backend.turnOff()
         clearBackend(backend)
         completionHandler(stopped ? Self.stoppedDuringStartError() : error)
@@ -423,7 +436,6 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
         _stopRequested = false
         backendLock.unlock()
         startPathMonitoring()
-        startStatsMirror()
 
         // Set Go timezone BEFORE wgSetLogFilePath so the first Go log line
         // ("wgSetLogFilePath: ...") gets a local-time timestamp. Reversed
@@ -763,6 +775,11 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
                     if isCSQTT {
                         self.startCsqttWatchdog(backend)
                     }
+                    // From here the counters exist and keep changing, so the
+                    // mirror starts with them — before the completion, so the
+                    // app's first post-connect poll already has a fallback if
+                    // its channel is refused. Same placement as the reference.
+                    self.startStatsMirror(backend)
                     completionHandler(nil)
 
                     // Hand the machine the mode the tunnel actually came up in.
@@ -1536,7 +1553,9 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
         // an OFF switch as "possibly leaking" and reconnects the tunnel —
         // exactly what the user saw. Never the requested value: `applied` is
         // only moved by a successful apply.
-        DirectMirror.write(direct: applied, into: AppGroup.containerURL)
+        for url in AppGroup.allContainerURLs {
+            DirectMirror.write(direct: applied, into: url)
+        }
         writeDirectKeychain(applied)
         let waiters = directWaiters
         directWaiters.removeAll()
@@ -1555,7 +1574,9 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
     private func directBecameReady(initial: Bool) {
         directSync = DirectRouteSync(applied: initial)
         directReady = true
-        DirectMirror.write(direct: initial, into: AppGroup.containerURL)
+        for url in AppGroup.allContainerURLs {
+            DirectMirror.write(direct: initial, into: url)
+        }
         writeDirectKeychain(initial)
         logMsg("direct: the tunnel came up \(initial ? "DIRECT" : "tunnelled") "
             + "in its FIRST settings — no second apply needed")

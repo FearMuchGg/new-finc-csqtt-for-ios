@@ -157,9 +157,7 @@ enum CredCache {
     /// App Group container path matching SharedLogger's vpn.log directory
     /// and the Go-side `filepath.Dir(logFilePath) + "/creds-pool.json"`.
     static var cacheURL: URL? {
-        FileManager.default.containerURL(
-            forSecurityApplicationGroupIdentifier: AppEntitlements.sharedGroup
-        )?.appendingPathComponent("creds-pool.json")
+        AppGroup.containerURL?.appendingPathComponent("creds-pool.json")
     }
 
     /// Loads the cache and returns the first valid cred (any slot), or

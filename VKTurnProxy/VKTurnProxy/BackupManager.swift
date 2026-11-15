@@ -61,9 +61,7 @@ enum BackupManager {
     /// backup logic is self-contained and won't break if CredCache ever
     /// computes the path differently.
     private static var credsPoolURL: URL? {
-        FileManager.default.containerURL(
-            forSecurityApplicationGroupIdentifier: AppEntitlements.sharedGroup
-        )?.appendingPathComponent("creds-pool.json")
+        AppGroup.containerURL?.appendingPathComponent("creds-pool.json")
     }
 
     // MARK: - Build current snapshot

@@ -2216,16 +2216,24 @@ struct LogsView: View {
     /// a temp file so the user can still attach a log to a bug report
     /// even when the App Group file is empty.
     private func exportShareableLogURL() -> URL? {
+        var data = Data()
         if let url = SharedLogger.shared.exportSnapshotURL(),
-           let attrs = try? FileManager.default.attributesOfItem(atPath: url.path),
-           let size = attrs[.size] as? Int, size > 0 {
-            return url
+           let fileData = try? Data(contentsOf: url) {
+            data.append(fileData)
         }
-        // SharedLogger empty — write the on-screen fallback text to a
-        // temp file so Share has something to attach.
+        // The extension's lines can live ONLY in its keychain mirror when the
+        // two processes were signed into different App Groups; an export
+        // without them reads as "the extension is silent" when it is not.
+        for account in ["log.tunnel", "log.app"] {
+            guard let tail = SharedKeychain.read(account: account), !tail.isEmpty else { continue }
+            data.append(Data("\n\n===== keychain mirror: \(account) =====\n".utf8))
+            data.append(tail)
+        }
+        if data.isEmpty { data = Data(logText.utf8) }
+        guard !data.isEmpty else { return nil }
         let tmp = FileManager.default.temporaryDirectory
-            .appendingPathComponent("vpn-export-oslog.log")
-        try? logText.write(to: tmp, atomically: true, encoding: .utf8)
+            .appendingPathComponent("vpn-export.log")
+        try? data.write(to: tmp, options: .atomic)
         return FileManager.default.fileExists(atPath: tmp.path) ? tmp : nil
     }
 }

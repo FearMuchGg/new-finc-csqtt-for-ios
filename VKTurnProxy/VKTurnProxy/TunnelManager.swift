@@ -340,6 +340,14 @@ class TunnelManager: ObservableObject {
         //    is deliberately NOT consulted: cfprefsd flushing made a fresh
         //    snapshot invisible across the process boundary.
         json = StatsMirror.read(from: AppGroup.containerURL, maxAge: maxAge)
+        if json == nil {
+            for url in AppGroup.allContainerURLs {
+                if let value = StatsMirror.read(from: url, maxAge: maxAge) {
+                    json = value
+                    break
+                }
+            }
+        }
         // 2. The keychain channel, for a build whose signature grants no App
         //    Group at all.
         if json == nil,
@@ -1622,14 +1630,22 @@ class TunnelManager: ObservableObject {
         case .silent:
             note("⚠️ the extension did not answer, twice — the state of the routes is UNKNOWN")
             // The reply channel is refused on a re-signed build. The extension
-            // parks the routes it ACTUALLY applied in the shared container;
-            // read that before treating "no answer" as "possibly leaking" and
-            // reconnecting the whole tunnel — the reconnect the user reported
-            // on every DIRECT → tunnelled switch.
-            if let applied = mirroredDirect(notBefore: askedAt) {
+            // parks the routes it ACTUALLY applied in the shared container and
+            // the keychain; give the write a moment, then read every channel.
+            var applied: Bool?
+            for attempt in 0..<3 {
+                if attempt > 0 {
+                    try? await Task.sleep(nanoseconds: UInt64(attempt) * 400_000_000)
+                }
+                if let value = mirroredDirect(notBefore: askedAt) {
+                    applied = value
+                    break
+                }
+            }
+            if let applied {
                 if applied == direct {
                     directModeError = nil
-                    note("confirmed by the DirectMirror (App Group): routes are "
+                    note("confirmed by the mirror: routes are "
                         + (applied ? "DIRECT — traffic goes around the tunnel" : "tunnelled"))
                     return .confirmed
                 }
@@ -1642,13 +1658,12 @@ class TunnelManager: ObservableObject {
                     from: source)
                 return .unconfirmed(directModeError ?? "Routing could not be confirmed.")
             }
-            await directChangeUnconfirmed(
-                wanted: direct,
-                message: direct
-                    ? "No answer from the tunnel — routing may not have switched."
-                    : "No answer from the tunnel — routing may still be bypassed.",
-                from: source)
-            return .unconfirmed(directModeError ?? "Routing could not be confirmed.")
+            // No answer on ANY channel. That is absence of data, not evidence
+            // of a leak: reconnecting here ends a healthy session on a guess —
+            // exactly the behaviour reported when leaving DIRECT. The switch
+            // keeps the error and the next change re-checks the routes.
+            directModeError = "Не удалось подтвердить маршрутизацию: расширение не отвечает, состояние неизвестно."
+            return .unconfirmed(directModeError!)
         }
     }
 
@@ -1660,11 +1675,18 @@ class TunnelManager: ObservableObject {
         if let value = DirectMirror.read(from: AppGroup.containerURL, notBefore: notBefore) {
             return value
         }
+        for url in AppGroup.allContainerURLs {
+            if let value = DirectMirror.read(from: url, notBefore: notBefore) { return value }
+        }
         guard let data = SharedKeychain.read(account: "direct"),
               let text = String(data: data, encoding: .utf8),
               let newline = text.firstIndex(of: "\n"),
-              let writtenAt = Double(text[..<newline]),
-              writtenAt >= notBefore.timeIntervalSince1970 - DirectMirror.skew,
+              let writtenAt = Double(text[..<newline])
+        else { return nil }
+        let now = Date().timeIntervalSince1970
+        guard writtenAt >= notBefore.timeIntervalSince1970 - DirectMirror.skew,
+              writtenAt <= now + DirectMirror.skew,
+              now - writtenAt <= 300,
               let value = Int(text[text.index(after: newline)...])
         else { return nil }
         return value != 0
@@ -2686,6 +2708,14 @@ class TunnelManager: ObservableObject {
                         self.adoptSharedStatsIfFresh()
                         return
                     }
+                    // "{}" is the Go side's answer for a handle it no longer
+                    // knows — not a measurement. Decoding it would publish
+                    // zeroes as if they were read from the tunnel.
+                    let text = String(data: data, encoding: .utf8) ?? ""
+                    guard !text.isEmpty, text != "{}" else {
+                        self.adoptSharedStatsIfFresh()
+                        return
+                    }
                     if let newStats = try? JSONDecoder().decode(TunnelStats.self, from: data) {
                         self.missedStatsPolls = 0
                         self.live.statsReceivedOnce = true
@@ -2829,10 +2859,11 @@ class TunnelManager: ObservableObject {
                 }
             }
         } catch {
-            // Before, this was swallowed with "Extension might not be running"
-            // — true during startup, but it also hid a permanent IPC denial for
-            // the entire session. Record it; the UI shows "—" rather than a
-            // fabricated 0.
+            // The most common refusal on a re-signed build ("not entitled to
+            // establish IPC") throws rather than answering nothing. Read the
+            // mirror before declaring the channel down — otherwise the user
+            // waits five polls (and a banner) for data that is already there.
+            if adoptSharedStatsIfFresh() { return }
             noteStatsChannelDown("sendProviderMessage failed: \(error.localizedDescription)")
         }
 

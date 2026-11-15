@@ -428,42 +428,96 @@ struct AppEntitlements: Sendable {
 /// Deliberately small: the stats JSON (~1 KB) and the last ~3.5 KB of the log.
 enum SharedKeychain {
     private static let service = "com.vkturnproxy.bridge"
+    private static let sharedSuffix = ".com.vkturnproxy.shared"
 
-    private static var accessGroup: String? {
-        guard let team = AppEntitlements.current.effectiveTeam, !team.isEmpty else { return nil }
-        return "\(team).com.vkturnproxy.shared"
+    /// The keychain group to use — chosen from the groups the signature
+    /// ACTUALLY grants, never constructed from the team alone. Naming a group
+    /// the build is not entitled to makes every SecItem call fail with
+    /// -34018, and that is exactly what the first version did.
+    ///
+    /// Precedence: an explicit grant ending in our suffix; otherwise a team
+    /// wildcard (`TEAM.*`) re-prefixed with our suffix (the re-signer's usual
+    /// grant); otherwise nil — the bridge is unavailable, and saying so beats
+    /// silently writing into each process's DEFAULT group, which differs
+    /// between the app and the extension.
+    static let accessGroup: String? = {
+        let e = AppEntitlements.current
+        guard e.error == nil else { return nil }
+        let granted = e.keychainAccessGroups
+        if let exact = granted.first(where: { $0.hasSuffix(sharedSuffix) }) {
+            return exact
+        }
+        if let wildcard = granted.filter({ $0.hasSuffix(".*") }).sorted().first {
+            let prefix = String(wildcard.dropLast(2))
+            if !prefix.isEmpty { return prefix + sharedSuffix }
+        }
+        return nil
+    }()
+
+    static var isAvailable: Bool { accessGroup != nil }
+
+    private static let logLock = NSLock()
+    private static var logged: Set<String> = []
+
+    private static func note(_ message: String) {
+        logLock.lock()
+        let first = logged.insert(message).inserted
+        logLock.unlock()
+        if first {
+            SharedLogger.logDiagnostic("keychain: \(message)", category: "Keychain")
+        }
     }
 
-    private static func baseQuery(account: String) -> [String: Any] {
-        var query: [String: Any] = [
+    private static func baseQuery(account: String) -> [String: Any]? {
+        guard let group = accessGroup else {
+            note("no usable keychain group (granted: "
+                 + "\(AppEntitlements.current.keychainAccessGroups.joined(separator: ", "))) — bridge disabled")
+            return nil
+        }
+        return [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
-            kSecAttrAccount as String: account
+            kSecAttrAccount as String: account,
+            kSecAttrAccessGroup as String: group
         ]
-        if let group = accessGroup { query[kSecAttrAccessGroup as String] = group }
-        return query
     }
 
-    static func write(_ data: Data, account: String) {
-        let query = baseQuery(account: account)
-        SecItemDelete(query as CFDictionary)
-        var add = query
-        add[kSecValueData as String] = data
-        add[kSecAttrAccessible as String] = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
-        SecItemAdd(add as CFDictionary, nil)
+    @discardableResult
+    static func write(_ data: Data, account: String) -> OSStatus {
+        guard let query = baseQuery(account: account) else { return errSecMissingEntitlement }
+        // Update first: delete+add leaves a window in which the reader sees no
+        // item at all and concludes there was no measurement.
+        var status = SecItemUpdate(query as CFDictionary,
+                                   [kSecValueData as String: data] as CFDictionary)
+        if status == errSecItemNotFound {
+            var add = query
+            add[kSecValueData as String] = data
+            add[kSecAttrAccessible as String] = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
+            status = SecItemAdd(add as CFDictionary, nil)
+        }
+        if status != errSecSuccess {
+            note("write \(account) failed: \(status) "
+                 + (SecCopyErrorMessageString(status, nil) as String? ?? "?"))
+        }
+        return status
     }
 
     static func read(account: String) -> Data? {
-        var query = baseQuery(account: account)
+        guard var query = baseQuery(account: account) else { return nil }
         query[kSecReturnData as String] = true
         query[kSecMatchLimit as String] = kSecMatchLimitOne
         var item: CFTypeRef?
-        guard SecItemCopyMatching(query as CFDictionary, &item) == errSecSuccess else { return nil }
+        let status = SecItemCopyMatching(query as CFDictionary, &item)
+        if status != errSecSuccess && status != errSecItemNotFound {
+            note("read \(account) failed: \(status) "
+                 + (SecCopyErrorMessageString(status, nil) as String? ?? "?"))
+        }
         return item as? Data
     }
 
     static func remove(account: String) {
-        SecItemDelete(baseQuery(account: account) as CFDictionary)
+        guard let query = baseQuery(account: account) else { return }
+        SecItemDelete(query as CFDictionary)
     }
 }
 
@@ -518,6 +572,19 @@ enum AppGroup {
     static func defaults() -> UserDefaults? {
         guard let id = current else { return nil }
         return UserDefaults(suiteName: id)
+    }
+
+    /// Every container this build is granted, resolved and usable. The two
+    /// processes can be signed into DIFFERENT sets (a re-signer registers the
+    /// groups per bundle id), so writing a mirror into every one of them — and
+    /// reading from all — is the only way to guarantee an intersection without
+    /// knowing the other process's grant.
+    static var allContainerURLs: [URL] {
+        let e = AppEntitlements.current
+        guard e.error == nil else { return [] }
+        return e.applicationGroups.sorted().compactMap {
+            FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: $0)
+        }
     }
 }
 

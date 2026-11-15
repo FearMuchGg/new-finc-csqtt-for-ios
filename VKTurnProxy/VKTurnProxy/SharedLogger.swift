@@ -41,9 +41,10 @@ class SharedLogger {
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss.SSS"
         dateFormatter.locale = Locale(identifier: "en_US_POSIX")
 
-        if let container = FileManager.default.containerURL(
-            forSecurityApplicationGroupIdentifier: AppEntitlements.sharedGroup
-        ) {
+        // One resolver for every container consumer: AppGroup picks from the
+        // granted groups with the same fallback the mirrors use, so the log
+        // file and the mirrors cannot land in different containers.
+        if let container = AppGroup.containerURL {
             fileURL = container.appendingPathComponent("vpn.log")
         } else {
             fileURL = nil

@@ -28,10 +28,13 @@
 //     asks for a width unrelated to the string it shows, so it MUST be given an
 //     explicit `.frame` — unbounded it took ~82% of the screen and hid the status
 //     bar entirely (build 205; fixed in 207). See compactTrailing for the numbers.
-//  b. The island's expanded .bottom region fits THREE buttons and silently CLIPS
-//     anything after them — a cancel/paging row stacked under the server list
+//  b. The island's expanded .bottom region has a fixed height and silently CLIPS
+//     anything past it — a cancel/paging row stacked under the server list
 //     simply vanished, leaving no way out of the picker. Chrome therefore lives
-//     in .leading/.trailing, which are separate regions.
+//     in .leading/.trailing, which are separate regions. The rows themselves are
+//     compact (~25 pt: 12 pt text, 5 pt padding) in build 498 so that THREE fit
+//     completely; at the earlier 9 pt padding the third row crossed the lower
+//     edge and its bottom half was cut off.
 //  c. An expired picker renders as the NORMAL layout. staleDate is the picker's
 //     deadline (see LiveActivityController): the app is asleep and cannot close
 //     the menu itself, so this is the only thing that gets the user out without
@@ -114,7 +117,10 @@ struct VPNLiveActivity: Widget {
                     if picking(context) {
                         if #available(iOS 17.0, *) {
                             // Nothing else may go in here — see rule (b) above.
-                            VStack(spacing: 4) {
+                            // Spacing 3 keeps three ~25 pt rows inside the
+                            // region; the rows themselves are compacted in
+                            // serverButton.
+                            VStack(spacing: 3) {
                                 ForEach(context.state.choices) { c in
                                     serverButton(c, busy: context.state.busyServerId == c.id)
                                 }
@@ -269,21 +275,26 @@ struct VPNLiveActivity: Widget {
     @available(iOS 17.0, *)
     private func serverButton(_ choice: ServerChoice, busy: Bool) -> some View {
         Button(intent: SelectServerIntent(serverId: choice.id)) {
-            HStack(spacing: 8) {
+            HStack(spacing: 6) {
                 Circle()
                     .fill(busy ? Color.green : Color.secondary.opacity(0.45))
-                    .frame(width: 7, height: 7)
+                    .frame(width: 6, height: 6)
                 Text(choice.name)
-                    .font(.caption.weight(.semibold))
+                    // 12 pt + 5 pt of padding is ~25 pt per row, so THREE rows
+                    // fit the island's expanded .bottom with room to spare
+                    // (build 498). At the previous 9 pt padding and .caption the
+                    // third row crossed the region's lower edge and its bottom
+                    // half was cut — the "половина кнопки не видна" report.
+                    .font(.system(size: 12, weight: .semibold))
                     .lineLimit(1)
                     .truncationMode(.middle)
                 Spacer(minLength: 0)
                 Image(systemName: busy ? "hourglass" : "chevron.right")
-                    .font(.caption2)
+                    .font(.system(size: 10, weight: .semibold))
                     .foregroundStyle(.secondary)
             }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 9)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 5)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(Capsule(style: .continuous).fill(.ultraThinMaterial))
             .overlay(Capsule(style: .continuous)

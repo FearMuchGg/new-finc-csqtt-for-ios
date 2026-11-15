@@ -91,13 +91,9 @@ struct ServerPickerMenu: View {
             .font(.subheadline.weight(.semibold))
             .padding(.horizontal, 14)
             .padding(.vertical, 8)
-            .background {
-                Capsule(style: .continuous).fill(.ultraThinMaterial)
-            }
-            .overlay {
-                Capsule(style: .continuous)
-                    .strokeBorder(Color.white.opacity(0.18), lineWidth: 1)
-            }
+            // iOS 26: the system's own Liquid Glass capsule, with its touch
+            // response; older releases keep the frosted capsule.
+            .csqttCapsuleGlass(interactive: true)
         }
         .sheet(isPresented: $showSubscriptions) {
             NavigationView {

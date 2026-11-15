@@ -166,10 +166,9 @@ struct CSQTTStatusPill: View {
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 7)
-        .background {
-            Capsule(style: .continuous)
-                .fill(.ultraThinMaterial)
-                .overlay { Capsule().strokeBorder(color.opacity(0.30), lineWidth: 1) }
+        .csqttCapsuleGlass()
+        .overlay {
+            Capsule().strokeBorder(color.opacity(0.30), lineWidth: 1)
         }
         .accessibilityElement(children: .combine)
     }

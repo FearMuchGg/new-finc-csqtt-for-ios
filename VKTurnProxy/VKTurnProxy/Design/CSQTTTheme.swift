@@ -7,13 +7,13 @@
 //  Nothing here knows about the tunnel, the Go bridge or ServerStore, so the
 //  file compiles into the app target alone and cannot affect the extension.
 //
-//  The glass surface is OURS, not UIKit's: `.glassEffect` (Liquid Glass, iOS
-//  26) only exists in a project built with the iOS 26 SDK, and the app's floor
-//  is iOS 15. A build with an older Xcode would fail on a call it cannot see,
-//  even behind `#available`. So the style is reproduced with
-//  `.ultraThinMaterial`, a specular gradient, a hairline border and two
-//  shadows — the same recipe at every SDK level, which is also why the CI can
-//  build it with whichever Xcode the runner has.
+//  The glass surface: on iOS 26 and later this is the SYSTEM Liquid Glass
+//  (`glassEffect(_:in:)`), so cards, pills, the server menu and the primary
+//  button carry Apple's own material, optics and touch response. Below iOS 26
+//  Liquid Glass does not exist, so the same layout falls back to a hand-rolled
+//  frosted surface — `.ultraThinMaterial`, a specular gradient, a hairline
+//  border and two shadows. That fallback is a LOOK-ALIKE, kept only because the
+//  app's floor is iOS 15; it is never used on a system that has the real thing.
 //
 
 import SwiftUI
@@ -162,13 +162,32 @@ private struct CSQTTGlassModifier: ViewModifier {
 
     @AppStorage(CSQTTTheme.Key.glass) private var glassEnabled = true
 
+    @ViewBuilder
     func body(content: Content) -> some View {
-        content
-            .padding(padding)
-            .background {
-                if glassEnabled {
-                    CSQTTGlassSurface(corner: corner, tint: tint, elevated: elevated)
-                } else {
+        if glassEnabled {
+            if #available(iOS 26.0, *) {
+                // The SYSTEM material, not our imitation of it. Apple ships
+                // Liquid Glass as the material of the functional layer and
+                // renders it with the device's own optics (light, refraction,
+                // legibility over any background) — reproducing that by hand
+                // is what this project did until build 497. `regular` is the
+                // documented variant for components that carry text; the
+                // rounded rectangle is the documented shape for cards.
+                content
+                    .padding(padding)
+                    .glassEffect(.regular.tint(tint.opacity(0.14)),
+                                 in: RoundedRectangle(cornerRadius: corner, style: .continuous))
+            } else {
+                content
+                    .padding(padding)
+                    .background {
+                        CSQTTGlassSurface(corner: corner, tint: tint, elevated: elevated)
+                    }
+            }
+        } else {
+            content
+                .padding(padding)
+                .background {
                     RoundedRectangle(cornerRadius: corner, style: .continuous)
                         .fill(Color(.secondarySystemBackground))
                         .overlay {
@@ -176,7 +195,7 @@ private struct CSQTTGlassModifier: ViewModifier {
                                 .strokeBorder(Color.primary.opacity(0.08), lineWidth: 1)
                         }
                 }
-            }
+        }
     }
 }
 
@@ -187,6 +206,38 @@ extension View {
                     elevated: Bool = true,
                     padding: CGFloat = CSQTTTheme.Spacing.m) -> some View {
         modifier(CSQTTGlassModifier(corner: corner, tint: tint, elevated: elevated, padding: padding))
+    }
+
+    /// A capsule of glass — pills, menus, tab items. On iOS 26 this is the
+    /// system Liquid Glass (`interactive` adds the documented touch response);
+    /// below 26 it stays the hand-rolled frosted capsule, because Liquid Glass
+    /// does not exist there.
+    @ViewBuilder
+    func csqttCapsuleGlass(interactive: Bool = false) -> some View {
+        if #available(iOS 26.0, *) {
+            glassEffect(interactive ? .regular.interactive() : .regular,
+                        in: Capsule(style: .continuous))
+        } else {
+            self
+                .background { Capsule(style: .continuous).fill(.ultraThinMaterial) }
+                .overlay {
+                    Capsule(style: .continuous)
+                        .strokeBorder(Color.white.opacity(0.18), lineWidth: 1)
+                }
+        }
+    }
+
+    /// The primary action (Connect / Disconnect). iOS 26 draws it as the
+    /// system's prominent glass button — the documented control for a screen's
+    /// main action — and older releases keep the filled brand button, which is
+    /// the only Liquid Glass-free primary the app had.
+    @ViewBuilder
+    func csqttPrimaryButton(tint: Color) -> some View {
+        if #available(iOS 26.0, *) {
+            self.buttonStyle(.glassProminent).tint(tint)
+        } else {
+            self.buttonStyle(CSQTTFilledButtonStyle(tint: tint))
+        }
     }
 }
 

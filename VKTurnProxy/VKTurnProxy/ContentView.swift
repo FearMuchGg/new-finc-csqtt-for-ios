@@ -452,7 +452,7 @@ private struct ActiveServerControls: View {
             }) {
                 Text(buttonText)
             }
-            .buttonStyle(CSQTTFilledButtonStyle(tint: buttonColor))
+            .csqttPrimaryButton(tint: buttonColor)
             .padding(.horizontal)
             .padding(.top, 8)
             // Block Connect when a required field for the active mode is

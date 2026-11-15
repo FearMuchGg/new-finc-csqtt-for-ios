@@ -335,25 +335,22 @@ class TunnelManager: ObservableObject {
     @discardableResult
     private func adoptSharedStatsIfFresh(maxAge: TimeInterval = 8) -> Bool {
         var json: String?
-        var at: Double?
-        if let suite = UserDefaults(suiteName: AppEntitlements.sharedGroup),
-           let j = suite.string(forKey: Self.statsMirrorKey),
-           let a = suite.object(forKey: Self.statsMirrorAtKey) as? Double {
-            json = j
-            at = a
-        }
-        // Second source: the keychain channel. It survives a re-signed build
-        // where the App Group was replaced by the signer's own.
+        // 1. The extension's file mirror — atomic, visible immediately, and
+        //    the channel the reference implementation settled on. UserDefaults
+        //    is deliberately NOT consulted: cfprefsd flushing made a fresh
+        //    snapshot invisible across the process boundary.
+        json = StatsMirror.read(from: AppGroup.containerURL, maxAge: maxAge)
+        // 2. The keychain channel, for a build whose signature grants no App
+        //    Group at all.
         if json == nil,
            let data = SharedKeychain.read(account: "stats"),
            let text = String(data: data, encoding: .utf8),
            let newline = text.firstIndex(of: "\n"),
-           let a = Double(text[..<newline]) {
-            at = a
+           let writtenAt = Double(text[..<newline]),
+           Date().timeIntervalSince1970 - writtenAt <= maxAge {
             json = String(text[text.index(after: newline)...])
         }
-        guard let json, let at,
-              Date().timeIntervalSince1970 - at <= maxAge,
+        guard let json,
               let data = json.data(using: .utf8),
               let newStats = try? JSONDecoder().decode(TunnelStats.self, from: data)
         else { return false }

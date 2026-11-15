@@ -94,16 +94,10 @@ struct ContentView: View {
                         }
                     case .logs:
                         LogsView(tunnel: tunnel)
-                            // Its own bottom bar (Auto-scroll / Clear / Share)
-                            // lives at the bottom edge: keep it above the
-                            // floating tab bar instead of under it.
-                            .padding(.bottom, 104)
                     case .speed:
                         SpeedTestView(tunnel: tunnel)
-                            .padding(.bottom, 104)
                     case .settings:
                         SettingsView()
-                            .padding(.bottom, 104)
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -2005,6 +1999,10 @@ struct LogsView: View {
             }
             .padding(.horizontal)
             .padding(.vertical, 8)
+            // The floating tab bar overlays the bottom edge: keep this row of
+            // controls above it while the log text still runs underneath (the
+            // Telegram-style card, not a black band).
+            .padding(.bottom, 84)
         }
         .navigationTitle("Logs")
         .onAppear { loadLogs() }

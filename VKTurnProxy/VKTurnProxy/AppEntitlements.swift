@@ -89,13 +89,10 @@ struct AppEntitlements: Sendable {
     /// the first group the signature grants, otherwise the preferred name
     /// (which then simply fails to resolve, as before).
     static var sharedGroup: String {
-        let granted = current.applicationGroups
-        if granted.contains(preferredAppGroup) { return preferredAppGroup }
-        if let legacy = granted.first(where: { $0.hasSuffix("com.vkturnproxy.app") }) {
-            return legacy
-        }
-        if let first = granted.first { return first }
-        return preferredAppGroup
+        // AppGroup resolves the deterministic choice; the fallback name only
+        // matters on a build whose signature grants no group at all (then the
+        // container simply does not resolve, as before).
+        AppGroup.current ?? preferredAppGroup
     }
 
     func hasAppGroup(_ identifier: String) -> Bool {
@@ -467,5 +464,109 @@ enum SharedKeychain {
 
     static func remove(account: String) {
         SecItemDelete(baseQuery(account: account) as CFDictionary)
+    }
+}
+
+// MARK: - App Group resolution
+
+/// WHICH App Group container this build may actually use, resolved once from
+/// the entitlements the build was signed with instead of a literal in source.
+///
+/// An App Group is owned by the team that registered it, so a build re-signed
+/// by another team can never be granted ours. The re-signer substitutes its own
+/// groups (the profile used for this build lists
+/// `group.e7646f4c0fb134c4.1` … `.5`), all of them usable and none of them
+/// ours. Asking "which group do I have?" instead of "do I have OUR group?"
+/// turns that whole class of failure into working storage.
+///
+/// Determinism is the safety property: both processes run this resolver
+/// against their own signature, and the order is fixed (preferred group, then
+/// canonical, then the granted identifiers sorted) so they cannot pick
+/// different containers from the same grant.
+enum AppGroup {
+    static let canonical = "group.com.vkturnproxy.app"
+
+    static let current: String? = {
+        let e = AppEntitlements.current
+        let granted = e.error == nil ? e.applicationGroups : []
+        if granted.contains(AppEntitlements.preferredAppGroup) {
+            return AppEntitlements.preferredAppGroup
+        }
+        if granted.contains(canonical) { return canonical }
+        return granted.sorted().first
+    }()
+
+    static var containerURL: URL? {
+        guard let id = current else { return nil }
+        if let url = FileManager.default.containerURL(
+            forSecurityApplicationGroupIdentifier: id) {
+            return url
+        }
+        // The grant exists but the system did not materialise THAT group; ask
+        // about the rest in the same sorted order on both sides.
+        let others = (AppEntitlements.current.error == nil
+                      ? AppEntitlements.current.applicationGroups : []).sorted()
+        for other in others where other != id {
+            if let url = FileManager.default.containerURL(
+                forSecurityApplicationGroupIdentifier: other) {
+                return url
+            }
+        }
+        return nil
+    }
+
+    static func defaults() -> UserDefaults? {
+        guard let id = current else { return nil }
+        return UserDefaults(suiteName: id)
+    }
+}
+
+// MARK: - Stats mirror
+
+/// A copy of the tunnel's statistics that the extension leaves in the shared
+/// App Group, so the app can still show live counters when the NE provider
+/// channel is refused (a third-party re-signed build).
+///
+/// A FILE, not `UserDefaults`: the mirror is written every two seconds and read
+/// by the other process, and a suite goes through cfprefsd, which flushes on
+/// its own schedule — a just-written snapshot can be invisible across the
+/// boundary for a while. An atomic file write is visible the moment it returns.
+///
+/// The mirror is a fallback, never the source of truth: every read checks the
+/// age of the snapshot, so a session that ended hours ago cannot paint its
+/// numbers over the current screen.
+let statsMirrorFileName = "stats-mirror.json"
+
+struct StatsMirrorSnapshot: Codable, Equatable {
+    let writtenAt: Double
+    let json: String
+}
+
+enum StatsMirror {
+    static func fileURL(in container: URL?) -> URL? {
+        container?.appendingPathComponent(statsMirrorFileName)
+    }
+
+    static func write(json: String, into container: URL?, now: Date = Date()) {
+        guard let url = fileURL(in: container) else { return }
+        let snapshot = StatsMirrorSnapshot(writtenAt: now.timeIntervalSince1970, json: json)
+        guard let data = try? JSONEncoder().encode(snapshot) else { return }
+        try? data.write(to: url, options: .atomic)
+    }
+
+    static func read(from container: URL?, now: Date = Date(),
+                     maxAge: TimeInterval = 10) -> String? {
+        guard let url = fileURL(in: container),
+              let data = try? Data(contentsOf: url),
+              let snapshot = try? JSONDecoder().decode(StatsMirrorSnapshot.self, from: data)
+        else { return nil }
+        let age = now.timeIntervalSince1970 - snapshot.writtenAt
+        guard age >= 0, age <= maxAge else { return nil }
+        return snapshot.json
+    }
+
+    static func clear(from container: URL?) {
+        guard let url = fileURL(in: container) else { return }
+        try? FileManager.default.removeItem(at: url)
     }
 }

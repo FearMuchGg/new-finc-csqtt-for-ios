@@ -48,14 +48,13 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
         timer.setEventHandler { [weak self] in
             guard let self, let backend = self.backend, let json = backend.stats() else { return }
             let now = Date().timeIntervalSince1970
-            // Prefer the App Group when this build is actually entitled to
-            // one; otherwise fall back to the keychain channel, which a
-            // re-signed build still shares through the keychain-access-group.
-            if FileManager.default.containerURL(
-                forSecurityApplicationGroupIdentifier: AppEntitlements.sharedGroup) != nil,
-               let suite = UserDefaults(suiteName: AppEntitlements.sharedGroup) {
-                suite.set(json, forKey: Self.statsMirrorKey)
-                suite.set(now, forKey: Self.statsMirrorAtKey)
+            // The file mirror is the reference implementation's channel: an
+            // atomic write in the shared container is visible to the other
+            // process immediately, unlike a UserDefaults suite (cfprefsd
+            // flushes on its own schedule — the exact reason the counters
+            // stayed empty while the mirror "worked").
+            if let container = AppGroup.containerURL {
+                StatsMirror.write(json: json, into: container)
             } else {
                 let payload = "\(now)\n\(json)"
                 SharedKeychain.write(Data(payload.utf8), account: "stats")
@@ -68,10 +67,11 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
     private func stopStatsMirror() {
         statsMirrorTimer?.cancel()
         statsMirrorTimer = nil
-        // Drop the timestamp so a stale snapshot can never be read as live;
-        // the reader also checks the age, but a missing key is unambiguous.
-        UserDefaults(suiteName: AppEntitlements.sharedGroup)?
-            .removeObject(forKey: Self.statsMirrorAtKey)
+        // Drop the snapshot so a session that ended can never be read as the
+        // current one; the reader also checks the age, but a deleted file is
+        // unambiguous.
+        StatsMirror.clear(from: AppGroup.containerURL)
+        SharedKeychain.remove(account: "stats")
     }
 
     /// Clears the backend only if it is still the one the caller owns: a

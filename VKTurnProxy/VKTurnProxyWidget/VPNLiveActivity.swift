@@ -77,7 +77,11 @@ struct VPNLiveActivity: Widget {
                             .lineLimit(1)
                             .minimumScaleFactor(0.7)
                     } icon: {
+                        // A couple of points to the right: the leading region
+                        // clips its left edge, and the dot's outer ring was
+                        // being shaved by it.
                         statusDot(context, size: 11)
+                            .offset(x: 4)
                     }
                     .foregroundStyle(context.isStale ? .secondary : .primary)
                     }

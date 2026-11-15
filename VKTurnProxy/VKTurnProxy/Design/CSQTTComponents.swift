@@ -17,7 +17,12 @@ import UIKit
 
 enum CSQTTHaptic {
     private static var enabled: Bool {
-        UserDefaults.standard.object(forKey: CSQTTTheme.Key.haptics) as? Bool ?? true
+        // `bool(forKey:)` rather than `object(forKey:) as? Bool`: the latter
+        // depends on NSNumber bridging and reads nil for a value a Toggle
+        // wrote moments ago, which is exactly how "haptics off" kept buzzing.
+        let defaults = UserDefaults.standard
+        guard defaults.object(forKey: CSQTTTheme.Key.haptics) != nil else { return true }
+        return defaults.bool(forKey: CSQTTTheme.Key.haptics)
     }
 
     static func tap(_ style: UIImpactFeedbackGenerator.FeedbackStyle = .light) {

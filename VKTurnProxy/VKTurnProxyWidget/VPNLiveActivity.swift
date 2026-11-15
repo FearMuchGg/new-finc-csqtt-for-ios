@@ -144,8 +144,10 @@ struct VPNLiveActivity: Widget {
             } compactLeading: {
                 // No glow and no ring here: the compact pill shares the status
                 // bar, and a soft shadow reads as a smudge over the carrier
-                // glyphs. 10 pt is the visible dot, no halo.
+                // glyphs. 10 pt is the visible dot; 1 pt to the left keeps its
+                // right edge off the region's clip.
                 statusDot(context, size: 10, glow: false, ring: false)
+                    .offset(x: -1)
             } compactTrailing: {
                 // 🚨 The `.frame` is load-bearing — never drop it. A live text
                 // (`style: .timer`, and `Text(timerInterval:)` too) asks for a

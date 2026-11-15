@@ -59,10 +59,14 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
             let now = Date().timeIntervalSince1970
             if let container = AppGroup.containerURL {
                 StatsMirror.write(json: json, into: container)
-            } else {
-                let payload = "\(now)\n\(json)"
-                SharedKeychain.write(Data(payload.utf8), account: "stats")
             }
+            // ALWAYS mirror into the keychain as well: a re-signed build can
+            // hand the app and the extension DIFFERENT App Group containers
+            // (the exported log proves it — the app's file holds its own lines
+            // and none of the extension's), while the keychain group is the one
+            // channel both signatures share.
+            let payload = "\(now)\n\(json)"
+            SharedKeychain.write(Data(payload.utf8), account: "stats")
         }
         timer.resume()
         statsMirrorTimer = timer
@@ -1533,9 +1537,17 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
         // exactly what the user saw. Never the requested value: `applied` is
         // only moved by a successful apply.
         DirectMirror.write(direct: applied, into: AppGroup.containerURL)
+        writeDirectKeychain(applied)
         let waiters = directWaiters
         directWaiters.removeAll()
         for waiter in waiters { waiter(applied) }
+    }
+
+    /// The keychain half of the DIRECT confirmation: same stamp + applied
+    /// state, for a build whose App Group differs between the two processes.
+    private func writeDirectKeychain(_ direct: Bool) {
+        let payload = "\(Date().timeIntervalSince1970)\n\(direct ? 1 : 0)"
+        SharedKeychain.write(Data(payload.utf8), account: "direct")
     }
 
     /// Called once, from the successful first `setTunnelNetworkSettings`, with
@@ -1544,6 +1556,7 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
         directSync = DirectRouteSync(applied: initial)
         directReady = true
         DirectMirror.write(direct: initial, into: AppGroup.containerURL)
+        writeDirectKeychain(initial)
         logMsg("direct: the tunnel came up \(initial ? "DIRECT" : "tunnelled") "
             + "in its FIRST settings — no second apply needed")
         if let pending = directPendingBeforeReady {

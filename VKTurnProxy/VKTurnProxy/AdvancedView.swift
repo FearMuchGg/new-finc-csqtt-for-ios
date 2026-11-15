@@ -91,6 +91,13 @@ struct AdvancedView: View {
                 Toggle("csqtt.appearance.glass", isOn: $glassEnabled)
                 Toggle("csqtt.appearance.animations", isOn: $animations)
                 Toggle("csqtt.appearance.haptics", isOn: $haptics)
+                    // Write explicitly and confirm audibly when switched ON:
+                    // the toggle must take effect for the NEXT tap, not at the
+                    // next launch, and a silent ON looks like a broken switch.
+                    .onChange(of: haptics) { enabled in
+                        UserDefaults.standard.set(enabled, forKey: CSQTTTheme.Key.haptics)
+                        if enabled { CSQTTHaptic.selection() }
+                    }
             } header: {
                 Text("csqtt.appearance.title")
             } footer: {

@@ -2037,7 +2037,16 @@ struct LogsView: View {
                   + "replaced with \u{FFFD} so it could be shown. The RAW bytes are in the Share "
                   + "export; the text around each \u{FFFD} is what names the writer.\n\n"
                 : ""
-            logText = banner + truncated(snapshot.text)
+            var combinedText = banner + snapshot.text
+            // The extension's own lines may live in a DIFFERENT App Group
+            // container on a re-signed build; its keychain mirror is appended
+            // whenever it has anything, so the Logs screen shows both sides.
+            if let data = SharedKeychain.read(account: "log.tunnel"),
+               let tunnelTail = String(data: data, encoding: .utf8),
+               !tunnelTail.isEmpty {
+                combinedText += "\n\n[keychain mirror — tunnel extension]\n" + tunnelTail
+            }
+            logText = truncated(combinedText)
             return
         }
         // Empty result. Distinguish "intentionally empty" (Clear was

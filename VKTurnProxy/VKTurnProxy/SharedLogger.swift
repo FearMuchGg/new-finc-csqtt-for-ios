@@ -88,15 +88,22 @@ class SharedLogger {
 
     /// Append a timestamped log line to the shared log file.
     func log(_ message: String) {
-        guard let url = fileURL else {
-            let ts = dateFormatter.string(from: Date())
-            appendToKeychain("[\(ts)] \(message)\n")
-            return
-        }
         let ts = dateFormatter.string(from: Date())
         let line = "[\(ts)] \(message)\n"
-        queue.async { [self] in
-            appendData(line.data(using: .utf8)!, to: url)
+        let isExtension = Bundle.main.bundlePath.hasSuffix(".appex")
+        if let url = fileURL {
+            queue.async { [self] in
+                appendData(line.data(using: .utf8)!, to: url)
+            }
+        }
+        // The extension ALWAYS mirrors into the keychain as well: a re-signed
+        // build can give the app and the extension DIFFERENT App Group
+        // containers (the log proves it — the app writes its own file while
+        // the extension's lines never appear), and the keychain group is the
+        // one channel both signatures share. The app needs the mirror only
+        // when it has no file of its own.
+        if isExtension || fileURL == nil {
+            appendToKeychain(line)
         }
     }
 
@@ -136,12 +143,14 @@ class SharedLogger {
 
     /// Append raw data (used by Go bridge for already-timestamped log lines).
     func logRaw(_ data: Data) {
-        guard let url = fileURL else {
-            appendToKeychain(String(decoding: data, as: UTF8.self))
-            return
+        let isExtension = Bundle.main.bundlePath.hasSuffix(".appex")
+        if let url = fileURL {
+            queue.async { [self] in
+                appendData(data, to: url)
+            }
         }
-        queue.async { [self] in
-            appendData(data, to: url)
+        if isExtension || fileURL == nil {
+            appendToKeychain(String(decoding: data, as: UTF8.self))
         }
     }
 

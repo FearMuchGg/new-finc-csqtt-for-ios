@@ -1626,7 +1626,7 @@ class TunnelManager: ObservableObject {
             // read that before treating "no answer" as "possibly leaking" and
             // reconnecting the whole tunnel — the reconnect the user reported
             // on every DIRECT → tunnelled switch.
-            if let applied = DirectMirror.read(from: AppGroup.containerURL, notBefore: askedAt) {
+            if let applied = mirroredDirect(notBefore: askedAt) {
                 if applied == direct {
                     directModeError = nil
                     note("confirmed by the DirectMirror (App Group): routes are "
@@ -1650,6 +1650,24 @@ class TunnelManager: ObservableObject {
                 from: source)
             return .unconfirmed(directModeError ?? "Routing could not be confirmed.")
         }
+    }
+
+    /// The applied routing state from whichever channel this build can use:
+    /// the App Group file first, the keychain second. The two processes can be
+    /// signed into DIFFERENT App Groups (a re-signer's groups are per-bundle),
+    /// and the keychain group is the one both signatures share.
+    private func mirroredDirect(notBefore: Date) -> Bool? {
+        if let value = DirectMirror.read(from: AppGroup.containerURL, notBefore: notBefore) {
+            return value
+        }
+        guard let data = SharedKeychain.read(account: "direct"),
+              let text = String(data: data, encoding: .utf8),
+              let newline = text.firstIndex(of: "\n"),
+              let writtenAt = Double(text[..<newline]),
+              writtenAt >= notBefore.timeIntervalSince1970 - DirectMirror.skew,
+              let value = Int(text[text.index(after: newline)...])
+        else { return nil }
+        return value != 0
     }
 
     /// A routing change that was not confirmed. Surfaces it under the switch,
@@ -2650,10 +2668,13 @@ class TunnelManager: ObservableObject {
         if status == .connected {
             missedStatsPolls += 1
             if missedStatsPolls >= 5 {
-                noteStatsChannelDown("no reply to \(missedStatsPolls) consecutive polls")
-                // The channel is refused; the App Group mirror is the only
-                // source left. Try it on every subsequent poll.
-                adoptSharedStatsIfFresh()
+                // Try the mirror FIRST. When it answers, the counters are
+                // live and there is nothing to warn about — flipping the
+                // banner on every fifth poll would make a working fallback
+                // look like a broken channel.
+                if !adoptSharedStatsIfFresh() {
+                    noteStatsChannelDown("no reply to \(missedStatsPolls) consecutive polls")
+                }
             }
         }
         do {

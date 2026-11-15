@@ -13,6 +13,9 @@
 
 import Foundation
 import NetworkExtension
+// `LocalizedStringKey` lives in SwiftUI: the label below is a catalog key, not
+// a plain String, so this file needs the import (build 500 failed without it).
+import SwiftUI
 
 enum ConnectButtonAction: Equatable {
     case connect

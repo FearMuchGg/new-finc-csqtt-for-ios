@@ -44,6 +44,40 @@ import ActivityKit
 import SwiftUI
 import WidgetKit
 
+/// The compact-leading pill: a tiny brand capsule instead of a bare dot.
+///
+/// Sized 28 × 22 on purpose — Apple asks compact content to fit a 28 pt circle
+/// when the island renders with reduced width (landscape, iPhone Duo, or two
+/// simultaneous Live Activities), and a larger capsule would simply be clipped
+/// by the region. Colour carries the state: the tunnel's own tint while the data
+/// is live, grey once it is stale — a stale activity must not claim a live
+/// tunnel (rule (c) in the file header).
+private struct IslandBrandPill: View {
+    let color: Color
+    let stale: Bool
+
+    var body: some View {
+        Image(systemName: stale ? "shield.slash.fill" : "checkmark.shield.fill")
+            .font(.system(size: 11, weight: .bold))
+            .foregroundStyle(Color.white)
+            .frame(width: 28, height: 22)
+            .background {
+                Capsule(style: .continuous)
+                    .fill(LinearGradient(
+                        colors: stale
+                            ? [Color.gray.opacity(0.60), Color.gray.opacity(0.32)]
+                            : [color.opacity(0.95), color.opacity(0.55)],
+                        startPoint: .top,
+                        endPoint: .bottom))
+            }
+            .overlay {
+                Capsule(style: .continuous)
+                    .strokeBorder(Color.white.opacity(0.28), lineWidth: 0.6)
+            }
+            .accessibilityLabel(stale ? "Tunnel status: last known" : "Tunnel status")
+    }
+}
+
 struct VPNLiveActivity: Widget {
     var body: some WidgetConfiguration {
         ActivityConfiguration(for: VPNActivityAttributes.self) { context in
@@ -148,11 +182,14 @@ struct VPNLiveActivity: Widget {
                     }
                 }
             } compactLeading: {
-                // No glow and no ring here: the compact pill shares the status
-                // bar, and a soft shadow reads as a smudge over the carrier
-                // glyphs. 10 pt is the visible dot; 1 pt to the left keeps its
-                // right edge off the region's clip.
-                statusDot(context, size: 10, glow: false, ring: false)
+                // A brand capsule rather than a bare dot — the leading pill from
+                // the reference, in this app's own colours. It is 28 × 22, i.e.
+                // exactly the 28 pt circle Apple's reduced-width guidance asks
+                // compact content to fit into (ActivityKit › Displaying live
+                // data › Support presentations with reduced width), so the same
+                // view survives landscape, iPhone Duo and a second Live
+                // Activity instead of being clipped by the region.
+                IslandBrandPill(color: dotColor(context), stale: context.isStale)
                     .offset(x: -1)
             } compactTrailing: {
                 // 🚨 The `.frame` is load-bearing — never drop it. A live text

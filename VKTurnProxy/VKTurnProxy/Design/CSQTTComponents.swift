@@ -384,7 +384,7 @@ struct CSQTTErrorBanner: View {
 
 // MARK: - Bottom tab bar
 
-enum CSQTTTab: Int, CaseIterable, Identifiable {
+enum CSQTTTab: Int, CaseIterable, Identifiable, Hashable {
     case home, logs, speed, settings
 
     var id: Int { rawValue }

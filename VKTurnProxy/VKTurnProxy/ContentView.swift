@@ -30,11 +30,10 @@ extension View {
 struct ContentView: View {
     @StateObject private var tunnel = TunnelManager.shared
 
-    /// Which bottom-tab is showing. The bar is the app's own, not a system
-    /// TabView: the floating capsule is the design, and the system bar cannot
-    /// be shaped into it. Screens are rebuilt on a switch — Logs and Settings
-    /// keep nothing worth preserving, and a speed test is a deliberate action
-    /// the user starts and stays with.
+    /// Which bottom-tab is showing. On iOS 26 the SYSTEM `TabView` drives this
+    /// value; on iOS 15-18 the app's own capsule bar does. Screens are rebuilt
+    /// on a switch — Logs and Settings keep nothing worth preserving, and a
+    /// speed test is a deliberate action the user starts and stays with.
     @State private var tab: CSQTTTab = .home
 
 
@@ -53,65 +52,102 @@ struct ContentView: View {
     // live, used the new one. Reading the store at render time in a child
     // removes the class, not the case.
     var body: some View {
+        Group {
+            if #available(iOS 26.0, *) {
+                systemTabs
+            } else {
+                legacyTabs
+            }
+        }
+        .sheet(isPresented: $tunnel.captchaPending) {
+            if let urlStr = tunnel.captchaImageURL, let url = URL(string: urlStr) {
+                CaptchaWebView(
+                    url: url,
+                    captchaSID: tunnel.captchaSID ?? "",
+                    onSolved: { token in
+                        NSLog("[Captcha] Token received (%d chars), sending to tunnel", token.count)
+                        tunnel.solveCaptcha(answer: token)
+                    },
+                    onDismiss: {
+                        // Don't send fake answer — just dismiss the sheet.
+                        // The captcha will re-appear on next poll if not actually solved.
+                        NSLog("[Captcha] Sheet dismissed without token")
+                        tunnel.onCaptchaSheetDismissed()
+                        tunnel.captchaPending = false
+                        tunnel.captchaImageURL = nil
+                    },
+                    onLimitDetected: { tunnel.onCaptchaLimitDetected() },
+                    onCaptchaReady: { tunnel.onCaptchaReady() },
+                    onLog: { tunnel.logFromCaptchaView($0) },
+                    tunnel: tunnel
+                )
+            }
+        }
+        // VKAuth login during cookie pre-bootstrap (connect flow). Driven by
+        // tunnel.vkLoginPending; on result, resume awaitVKLogin().
+        .sheet(isPresented: $tunnel.vkLoginPending) {
+            VKAuthWebView { result in
+                tunnel.onVKLoginResult(result)
+            }
+        }
+        // The root consumer for tapped vkturnproxy:// links. A separate
+        // view so that its inbox observation cannot re-render this body.
+        // → ConnectionLinkImport.swift.
+        .background(ConnectionLinkImporter())
+    }
+
+    // MARK: - Tab bars
+
+    /// iOS 26 and later: the SYSTEM tab bar, and none of ours.
+    ///
+    /// Liquid Glass is the material of the functional layer, and a tab bar is
+    /// its canonical example; Apple's HIG states that standard components adopt
+    /// it automatically and asks for custom Liquid Glass to be used sparingly
+    /// (developer.apple.com/design/human-interface-guidelines/materials). The
+    /// bar in the reference — the floating capsule, the selection lens, the
+    /// content blurred through it — IS `TabView` on iOS 26. Drawing a look-alike
+    /// would re-implement the material instead of adopting it, so this branch
+    /// hands the bar to the system and does not render `CSQTTTabBar` at all.
+    @available(iOS 26.0, *)
+    private var systemTabs: some View {
+        TabView(selection: $tab) {
+            Tab(CSQTTTab.home.title, systemImage: CSQTTTab.home.icon, value: CSQTTTab.home) {
+                NavigationStack {
+                    homeTab
+                        .navigationTitle("VK Turn Proxy")
+                        .navigationBarTitleDisplayMode(.inline)
+                }
+            }
+            Tab(CSQTTTab.logs.title, systemImage: CSQTTTab.logs.icon, value: CSQTTTab.logs) {
+                NavigationStack { LogsView(tunnel: tunnel) }
+            }
+            Tab(CSQTTTab.speed.title, systemImage: CSQTTTab.speed.icon, value: CSQTTTab.speed) {
+                NavigationStack { SpeedTestView(tunnel: tunnel) }
+            }
+            Tab(CSQTTTab.settings.title, systemImage: CSQTTTab.settings.icon, value: CSQTTTab.settings) {
+                NavigationStack { SettingsView() }
+            }
+        }
+    }
+
+    /// iOS 15-18: the app's own capsule bar. Those releases neither draw a
+    /// Liquid Glass bar for us nor let the system bar be shaped into the
+    /// floating capsule, so the custom bar stays for them only.
+    private var legacyTabs: some View {
         NavigationView {
             ZStack(alignment: .bottom) {
                 Group {
                     switch tab {
-                    case .home:
-                        ScrollView {
-                            VStack(spacing: 16) {
-                                // Status indicator — compact size so the rest of
-                                // the controls stay visible on small screens.
-                                // The orb breathes while the status is
-                                // transitional and fires one haptic per real
-                                // state change, not per render.
-                                CSQTTStatusOrb(color: statusColor, pulsing: statusIsTransitional)
-                                    .padding(.top, 8)
-                                    .onChange(of: tunnel.status) { newStatus in
-                                        if newStatus == .connected {
-                                            CSQTTHaptic.success()
-                                        } else if newStatus == .disconnected {
-                                            CSQTTHaptic.tap(.light)
-                                        }
-                                    }
-
-                                Text(statusText)
-                                    .font(.headline)
-
-                                // Everything that depends on the ACTIVE SERVER —
-                                // its name, the blocking-validation caption, the
-                                // stats and the Connect button — is one child that
-                                // observes `ServerStore`, so a link import or a
-                                // Live Activity switch re-renders THAT and not the
-                                // NavigationView host.
-                                ActiveServerControls(tunnel: tunnel)
-                            }
-                            .frame(maxWidth: .infinity)
-                            .padding(.top, 8)
-                            // No bottom padding any more: the bar's band is
-                            // reserved ONCE for every tab by the safeAreaInset
-                            // below. Two sources of truth drifted apart — this
-                            // screen had 104pt, Logs had 84pt, and Settings and
-                            // Speed test had none, which is exactly why the
-                            // last rows of Settings sat under the glass.
-                        }
-                    case .logs:
-                        LogsView(tunnel: tunnel)
-                    case .speed:
-                        SpeedTestView(tunnel: tunnel)
-                    case .settings:
-                        SettingsView()
+                    case .home: homeTab
+                    case .logs: LogsView(tunnel: tunnel)
+                    case .speed: SpeedTestView(tunnel: tunnel)
+                    case .settings: SettingsView()
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 // Reserve the floating bar's band INSIDE the safe area, once,
-                // for every tab. Its scroll views (ScrollView here, List in
-                // Subscriptions, Form in Settings and Speed test) then end
-                // their content above the glass by themselves — while the bar
-                // itself still draws OVER the content, because it stays the
-                // ZStack's sibling below. This replaces the per-screen numbers
-                // (home 104, logs 84, settings/speed: none), which is exactly
-                // how the last settings rows ended up cut off by the bar.
+                // for every tab: each scroll view then ends its content above
+                // the glass while the bar still draws over it.
                 .safeAreaInset(edge: .bottom, spacing: 0) {
                     Color.clear
                         .frame(height: CSQTTTabBar.bandHeight)
@@ -122,41 +158,41 @@ struct ContentView: View {
             }
             .navigationTitle("VK Turn Proxy")
             .navigationBarTitleDisplayMode(.inline)
-            .sheet(isPresented: $tunnel.captchaPending) {
-                if let urlStr = tunnel.captchaImageURL, let url = URL(string: urlStr) {
-                    CaptchaWebView(
-                        url: url,
-                        captchaSID: tunnel.captchaSID ?? "",
-                        onSolved: { token in
-                            NSLog("[Captcha] Token received (%d chars), sending to tunnel", token.count)
-                            tunnel.solveCaptcha(answer: token)
-                        },
-                        onDismiss: {
-                            // Don't send fake answer — just dismiss the sheet.
-                            // The captcha will re-appear on next poll if not actually solved.
-                            NSLog("[Captcha] Sheet dismissed without token")
-                            tunnel.onCaptchaSheetDismissed()
-                            tunnel.captchaPending = false
-                            tunnel.captchaImageURL = nil
-                        },
-                        onLimitDetected: { tunnel.onCaptchaLimitDetected() },
-                        onCaptchaReady: { tunnel.onCaptchaReady() },
-                        onLog: { tunnel.logFromCaptchaView($0) },
-                        tunnel: tunnel
-                    )
-                }
+        }
+    }
+
+    /// The main screen, shared by both bars so the two branches cannot drift.
+    private var homeTab: some View {
+        ScrollView {
+            VStack(spacing: 16) {
+                // Status indicator — compact size so the rest of
+                // the controls stay visible on small screens.
+                // The orb breathes while the status is
+                // transitional and fires one haptic per real
+                // state change, not per render.
+                CSQTTStatusOrb(color: statusColor, pulsing: statusIsTransitional)
+                    .padding(.top, 8)
+                    .onChange(of: tunnel.status) { newStatus in
+                        if newStatus == .connected {
+                            CSQTTHaptic.success()
+                        } else if newStatus == .disconnected {
+                            CSQTTHaptic.tap(.light)
+                        }
+                    }
+
+                Text(statusText)
+                    .font(.headline)
+
+                // Everything that depends on the ACTIVE SERVER —
+                // its name, the blocking-validation caption, the
+                // stats and the Connect button — is one child that
+                // observes `ServerStore`, so a link import or a
+                // Live Activity switch re-renders THAT and not the
+                // screen's host.
+                ActiveServerControls(tunnel: tunnel)
             }
-            // VKAuth login during cookie pre-bootstrap (connect flow). Driven by
-            // tunnel.vkLoginPending; on result, resume awaitVKLogin().
-            .sheet(isPresented: $tunnel.vkLoginPending) {
-                VKAuthWebView { result in
-                    tunnel.onVKLoginResult(result)
-                }
-            }
-            // The root consumer for tapped vkturnproxy:// links. A separate
-            // view so that its inbox observation cannot re-render this body.
-            // → ConnectionLinkImport.swift.
-            .background(ConnectionLinkImporter())
+            .frame(maxWidth: .infinity)
+            .padding(.top, 8)
         }
     }
 

@@ -54,9 +54,13 @@ struct VPNLiveActivity: Widget {
                 DynamicIslandExpandedRegion(.leading) {
                     if picking(context), #available(iOS 17.0, *) {
                         Button(intent: ExitPickerIntent()) {
-                            Image(systemName: "xmark").font(.caption2)
+                            Image(systemName: "xmark")
+                                .font(.caption2.weight(.bold))
+                                .frame(width: 26, height: 26)
+                                .background(Circle().fill(.ultraThinMaterial))
+                                .overlay(Circle().strokeBorder(Color.white.opacity(0.16), lineWidth: 1))
                         }
-                        .buttonStyle(.bordered)
+                        .buttonStyle(.plain)
                     } else {
                     Label {
                         // SHORT form only: this region is ~1/3 of the island's
@@ -91,9 +95,14 @@ struct VPNLiveActivity: Widget {
                         if context.state.pageCount > 1, #available(iOS 17.0, *) {
                             Button(intent: NextPageIntent()) {
                                 Text("\(context.state.page + 1)/\(context.state.pageCount) ›")
-                                    .font(.caption2)
+                                    .font(.caption2.weight(.semibold))
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 5)
+                                    .background(Capsule(style: .continuous).fill(.ultraThinMaterial))
+                                    .overlay(Capsule(style: .continuous)
+                                        .strokeBorder(Color.white.opacity(0.16), lineWidth: 1))
                             }
-                            .buttonStyle(.bordered)
+                            .buttonStyle(.plain)
                         }
                     } else {
                         clock(context)

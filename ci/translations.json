@@ -97,5 +97,13 @@
   "Use VK account (cookie) auth": "Авторизация через VK-аккаунт (cookie)",
   "VK Account Auth": "Авторизация VK-аккаунта",
   "VK Call Link": "Ссылка на звонок VK",
-  "WRAP key (64 hex chars)": "Ключ WRAP (64 hex-символа)"
+  "WRAP key (64 hex chars)": "Ключ WRAP (64 hex-символа)",
+  "csqtt.tab.home": "Главная",
+  "csqtt.tab.logs": "Логи",
+  "csqtt.tab.speed": "Тест",
+  "csqtt.tab.settings": "Настройки",
+  "csqtt.tab.connect": "Подключить",
+  "csqtt.tab.disconnect": "Отключить",
+  "Could not switch routing.": "Не удалось переключить маршрутизацию.",
+  "Connection cancelled by the user": "Подключение отменено пользователем"
 }

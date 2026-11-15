@@ -376,3 +376,96 @@ struct CSQTTErrorBanner: View {
         .transition(.move(edge: .top).combined(with: .opacity))
     }
 }
+
+// MARK: - Bottom tab bar
+
+enum CSQTTTab: Int, CaseIterable, Identifiable {
+    case home, logs, speed, settings
+
+    var id: Int { rawValue }
+
+    var title: LocalizedStringKey {
+        switch self {
+        case .home: return "csqtt.tab.home"
+        case .logs: return "csqtt.tab.logs"
+        case .speed: return "csqtt.tab.speed"
+        case .settings: return "csqtt.tab.settings"
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .home: return "house.fill"
+        case .logs: return "doc.text.magnifyingglass"
+        case .speed: return "speedometer"
+        case .settings: return "gearshape.fill"
+        }
+    }
+}
+
+/// The floating bar from the reference: a capsule of tabs plus one round
+/// action. It is the app's own control, not a system TabView — the floating
+/// shape is the design and UITabBar cannot be reshaped into it.
+struct CSQTTTabBar: View {
+    @Binding var selection: CSQTTTab
+    var actionColor: Color
+    var isConnected: Bool
+    var onAction: () -> Void
+
+    @Namespace private var pill
+
+    var body: some View {
+        HStack(spacing: 12) {
+            HStack(spacing: 2) {
+                ForEach(CSQTTTab.allCases) { tab in
+                    Button {
+                        CSQTTHaptic.selection()
+                        withAnimation(.spring(response: 0.32, dampingFraction: 0.82)) {
+                            selection = tab
+                        }
+                    } label: {
+                        VStack(spacing: 3) {
+                            Image(systemName: tab.icon)
+                                .font(.system(size: 16, weight: .semibold))
+                            Text(tab.title)
+                                .font(.system(size: 9, weight: .semibold))
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.8)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 7)
+                        .foregroundStyle(selection == tab ? Color.white : Color.secondary)
+                        .background {
+                            if selection == tab {
+                                Capsule(style: .continuous)
+                                    .fill(CSQTTTheme.accent)
+                                    .matchedGeometryEffect(id: "selected", in: pill)
+                            }
+                        }
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityLabel(tab.title)
+                }
+            }
+            .padding(4)
+            .background(Capsule(style: .continuous).fill(.ultraThinMaterial))
+            .overlay(Capsule(style: .continuous)
+                .strokeBorder(Color.white.opacity(0.18), lineWidth: 1))
+            .shadow(color: Color.black.opacity(0.18), radius: 18, x: 0, y: 10)
+
+            Button(action: onAction) {
+                Image(systemName: isConnected ? "power" : "bolt.fill")
+                    .font(.system(size: 18, weight: .bold))
+                    .foregroundStyle(.white)
+                    .frame(width: 52, height: 52)
+                    .background(Circle().fill(actionColor))
+                    .overlay(Circle().strokeBorder(Color.white.opacity(0.25), lineWidth: 1))
+                    .shadow(color: actionColor.opacity(0.45), radius: 12, x: 0, y: 6)
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(isConnected ? "csqtt.tab.disconnect" : "csqtt.tab.connect")
+        }
+        .padding(.horizontal, 16)
+        .padding(.bottom, 4)
+    }
+}

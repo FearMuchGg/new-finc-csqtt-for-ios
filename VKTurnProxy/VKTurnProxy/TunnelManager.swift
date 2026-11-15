@@ -1538,12 +1538,12 @@ class TunnelManager: ObservableObject {
             // check was scoped to `errorMessage =`, so a bare framework string
             // published as `directModeError` slipped past. saveToPreferences()
             // here refuses for exactly the same reasons it refuses on connect.
-            directModeError = Self.failureText("Could not switch routing", error)
+            directModeError = Self.failureText(String(localized: "Could not switch routing"), error)
             // The in-memory restore above fixes the object we hold; re-reading
             // fixes anything else that moved. Only then may the switch refresh.
             try? await manager.loadFromPreferences()
             refreshDirectMode()
-            return .failed(directModeError ?? "Could not switch routing.")
+            return .failed(directModeError ?? String(localized: "Could not switch routing."))
         }
 
         // 🎯 THE EXTENSION ALSO WATCHES THE PROFILE ITSELF (KVO on
@@ -2066,7 +2066,7 @@ class TunnelManager: ObservableObject {
                 observeStatus(existing)
             }
         } catch {
-            errorMessage = Self.failureText("Failed to load VPN config", error)
+            errorMessage = Self.failureText(String(localized: "Failed to load VPN config"), error)
         }
     }
 
@@ -2409,7 +2409,7 @@ class TunnelManager: ObservableObject {
                                     SharedLogger.shared.log("[AppDebug] the start was cancelled by the user's Disconnect — shown as a notice, not an error")
                                     self.noticeMessage = DisconnectReasonGate.cancelledByUserText
                                 } else {
-                                    self.errorMessage = Self.failureText("The tunnel stopped", stop)
+                                    self.errorMessage = Self.failureText(String(localized: "The tunnel stopped"), stop)
                                 }
                             }
                         }
@@ -2460,7 +2460,7 @@ class TunnelManager: ObservableObject {
                       self.disconnectGate.mayPublish(fetchedUnder: generation,
                                                      messageNow: self.errorMessage)
                 else { return }
-                self.errorMessage = Self.failureText("The tunnel had stopped", stop)
+                self.errorMessage = Self.failureText(String(localized: "The tunnel had stopped"), stop)
             }
         }
     }

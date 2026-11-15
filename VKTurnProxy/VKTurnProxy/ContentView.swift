@@ -30,6 +30,13 @@ extension View {
 struct ContentView: View {
     @StateObject private var tunnel = TunnelManager.shared
 
+    /// Which bottom-tab is showing. The bar is the app's own, not a system
+    /// TabView: the floating capsule is the design, and the system bar cannot
+    /// be shaped into it. Screens are rebuilt on a switch — Logs and Settings
+    /// keep nothing worth preserving, and a speed test is a deliberate action
+    /// the user starts and stays with.
+    @State private var tab: CSQTTTab = .home
+
 
     // 🚨 THIS VIEW HOSTS THE `NavigationView`, SO IT SUBSCRIBES TO NOTHING BUT
     // THE TUNNEL. Re-rendering this body tears down whatever is pushed (build
@@ -47,43 +54,69 @@ struct ContentView: View {
     // removes the class, not the case.
     var body: some View {
         NavigationView {
-            // ScrollView is the safety net for very small screens
-            // (iPhone SE etc.). When the stats grid grows enough that
-            // it would push Logs/Settings below the visible area, the
-            // user can scroll instead of losing access to them. On
-            // larger screens the content fits without scrolling.
-            ScrollView {
-                VStack(spacing: 16) {
-                    // Status indicator — compact size so the rest of the
-                    // controls stay visible on small screens. The orb breathes
-                    // while the status is transitional and fires one haptic per
-                    // real state change, not per render.
-                    CSQTTStatusOrb(color: statusColor, pulsing: statusIsTransitional)
-                        .padding(.top, 8)
-                        .onChange(of: tunnel.status) { newStatus in
-                            if newStatus == .connected {
-                                CSQTTHaptic.success()
-                            } else if newStatus == .disconnected {
-                                CSQTTHaptic.tap(.light)
+            ZStack(alignment: .bottom) {
+                Group {
+                    switch tab {
+                    case .home:
+                        ScrollView {
+                            VStack(spacing: 16) {
+                                // Status indicator — compact size so the rest of
+                                // the controls stay visible on small screens.
+                                // The orb breathes while the status is
+                                // transitional and fires one haptic per real
+                                // state change, not per render.
+                                CSQTTStatusOrb(color: statusColor, pulsing: statusIsTransitional)
+                                    .padding(.top, 8)
+                                    .onChange(of: tunnel.status) { newStatus in
+                                        if newStatus == .connected {
+                                            CSQTTHaptic.success()
+                                        } else if newStatus == .disconnected {
+                                            CSQTTHaptic.tap(.light)
+                                        }
+                                    }
+
+                                Text(statusText)
+                                    .font(.headline)
+
+                                // Everything that depends on the ACTIVE SERVER —
+                                // its name, the blocking-validation caption, the
+                                // stats and the Connect button — is one child that
+                                // observes `ServerStore`, so a link import or a
+                                // Live Activity switch re-renders THAT and not the
+                                // NavigationView host.
+                                ActiveServerControls(tunnel: tunnel)
                             }
+                            .frame(maxWidth: .infinity)
+                            .padding(.top, 8)
+                            // Room for the floating bar: the last control must
+                            // scroll clear of it, not sit under it.
+                            .padding(.bottom, 104)
                         }
-
-                    Text(statusText)
-                        .font(.headline)
-
-                    // Everything that depends on the ACTIVE SERVER — its name,
-                    // the blocking-validation caption, the stats and the Connect
-                    // button — is one child that observes `ServerStore`, so a
-                    // link import or a Live Activity switch re-renders THAT and
-                    // not the NavigationView host.
-                    ActiveServerControls(tunnel: tunnel)
-
-                    // Logs & Settings links
-                    MainNavigationLinks(tunnel: tunnel)
-                        .padding(.bottom, 8)
+                    case .logs:
+                        LogsView(tunnel: tunnel)
+                    case .speed:
+                        SpeedTestView(tunnel: tunnel)
+                    case .settings:
+                        SettingsView()
+                    }
                 }
-                .frame(maxWidth: .infinity)
-                .padding(.top, 8)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+                CSQTTTabBar(
+                    selection: $tab,
+                    actionColor: statusColor,
+                    isConnected: tunnel.status == .connected
+                ) {
+                    // The round action mirrors the main Connect button: one
+                    // control, reachable from every tab.
+                    CSQTTHaptic.tap(.medium)
+                    if tunnel.status == .connected {
+                        tunnel.disconnect()
+                    } else {
+                        let active = ServerStore.shared.activeServer
+                        Task { await tunnel.connect(config: TunnelConfig.make(for: active)) }
+                    }
+                }
             }
             .navigationTitle("VK Turn Proxy")
             .navigationBarTitleDisplayMode(.inline)

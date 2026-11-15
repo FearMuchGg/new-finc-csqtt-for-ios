@@ -193,6 +193,22 @@
         }
       }
     },
+    "Connection cancelled by the user": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connection cancelled by the user"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Подключение отменено пользователем"
+          }
+        }
+      }
+    },
     "Copy server": {
       "localizations": {
         "en": {
@@ -221,6 +237,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Не удалось переключить маршрутизацию"
+          }
+        }
+      }
+    },
+    "Could not switch routing.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Could not switch routing."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Не удалось переключить маршрутизацию."
           }
         }
       }
@@ -2173,6 +2205,102 @@
           "stringUnit": {
             "state": "translated",
             "value": "Неизвестное состояние"
+          }
+        }
+      }
+    },
+    "csqtt.tab.connect": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "csqtt.tab.connect"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Подключить"
+          }
+        }
+      }
+    },
+    "csqtt.tab.disconnect": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "csqtt.tab.disconnect"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отключить"
+          }
+        }
+      }
+    },
+    "csqtt.tab.home": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "csqtt.tab.home"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Главная"
+          }
+        }
+      }
+    },
+    "csqtt.tab.logs": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "csqtt.tab.logs"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Логи"
+          }
+        }
+      }
+    },
+    "csqtt.tab.settings": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "csqtt.tab.settings"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Настройки"
+          }
+        }
+      }
+    },
+    "csqtt.tab.speed": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "csqtt.tab.speed"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Тест"
           }
         }
       }

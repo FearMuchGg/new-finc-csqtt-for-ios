@@ -133,7 +133,7 @@ struct DisconnectReasonGate {
 
     /// What the main screen says instead of a stop reason when the user
     /// cancelled the start themselves — a notice, not an error.
-    static let cancelledByUserText = "Connection cancelled by the user"
+    static let cancelledByUserText = String(localized: "Connection cancelled by the user")
 
     /// Whether a stop reason fetched under `fetchedUnder` is the user's own
     /// Disconnect during the start: BOTH the intent (recorded for this

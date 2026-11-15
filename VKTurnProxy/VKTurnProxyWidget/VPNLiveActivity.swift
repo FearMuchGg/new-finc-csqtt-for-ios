@@ -81,7 +81,7 @@ struct VPNLiveActivity: Widget {
                         // clips its left edge, and the dot's outer ring was
                         // being shaved by it.
                         statusDot(context, size: 11)
-                            .offset(x: 4)
+                            .offset(x: 3)
                     }
                     .foregroundStyle(context.isStale ? .secondary : .primary)
                     }
@@ -411,8 +411,8 @@ struct VPNLiveActivity: Widget {
                                      endRadius: size))
                 .frame(width: size, height: size)
                 .overlay(Circle().strokeBorder(Color.white.opacity(0.35), lineWidth: 0.6))
-                .shadow(color: glow ? color.opacity(0.6) : .clear,
-                        radius: glow ? size * 0.5 : 0)
+                .shadow(color: glow ? color.opacity(0.55) : .clear,
+                        radius: glow ? size * 0.38 : 0)
                 .overlay(alignment: .bottomTrailing) {
                     if context.state.direct == true {
                         Circle()
@@ -424,6 +424,11 @@ struct VPNLiveActivity: Widget {
                 }
         }
         .frame(width: side, height: side)
+        // A shadow is drawn OUTSIDE the view's bounds, so in the expanded
+        // leading region its soft edge was reaching the island's rounded
+        // corner. The padding reserves that edge inside the dot's own slot;
+        // the compact island skips it (no glow there anyway).
+        .padding(glow ? 3 : 0)
     }
 
     private func dotColor(_ context: ActivityViewContext<VPNActivityAttributes>) -> Color {

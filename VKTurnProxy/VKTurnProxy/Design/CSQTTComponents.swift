@@ -278,7 +278,9 @@ struct CSQTTEmptyStateView<Extra: View>: View {
             }
             if let actionTitle, let action {
                 Button(actionTitle, action: action)
-                    .buttonStyle(CSQTTGhostButtonStyle())
+                    // iOS 26: the system glass button, like every other control
+                    // on the screen; older releases: the frosted capsule.
+                    .csqttGhostButton()
             }
             extra()
         }

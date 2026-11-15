@@ -214,10 +214,17 @@ extension View {
         }
     }
 
-    /// The primary action (Connect / Disconnect). iOS 26 draws it as the
-    /// system's prominent glass button — the documented control for a screen's
-    /// main action — and older releases keep the filled brand button, which is
-    /// the only Liquid Glass-free primary the app had.
+    /// The secondary action (empty-state button). iOS 26 draws it with the
+    /// system glass button style, so it matches every other control on the
+    /// screen; older releases keep the hand-rolled capsule.
+    @ViewBuilder
+    func csqttGhostButton() -> some View {
+        if #available(iOS 26.0, *) {
+            self.buttonStyle(.glass)
+        } else {
+            self.buttonStyle(CSQTTGhostButtonStyle())
+        }
+    }
     @ViewBuilder
     func csqttPrimaryButton(tint: Color) -> some View {
         if #available(iOS 26.0, *) {

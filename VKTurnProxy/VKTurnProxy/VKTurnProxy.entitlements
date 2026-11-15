@@ -15,7 +15,7 @@
 	     $(AppIdentifierPrefix) expands to the team id ("CDMQ33VFQC.") at build. -->
 	<key>keychain-access-groups</key>
 	<array>
-		<string>$(AppIdentifierPrefix)com.vkturnproxy.shared</string>
+		<string>TD7NS5K83C.com.vkturnproxy.shared</string>
 	</array>
 	<!-- See PacketTunnel.entitlements for the rationale; mirrored here
 	     defensively in case Apple's entitlement check looks at the host

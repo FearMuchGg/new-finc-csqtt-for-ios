@@ -34,6 +34,16 @@ enum SubscriptionParser {
         }
 
         if let text = String(data: data, encoding: .utf8) {
+            // HTML FIRST: a page carries display names ("Швеция #1") next to
+            // each link. Trying the generic text pass first would return the
+            // same links named by host and never reach the nicer names.
+            let looksHTML = ct.contains("html")
+                || text.contains("<html") || text.contains("<div")
+            if looksHTML {
+                let fromHTML = parseHTML(text)
+                if !fromHTML.isEmpty { return dedupe(fromHTML) }
+            }
+
             let direct = parseText(text)
             if !direct.isEmpty { return dedupe(direct) }
 

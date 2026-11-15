@@ -85,6 +85,36 @@ enum SubscriptionParser {
         if let array = object as? [Any] { return array.flatMap { servers(fromJSON: $0) } }
         guard let dict = object as? [String: Any] else { return [] }
 
+        // turnplus (and its Android sibling) answers a non-browser client with
+        // a JSON document rather than the HTML page:
+        //   { "subscriptionName": …, "profiles": [
+        //       { "name", "peer": "host:port", "password", "hashes", "listenPort" } ] }
+        // The app's URLSession gets exactly this shape, so it must be the first
+        // thing the parser understands.
+        if let profiles = dict["profiles"] as? [[String: Any]] {
+            return profiles.compactMap { profile -> SubscriptionServer? in
+                guard let peer = profile["peer"] as? String, peer.contains(":"),
+                      let password = profile["password"] as? String, !password.isEmpty
+                else { return nil }
+                let hashes: String
+                if let value = profile["hashes"] as? String {
+                    hashes = value
+                } else if let list = profile["hashes"] as? [String] {
+                    hashes = list.joined(separator: ",")
+                } else {
+                    return nil
+                }
+                guard !hashes.isEmpty else { return nil }
+                let listen = (profile["listenPort"] as? Int) ?? 9000
+                // wdtt://host:dtlsPort:wgPort:localPeerPort:password:hash —
+                // wgPort and localPeerPort are ignored by parseWdttLink; the
+                // placeholder keeps the positional layout intact.
+                let link = "wdtt://\(peer):0:\(listen):\(password):\(hashes)"
+                let name = (profile["name"] as? String) ?? host(from: peer)
+                return SubscriptionServer(name: name, link: link)
+            }
+        }
+
         for key in ["servers", "data", "items", "list"] {
             if let array = dict[key] as? [Any] {
                 let nested = array.flatMap { servers(fromJSON: $0) }

@@ -315,13 +315,9 @@ private struct ActiveServerControls: View {
         let caption = tunnel.serverCaption
         return VStack(spacing: 16) {
             // The picker is the primary “which server” control: a menu on the
-            // main screen, not a row buried in Settings. The caption under it
-            // keeps the session-vs-selection truth (SessionServer.swift).
+            // main screen, not a row buried in Settings. The old subtitle line
+            // repeated the server name under it and is gone with the menu.
             ServerPickerMenu(tunnel: tunnel)
-
-            Text(caption.subtitle)
-                .font(.caption)
-                .foregroundColor(.secondary)
 
             // The selection differs from what is running — say so, or the screen
             // reads as if the import had not worked.

@@ -79,6 +79,7 @@ final class ServerStore: ObservableObject {
         // / TunnelManager always read the active server's config. On first launch
         // this is a no-op (Server1 was built from those very keys).
         projectToFlatKeys(activeServer)
+        applyActiveVKLink()
         let s = activeServer
         SharedLogger.shared.log("[AppDebug] servers: \(servers.count) configured, active = \"\(s.serverName)\" [\(s.modeLabel)]")
     }
@@ -185,8 +186,55 @@ final class ServerStore: ObservableObject {
         guard servers.contains(where: { $0.id == id }) else { return }
         activeServerId = id
         persist()
+        applyActiveVKLink()
         let s = activeServer
         SharedLogger.shared.log("[AppDebug] active server → \"\(s.serverName)\" [\(s.modeLabel)]")
+    }
+
+    /// The tunnel reads `vkLink` from UserDefaults at connect time. A profile
+    /// imported from a subscription carries its own hash. 🚨 The global value
+    /// is a POOL — one call link per line — so selecting a server must ADD its
+    /// link, never replace the pool with it: the other subscriptions' servers
+    /// keep their calls available, and a provider that reuses one hash for all
+    /// its servers contributes exactly one line.
+    private func applyActiveVKLink() {
+        mergeVKLinks([activeServer.vkLink])
+    }
+
+    private func currentVKLines() -> [String] {
+        (d.string(forKey: "vkLink") ?? "")
+            .split(whereSeparator: { $0.isNewline })
+            .map(String.init)
+            .filter { !$0.isEmpty }
+    }
+
+    /// Adds links to the global VK pool without disturbing the existing order.
+    func mergeVKLinks(_ links: [String]) {
+        let incoming = links
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
+        guard !incoming.isEmpty else { return }
+        var lines = currentVKLines()
+        var changed = false
+        for link in incoming where !lines.contains(link) {
+            lines.append(link)
+            changed = true
+        }
+        guard changed else { return }
+        d.set(lines.joined(separator: "\n"), forKey: "vkLink")
+    }
+
+    /// Removes links that belonged only to profiles that no longer exist.
+    /// A link still carried by any remaining profile (manual or another
+    /// subscription) stays, so the pool never loses a live call.
+    private func pruneVKLinks(_ candidates: [String]) {
+        let unique = Set(candidates.filter { !$0.isEmpty })
+        guard !unique.isEmpty else { return }
+        let stillUsed = Set(servers.compactMap { $0.vkLink.isEmpty ? nil : $0.vkLink })
+        let current = currentVKLines()
+        let kept = current.filter { !unique.contains($0) || stillUsed.contains($0) }
+        guard kept != current else { return }
+        d.set(kept.joined(separator: "\n"), forKey: "vkLink")
     }
 
     func update(_ profile: ServerProfile) {
@@ -306,6 +354,8 @@ final class ServerStore: ObservableObject {
 
         let activeWasManaged = servers.first(where: { $0.id == activeServerId })?.subscriptionId == subscriptionId
         let activeSurvives = merged.contains { $0.id == activeServerId }
+        let removedLinks = existing.map(\.vkLink).filter { !$0.isEmpty }
+        let mergedLinks = merged.map(\.vkLink).filter { !$0.isEmpty }
         servers = others + merged
 
         var activeChanged = false
@@ -320,6 +370,11 @@ final class ServerStore: ObservableObject {
         }
         persist()
         if activeChanged { projectToFlatKeys(activeServer) }
+        // The subscription's calls go into the shared pool; calls of profiles
+        // that no longer exist leave it.
+        mergeVKLinks(mergedLinks)
+        pruneVKLinks(removedLinks)
+        applyActiveVKLink()
         SharedLogger.shared.log("[AppDebug] subscription \(subscriptionId.uuidString.prefix(8)): "
             + "\(incoming.count) server(s), \(merged.count) applied")
         return activeChanged
@@ -329,6 +384,7 @@ final class ServerStore: ObservableObject {
         let removed = servers.filter { $0.subscriptionId == subscriptionId }
         guard !removed.isEmpty else { return }
         let activeWasManaged = removed.contains { $0.id == activeServerId }
+        let removedLinks = removed.map(\.vkLink).filter { !$0.isEmpty }
         servers.removeAll { $0.subscriptionId == subscriptionId }
         if servers.isEmpty {
             // Never leave the app without a profile: an empty set breaks
@@ -341,6 +397,8 @@ final class ServerStore: ObservableObject {
         }
         persist()
         projectToFlatKeys(activeServer)
+        pruneVKLinks(removedLinks)
+        applyActiveVKLink()
     }
 
     func servers(for subscriptionId: UUID) -> [ServerProfile] {

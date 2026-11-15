@@ -24,6 +24,13 @@ struct ServerProfile: Codable, Identifiable, Equatable {
     /// strings and providers reorder servers freely.
     var remoteKey: String? = nil
 
+    /// The VK call link this server was imported with. The tunnel still reads
+    /// the GLOBAL `vkLink` key at connect time, but a subscription's servers
+    /// each carry their own hash — activating one must put ITS link into that
+    /// global key, or the session would use the previous server's call.
+    /// Empty on hand-made profiles, which keep whatever global link is set.
+    var vkLink: String = ""
+
     // WireGuard identity — used by SRTP / SRTP-WRAP / SRTP-WRAP-S. Unused by
     // SRTP-WRAP-A, whose WG keys are minted by the server via GETCONF.
     var privateKey: String = ""
@@ -117,7 +124,7 @@ struct ServerProfile: Codable, Identifiable, Equatable {
     /// from `init(from:)` silently decodes as its default.
     enum CodingKeys: String, CodingKey {
         case id, serverName
-        case subscriptionId, remoteKey
+        case subscriptionId, remoteKey, vkLink
         case privateKey, peerPublicKey, presharedKey, tunnelAddress, peerAddress
         case dnsServers, numConnections, credPoolCooldownSeconds, turnServerOverride
         case useUDP, useDTLS
@@ -148,6 +155,7 @@ extension ServerProfile {
         if let v = try c.decodeIfPresent(String.self, forKey: .serverName) { serverName = v }
         if let v = try c.decodeIfPresent(UUID.self, forKey: .subscriptionId) { subscriptionId = v }
         if let v = try c.decodeIfPresent(String.self, forKey: .remoteKey) { remoteKey = v }
+        if let v = try c.decodeIfPresent(String.self, forKey: .vkLink) { vkLink = v }
         if let v = try c.decodeIfPresent(String.self, forKey: .privateKey) { privateKey = v }
         if let v = try c.decodeIfPresent(String.self, forKey: .peerPublicKey) { peerPublicKey = v }
         if let v = try c.decodeIfPresent(String.self, forKey: .presharedKey) { presharedKey = v }
@@ -192,6 +200,7 @@ extension ServerProfile {
     init(link s: ConnectionSettings) {
         self.init()
         serverName = s.serverName?.trimmingCharacters(in: .whitespaces) ?? ""
+        if !s.vkLink.isEmpty { vkLink = s.vkLink }
         if let v = s.privateKey { privateKey = v }
         if let v = s.peerPublicKey { peerPublicKey = v }
         if let v = s.presharedKey { presharedKey = v }

@@ -356,7 +356,10 @@ private struct ActiveServerControls: View {
 
     private var buttonColor: Color {
         if connectBlocked { return .gray }
-        return buttonAction == .disconnect ? .red : .blue
+        // Accent, not system blue (build 507): the primary action was the only
+        // blue element on a screen whose palette is now steel blue — it read as
+        // someone else's button.
+        return buttonAction == .disconnect ? .red : CSQTTTheme.accent
     }
 
     var body: some View {

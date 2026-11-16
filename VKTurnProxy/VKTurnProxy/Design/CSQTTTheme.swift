@@ -32,8 +32,8 @@ enum CSQTTTheme {
 
     // Brand. A calm teal reads as "secure network" without competing with the
     // status colours, and stays legible on both schemes.
-    static let accent = Color(hex: 0x2CB1C4)
-    static let accentDeep = Color(hex: 0x0E7C8C)
+    static let accent = Color(hex: 0x4F7CAC)
+    static let accentDeep = Color(hex: 0x35577A)
     static let success = Color(hex: 0x2ECC8F)
     static let warning = Color(hex: 0xF2A33C)
     static let danger = Color(hex: 0xE5484D)

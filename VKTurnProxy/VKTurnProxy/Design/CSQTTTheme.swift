@@ -301,7 +301,7 @@ struct CSQTTGhostButtonStyle: ButtonStyle {
 // MARK: - Colour helper
 
 extension Color {
-    /// `Color(hex: 0x2CB1C4)` — sRGB, opaque. Kept here so no other file has
+    /// `Color(hex: 0x4F7CAC)` — sRGB, opaque. Kept here so no other file has
     /// to repeat the byte-shuffling.
     init(hex: UInt32, alpha: Double = 1.0) {
         let r = Double((hex >> 16) & 0xFF) / 255.0

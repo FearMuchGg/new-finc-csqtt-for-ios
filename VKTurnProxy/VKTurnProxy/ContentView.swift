@@ -719,7 +719,7 @@ struct SettingsView: View {
                             } label: {
                                 Image(systemName: server.id == store.activeServerId
                                       ? "checkmark.circle.fill" : "circle")
-                                    .foregroundColor(server.id == store.activeServerId ? .accentColor : .secondary)
+                                    .foregroundColor(server.id == store.activeServerId ? CSQTTTheme.accent : .secondary)
                                     .imageScale(.large)
                             }
                             .buttonStyle(.borderless)

@@ -117,6 +117,25 @@ struct VPNActivityAttributes: ActivityAttributes {
         /// tunnelled — which is the safe reading: it never claims the kill
         /// switch is off when it might not be.
         var direct: Bool?
+
+        // ── build 506: the country flag in the compact island ─────────────
+        /// ISO-3166 alpha-2 code of the SERVER's country ("DE", "NL"), or nil
+        /// when it is not known yet.
+        ///
+        /// 🚨 The widget cannot resolve this itself: it has no network and no
+        /// App Group. The app resolves it (cached GeoIP by the server's host,
+        /// with the server's name as an offline first guess) and stamps it here.
+        ///
+        /// **Optional for the same reason as `compactClock` and `direct`**: a
+        /// card started by an older build carries no such key, and a
+        /// non-Optional String would throw `.keyNotFound` on decode and break a
+        /// Live Activity nobody can refresh until the app runs again.
+        ///
+        /// ⚠️ It is the SERVER's country, not the exit country. With DIRECT on,
+        /// traffic bypasses the tunnel entirely — which is exactly why the pill
+        /// turns its RIM yellow in that mode instead of pretending the flag
+        /// describes where traffic comes out.
+        var countryCode: String?
     }
 
     /// When the activity itself was started. Informational — the session clock

@@ -165,6 +165,7 @@ final class LiveActivityController {
         // Read here, not in the widget: the widget is a separate process and
         // shares no App Group with the app. Same reasoning as compactClock.
         state.direct = TunnelManager.shared.directMode
+        applyCountry(to: &state, status: mapped)
         applyPicker(to: &state)
         if activity == nil {
             start(state)
@@ -264,8 +265,24 @@ final class LiveActivityController {
         // Read here, not in the widget: the widget is a separate process and
         // shares no App Group with the app. Same reasoning as compactClock.
         state.direct = TunnelManager.shared.directMode
+        applyCountry(to: &state, status: status)
         applyPicker(to: &state)
         return state
+    }
+
+    /// The flag's country: cached first (instant, offline), and when unknown,
+    /// exactly one GeoIP lookup is started and the card is re-pushed when the
+    /// answer lands. Nothing here blocks a publish.
+    private func applyCountry(to state: inout VPNActivityAttributes.ContentState,
+                              status: VPNActivityStatus) {
+        let host = CountryResolver.host(fromPeer: ServerStore.shared.activeServer.peerAddress)
+        state.countryCode = host.isEmpty ? nil : CountryResolver.cached(host)
+        guard state.countryCode == nil, !host.isEmpty,
+              status == .connected || status == .connecting || status == .disconnecting
+        else { return }
+        CountryResolver.resolve(host) { _ in
+            Task { @MainActor in LiveActivityController.shared.refreshNow() }
+        }
     }
 
     // MARK: - Button taps
@@ -473,5 +490,82 @@ final class LiveActivityController {
         guard loggedFailure != reason else { return }
         loggedFailure = reason
         SharedLogger.logDiagnostic("live-activity: \(reason)", category: "LiveActivity")
+    }
+}
+
+/// Resolves the COUNTRY OF THE SERVER for the island's flag.
+///
+/// The Live Activity cannot do this — it has no network and no App Group — so
+/// the app resolves it here and stamps the ISO code into
+/// `ContentState.countryCode`. Cheapest source first:
+///   1. the cache: one answer per server host, kept forever;
+///   2. one HTTPS GeoIP lookup by that host.
+///
+/// Only the SERVER's address is sent. That is public information about a public
+/// endpoint; nothing about the user's traffic or identity leaves the device.
+enum CountryResolver {
+    private static let cacheKey = "csqttCountryCacheV1"
+    private static var inFlight = Set<String>()
+    private static let lock = NSLock()
+
+    /// "host:port" → "host". A bracketed IPv6 literal is returned untouched:
+    /// its colons are not a port separator.
+    static func host(fromPeer peer: String) -> String {
+        let trimmed = peer.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty, !trimmed.hasPrefix("[") else { return trimmed }
+        guard let colon = trimmed.lastIndex(of: ":") else { return trimmed }
+        let port = trimmed[trimmed.index(after: colon)...]
+        guard !port.isEmpty, port.allSatisfy(\.isNumber) else { return trimmed }
+        return String(trimmed[..<colon])
+    }
+
+    static func cached(_ host: String) -> String? {
+        let map = UserDefaults.standard.dictionary(forKey: cacheKey) as? [String: String] ?? [:]
+        return map[host.lowercased()]
+    }
+
+    private static func remember(_ code: String, for host: String) {
+        var map = UserDefaults.standard.dictionary(forKey: cacheKey) as? [String: String] ?? [:]
+        map[host.lowercased()] = code
+        UserDefaults.standard.set(map, forKey: cacheKey)
+    }
+
+    /// One lookup per host at a time; a repeat call while one is in flight is
+    /// dropped — the publish that started it re-pushes the card when it lands.
+    static func resolve(_ host: String, completion: @escaping (String?) -> Void) {
+        if let known = cached(host) {
+            completion(known)
+            return
+        }
+        let key = host.lowercased()
+        lock.lock()
+        let alreadyRunning = inFlight.contains(key)
+        if !alreadyRunning { inFlight.insert(key) }
+        lock.unlock()
+        guard !alreadyRunning else { return }
+
+        // ipwho.is: no key, HTTPS (plain-HTTP GeoIP is blocked by ATS), and it
+        // accepts a hostname as well as an address.
+        var components = URLComponents(string: "https://ipwho.is/\(host)")
+        components?.queryItems = [URLQueryItem(name: "fields", value: "success,country_code")]
+        guard let url = components?.url else {
+            lock.lock(); inFlight.remove(key); lock.unlock()
+            completion(nil)
+            return
+        }
+        URLSession.shared.dataTask(with: url) { data, _, _ in
+            var code: String?
+            if let data,
+               let object = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+               object["success"] as? Bool == true,
+               let raw = object["country_code"] as? String,
+               raw.count == 2 {
+                let upper = raw.uppercased()
+                code = upper
+                remember(upper, for: host)
+            }
+            lock.lock(); inFlight.remove(key); lock.unlock()
+            DispatchQueue.main.async { completion(code) }
+        }.resume()
     }
 }

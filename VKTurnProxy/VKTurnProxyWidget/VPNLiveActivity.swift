@@ -53,11 +53,14 @@ import WidgetKit
 /// is live, grey once it is stale — a stale activity must not claim a live
 /// tunnel (rule (c) in the file header).
 private struct IslandBrandPill: View {
+    /// ISO-3166 alpha-2 of the SERVER's country, resolved by the app.
+    let countryCode: String?
+    /// Fallback when the country is unknown: the server's first letter.
+    let serverName: String
     let color: Color
     let stale: Bool
-    /// DIRECT routing. When on, the WHOLE capsule takes the DIRECT colour — rim
-    /// and glyph together — because the chosen variant (G) is an outline: with
-    /// no fill, colour is the only carrier of state.
+    /// DIRECT routing. Only the RIM changes colour — the flag always stays the
+    /// flag, because it describes the SERVER, not where traffic exits.
     let direct: Bool
 
     private var tint: Color {
@@ -65,29 +68,53 @@ private struct IslandBrandPill: View {
         return direct ? .yellow : color
     }
 
+    /// The country flag as a pair of Regional Indicator scalars — the system
+    /// renders it as the real flag, no assets needed.
+    private var flag: String? {
+        guard let code = countryCode?.uppercased(),
+              code.count == 2,
+              code.allSatisfy({ $0.isLetter }) else { return nil }
+        let base: UInt32 = 0x1F1E6
+        var scalars = String.UnicodeScalarView()
+        for scalar in code.unicodeScalars {
+            guard let regional = UnicodeScalar(base + scalar.value - 65) else { return nil }
+            scalars.append(regional)
+        }
+        return String(scalars)
+    }
+
+    private var initial: String {
+        let letter = serverName.trimmingCharacters(in: .whitespacesAndNewlines).first
+        return letter.map { String($0).uppercased() } ?? "•"
+    }
+
     var body: some View {
-        Image(systemName: stale ? "shield.slash.fill" : "checkmark.shield.fill")
-            .font(.system(size: 11, weight: .bold))
-            .foregroundStyle(tint)
-            .frame(width: 28, height: 22)
-            .background {
-                // A neutral wash, never the tint colour: only the RIM and the
-                // SHIELD may turn yellow, and only when DIRECT is on. A tinted
-                // fill made the whole capsule look yellow, which read as a
-                // different control rather than as a mode.
-                Capsule(style: .continuous)
-                    .fill(Color.white.opacity(stale ? 0.03 : 0.06))
+        Group {
+            if let flag {
+                Text(flag).font(.system(size: 15))
+            } else {
+                Text(initial).font(.system(size: 12, weight: .heavy))
             }
-            .overlay {
-                Capsule(style: .continuous)
-                    .strokeBorder(tint.opacity(stale ? 0.35 : 0.95), lineWidth: 1.2)
-            }
-            .accessibilityLabel(accessibilityText)
+        }
+        .foregroundStyle(tint)
+        .frame(width: 28, height: 22)
+        .background {
+            Capsule(style: .continuous)
+                .fill(Color.white.opacity(stale ? 0.03 : 0.06))
+        }
+        .overlay {
+            // The RIM is the only thing that changes with the mode — green for
+            // the tunnel, yellow for DIRECT, grey once the data is stale.
+            Capsule(style: .continuous)
+                .strokeBorder(tint.opacity(stale ? 0.40 : 0.95), lineWidth: 1.6)
+        }
+        .accessibilityLabel(accessibilityText)
     }
 
     private var accessibilityText: String {
-        var parts = [stale ? "Tunnel status: last known" : "Tunnel status"]
-        if direct { parts.append("Direct routing") }
+        var parts = [countryCode ?? serverName]
+        parts.append(stale ? "last known" : "tunnel status")
+        if direct { parts.append("direct routing") }
         return parts.joined(separator: ", ")
     }
 }
@@ -203,7 +230,9 @@ struct VPNLiveActivity: Widget {
                 // data › Support presentations with reduced width), so the same
                 // view survives landscape, iPhone Duo and a second Live
                 // Activity instead of being clipped by the region.
-                IslandBrandPill(color: dotColor(context),
+                IslandBrandPill(countryCode: context.state.countryCode,
+                                serverName: context.state.serverName,
+                                color: dotColor(context),
                                 stale: context.isStale,
                                 direct: isDirect(context))
                     .offset(x: -1)

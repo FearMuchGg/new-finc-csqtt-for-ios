@@ -177,6 +177,12 @@ void wgSetForceLegacyCaptcha(int32_t enabled);
 /// @param enabled 1 = 1s ticks; 0 = the normal 10s cadence
 void wgSetMemstatsFastTicks(int32_t enabled);
 
+/// Settings > Advanced > Logging: inner traffic summary once a minute.
+/// Only the extension runs the minute tick, so there is nothing for the main
+/// app to call. Applying it mid-session costs no reconnect.
+/// @param enabled 1 = the inner traffic line every minute; 0 = off (default)
+void wgSetInnerTrafficLog(int32_t enabled);
+
 /// Apply the uplink pacer (Settings > Advanced) to a tunnel that is already
 /// connected: a per-allocation token bucket over the counted wire bytes VK
 /// meters, which turns our bursts into a stream the relay's policer does not

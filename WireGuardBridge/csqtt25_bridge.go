@@ -85,6 +85,7 @@ type csqtt25Engine interface {
 	Send(pkt []byte) error
 	Close()
 	Stats() csqtt25.Stats
+	WireQuiet() csqtt25.WireQuiet
 	Config() csqtt25.ConfigResponse
 	OnPathChange()
 	Wake()
@@ -281,6 +282,15 @@ func (a *csqtt25Client) StatsLine(tunIn, tunOut int64) string {
 		s.Ready, s.Target, s.Live, s.Workers, s.Sessions, s.Restarts, s.Handshakes, s.Fallbacks, s.Probes, s.Repairs,
 		s.PanelRestarts, s.Unsettled, s.PathChanges, s.Freezes, s.Wakes, s.WakeDeaf, s.Voided, s.WriteStalls, s.DeadWrites,
 		s.NoStream, s.AuthFailures, s.FragsTx, s.FragsRx, a.dropped.Load(), tunIn, tunOut)
+}
+
+// WireLine is the minute's rhythm on the wire: datagrams written and heard
+// since the last take, the longest quiet stretch and how many passed the
+// floor. It TAKES the measure, so only the once-a-minute tick calls it.
+func (a *csqtt25Client) WireLine() string {
+	q := a.eng.WireQuiet()
+	return fmt.Sprintf("csqtt25: wire, the last %v: %d datagram(s) out, %d in; the longest stretch without one %v, %d of %v and more",
+		q.Span.Round(time.Second), q.Out, q.In, q.Longest.Round(100*time.Millisecond), q.Quiet, csqtt25.QuietFloor)
 }
 
 func (a *csqtt25Client) Config() csqtt.ConfigResponse {

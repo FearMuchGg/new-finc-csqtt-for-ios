@@ -94,9 +94,10 @@ type csqttConfig struct {
 	CredPoolCooldownSeconds int                 `json:"cred_pool_cooldown_seconds"`
 	VKHostIPs               map[string][]string `json:"vk_host_ips"`
 	SeededTURN              *struct {
-		Address  string `json:"address"`
-		Username string `json:"username"`
-		Password string `json:"password"`
+		Address   string   `json:"address"`
+		Username  string   `json:"username"`
+		Password  string   `json:"password"`
+		Addresses []string `json:"addresses,omitempty"`
 	} `json:"seeded_turn"`
 	UseCookieAuth      bool `json:"use_cookie_auth"`
 	ForceLegacyCaptcha bool `json:"force_legacy_captcha"`
@@ -420,6 +421,12 @@ func (a *csqttPoolAdapter) refused(workerID, connIdx, slot int, creds *proxy.TUR
 	switch {
 	case proxy.IsRelayUnanswered(err):
 		a.pool.NoteRelayUnanswered(connIdx, slot, creds, addr, attempt, err)
+	case proxy.IsPeerRefused(err):
+		// The relay answered CreatePermission for the csqtt server with a
+		// refusal — its own word that it will not relay to this peer. Mark it
+		// at once, before the auth case: a 403 on the permission is not a
+		// dead credential.
+		a.pool.NotePeerRefused(connIdx, addr, attempt)
 	case proxy.IsQuotaError(err):
 		cd := a.pool.MarkSaturated(slot, creds, addr)
 		log.Printf("csqtt: worker %d: TURN allocate quota error (486) on slot %d (cooldown %s) — the next credential comes from another slot",
@@ -533,8 +540,8 @@ func csqttStartImpl(proxyConfigJSON string) int32 {
 	}
 	var seed *proxy.TURNCreds
 	if cfg.SeededTURN != nil && cfg.SeededTURN.Address != "" {
-		seed = &proxy.TURNCreds{Address: cfg.SeededTURN.Address, Username: cfg.SeededTURN.Username, Password: cfg.SeededTURN.Password,
-			Addresses: []string{cfg.SeededTURN.Address}}
+		seed = proxy.SeedCreds(cfg.SeededTURN.Address, cfg.SeededTURN.Username, cfg.SeededTURN.Password,
+			append([]string{cfg.SeededTURN.Address}, cfg.SeededTURN.Addresses...))
 		log.Printf("csqttStart: using pre-fetched TURN creds (addr=%s)", seed.Address)
 	}
 
@@ -799,6 +806,9 @@ func (e *csqttEntry) logStatsEvery(client csqttClient) {
 			return
 		case <-tick.C:
 			log.Printf("csqtt: pathstats tick: %s", csqttLine(client, e.tunIn.Load(), e.tunOut.Load()))
+			if wire := csqttWireLine(client); wire != "" {
+				log.Print(wire)
+			}
 		}
 	}
 }
@@ -1005,6 +1015,16 @@ func csqttLine(c csqttClient, tunIn, tunOut int64) string {
 		return own.StatsLine(tunIn, tunOut)
 	}
 	return csqttStatsLine(c.Stats(), tunIn, tunOut)
+}
+
+// csqttWireLine is the tick's second line for a client that measures the
+// wire (2.5's adapter). A take starts the next stretch, so the path-event
+// snapshot and the stop must NOT call this — only the minute tick does.
+func csqttWireLine(c csqttClient) string {
+	if own, ok := c.(interface{ WireLine() string }); ok {
+		return own.WireLine()
+	}
+	return ""
 }
 
 // csqttStatsLine is the ONE wording of the client's counters in the log: the

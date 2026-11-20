@@ -76,6 +76,10 @@ struct AdvancedView: View {
     /// HERE, never in ContentView.
     @AppStorage("memstatsFastTicks") private var memstatsFastTicks = false
 
+    /// Once-a-minute summary of what the phone's own traffic meets inside the
+    /// tunnel. Same rule as the keys above: declared HERE, default off.
+    @AppStorage("innerTrafficLog") private var innerTrafficLog = false
+
     var body: some View {
         Form {
             Section {
@@ -238,6 +242,10 @@ struct AdvancedView: View {
                     // value, so a later reconnect keeps the setting.
                     .onChange(of: memstatsFastTicks) { _ in
                         TunnelManager.shared.applyMemstatsFastTicks()
+                    }
+                Toggle("Inner traffic summary every minute", isOn: $innerTrafficLog)
+                    .onChange(of: innerTrafficLog) { _ in
+                        TunnelManager.shared.applyInnerTrafficLog()
                     }
             } header: {
                 Text("Logging")

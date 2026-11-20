@@ -159,6 +159,9 @@ struct AppSettings: Codable {
     /// set it but never carried it back out. Same Optional/nil-preserves
     /// pattern.
     var memstatsFastTicks: Bool? = nil
+    /// Inner traffic summary every minute (Settings › Advanced › Logging).
+    /// Same Optional/nil-preserve round-trip contract as memstatsFastTicks.
+    var innerTrafficLog: Bool? = nil
     /// VKAuth (non-anonymous cookie cred path) toggle. Round-trips in full
     /// backups so the preference is preserved. The cookies themselves are NEVER
     /// in the backup — they live in the Keychain (VKCookieStore). Optional +

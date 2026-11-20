@@ -168,6 +168,7 @@ extension TunnelConfig {
             uplinkSynthMbit: d.double(forKey: "uplinkSynthMbit"),
             uplinkSynthSec: d.integer(forKey: "uplinkSynthSec"),
             memstatsFastTicks: d.bool(forKey: "memstatsFastTicks"),
+            innerTrafficLog: d.bool(forKey: "innerTrafficLog"),
             uplinkPaceKiB: UplinkPace.stored(in: d),
             useCookieAuth: d.bool(forKey: "VKAuth"),
             numConnections: s.numConnections,
@@ -1370,6 +1371,15 @@ class TunnelManager: ObservableObject {
         let on = UserDefaults.standard.bool(forKey: "memstatsFastTicks")
         guard let session = manager?.connection as? NETunnelProviderSession,
               let msg = "set_memstats_fast:\(on ? 1 : 0)".data(using: .utf8) else { return }
+        try? session.sendProviderMessage(msg) { _ in }
+    }
+
+    /// Push the inner traffic summary toggle to a RUNNING extension — same
+    /// reasoning as the switch above: no reconnect just to start measuring.
+    func applyInnerTrafficLog() {
+        let on = UserDefaults.standard.bool(forKey: "innerTrafficLog")
+        guard let session = manager?.connection as? NETunnelProviderSession,
+              let msg = "set_inner_traffic:\(on ? 1 : 0)".data(using: .utf8) else { return }
         try? session.sendProviderMessage(msg) { _ in }
     }
 
@@ -3096,6 +3106,7 @@ class TunnelManager: ObservableObject {
             "uplink_synth_mbit": config.uplinkSynthMbit,
             "uplink_synth_sec": config.uplinkSynthSec,
             "memstats_fast_ticks": config.memstatsFastTicks,
+            "inner_traffic_log": config.innerTrafficLog,
             // The rate rides the config so the choice survives a reconnect; 0 = off,
             // which is exactly what the Go side's PaceOff means. The burst is not a
             // setting — it is settled at 16 KiB — but it travels with the rate so
@@ -3672,6 +3683,9 @@ struct TunnelConfig {
     // Carried here so it survives a reconnect; the live path that avoids one is
     // TunnelManager.applyMemstatsFastTicks(). Default false.
     var memstatsFastTicks: Bool = false
+    /// Once-a-minute inner traffic summary. Settings › Advanced › Logging;
+    /// carried through a reconnect, live path `applyInnerTrafficLog()`.
+    var innerTrafficLog: Bool = false
     /// The uplink pacer's rate in KiB/s of counted bytes per allocation, 0 = off
     /// (Settings › Advanced). DEFAULT OFF — and the default lives here as well as
     /// in `UplinkPace.off`, because a config built without going through

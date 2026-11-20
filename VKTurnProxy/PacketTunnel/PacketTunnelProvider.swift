@@ -875,6 +875,11 @@ class PacketTunnelProvider: NEPacketTunnelProvider {
             logMsg("handleAppMessage: memstats fast ticks = \(on)")
             wgSetMemstatsFastTicks(on ? 1 : 0)
             completionHandler?("ok".data(using: .utf8))
+        } else if msg.hasPrefix("set_inner_traffic:") {
+            let on = msg.hasSuffix("1")
+            logMsg("handleAppMessage: inner traffic summary = \(on)")
+            wgSetInnerTrafficLog(on ? 1 : 0)
+            completionHandler?("ok".data(using: .utf8))
         } else if msg.hasPrefix("set_direct:") {
             // 🚧 DIAGNOSTIC, issue #72 — NOT a feature yet. Re-applies the
             // tunnel's ROUTES on a live session: DIRECT drops the default

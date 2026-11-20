@@ -201,9 +201,10 @@ type ProxyConfig struct {
 	// VK API call (no captcha risk in the .connecting window where
 	// the main app would be unable to display a WebView).
 	SeededTURN *struct {
-		Address  string `json:"address"`
-		Username string `json:"username"`
-		Password string `json:"password"`
+		Address   string   `json:"address"`
+		Username  string   `json:"username"`
+		Password  string   `json:"password"`
+		Addresses []string `json:"addresses,omitempty"` // every relay VK returned with it (a fresh probe's)
 	} `json:"seeded_turn,omitempty"`
 
 	// ForceLegacyCaptcha, when true, makes GetVKCreds skip the captcha-free VK
@@ -224,6 +225,11 @@ type ProxyConfig struct {
 	// Carried here so it survives a reconnect; wgSetMemstatsFastTicks below is
 	// the live path, because turning it on must not cost a re-dial of the thirty sessions.
 	MemstatsFastTicks bool `json:"memstats_fast_ticks,omitempty"`
+
+	// InnerTrafficLog asks the Go side for the once-a-minute summary of what
+	// the phone's own traffic meets inside the tunnel (Settings › Advanced ›
+	// Logging). Off by default; carries through a reconnect.
+	InnerTrafficLog bool `json:"inner_traffic_log,omitempty"`
 
 	// UplinkSynthMbit / UplinkSynthSec drive the paced synthetic uplink in
 	// pkg/proxy/synth.go — a DIAGNOSTIC that splits the ~19 Mbit/s upload
@@ -335,6 +341,7 @@ func wgStartVKBootstrap(proxyConfigJSON *C.char) C.int32_t {
 	}
 	proxy.SetForceLegacyCaptcha(pcfg.ForceLegacyCaptcha)
 	proxy.SetMemstatsFastTicks(pcfg.MemstatsFastTicks)
+	proxy.SetInnerTrafficLog(pcfg.InnerTrafficLog)
 	// The pacer is applied at the one connect site there is (the legacy second
 	// site went with wgTurnOnWithTURN in build 384) and again by
 	// wgSetUplinkPace on a running tunnel.
@@ -350,11 +357,7 @@ func wgStartVKBootstrap(proxyConfigJSON *C.char) C.int32_t {
 	// Seeded TURN creds from main app's pre-bootstrap captcha flow (optional).
 	var seededTURN *proxy.TURNCreds
 	if pcfg.SeededTURN != nil && pcfg.SeededTURN.Address != "" {
-		seededTURN = &proxy.TURNCreds{
-			Username: pcfg.SeededTURN.Username,
-			Password: pcfg.SeededTURN.Password,
-			Address:  pcfg.SeededTURN.Address,
-		}
+		seededTURN = proxy.SeedCreds(pcfg.SeededTURN.Address, pcfg.SeededTURN.Username, pcfg.SeededTURN.Password, pcfg.SeededTURN.Addresses)
 		log.Printf("wgStartVKBootstrap: using pre-fetched TURN creds (addr=%s)", seededTURN.Address)
 	}
 
@@ -565,6 +568,9 @@ func wgAttachWireGuardImpl(id int32, goSettings string, tunFd int) int32 {
 	// time goes. It answers "is wireguard-go starved or slow?", which is the
 	// one question left about the ~22 Mbit/s upload ceiling.
 	tunDev = proxy.WrapTUNForStats(tunDev)
+	// Inner traffic summary (Settings › Advanced › Logging, default off).
+	// Transparent unless the toggle is on.
+	tunDev = proxy.WrapTUNForInner(tunDev)
 
 	logger := device.NewLogger(device.LogLevelVerbose, "(wireguard-turn) ")
 	dev := device.NewDevice(tunDev, bind, logger)
@@ -1066,6 +1072,11 @@ func wgSetMemstatsFastTicks(enabled C.int32_t) {
 	proxy.SetMemstatsFastTicks(enabled != 0)
 }
 
+//export wgSetInnerTrafficLog
+func wgSetInnerTrafficLog(enabled C.int32_t) {
+	proxy.SetInnerTrafficLog(enabled != 0)
+}
+
 // Applies the uplink pacer to the RUNNING tunnel. kib is KiB/s of counted bytes
 // per allocation, 0 = off; burstKiB 0 falls back to the shipped 16 KiB.
 //
@@ -1178,6 +1189,12 @@ func wgProbeVKCreds(linkID, vkHostIPsJSON, savedSID, savedKey, savedToken1, save
 		resp["turn_address"] = creds.Address
 		resp["turn_username"] = creds.Username
 		resp["turn_password"] = creds.Password
+		if len(creds.Addresses) > 0 {
+			// Every relay VK returned with this credential, not only the
+			// first. The app hands the list back in seeded_turn.addresses,
+			// so a cold pool has another relay to move to.
+			resp["turn_addresses"] = creds.Addresses
+		}
 	}
 
 	out, mErr := json.Marshal(resp)

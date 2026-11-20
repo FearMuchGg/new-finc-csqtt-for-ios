@@ -4143,6 +4143,23 @@ var memstatsFastTicks atomic.Bool
 // being measured.
 func SetMemstatsFastTicks(on bool) { memstatsFastTicks.Store(on) }
 
+// innerTrafficLog controls the once-a-minute summary of the traffic the
+// phone's own apps meet inside the tunnel. Like memstatsFastTicks it is a
+// process-global diagnostic, read by the TUN wrappers and the minute tick;
+// switching it mid-session costs no reconnect.
+var innerTrafficLog atomic.Bool
+
+// SetInnerTrafficLog turns the inner traffic summary on or off.
+func SetInnerTrafficLog(on bool) {
+	innerTrafficLog.Store(on)
+	globalInnerTraffic.setOn(on)
+}
+
+// globalInnerTraffic is the process-global counter the TUN wrappers and the
+// minute tick share. The line is off by default, so an ordinary tunnel does
+// no per-packet header work.
+var globalInnerTraffic = newInnerTraffic()
+
 // memstatsCadence picks the tick interval, and is the ONLY thing that does.
 //
 // 🚨 It is a separate function so the rule is testable and so there is exactly
@@ -4344,6 +4361,12 @@ func (p *Proxy) logMemStatsLoop(ctx context.Context) {
 		// numbers only mean anything next to each other. Silent when no
 		// transport packet arrived in the interval. → rxreorder.go
 		downlinkReorder.dumpAndReset(time.Now())
+
+		// Inner traffic summary (once a minute, default off). Header-only
+		// counts of what the phone's apps met inside the tunnel.
+		if innerTrafficLog.Load() {
+			globalInnerTraffic.take(time.Now())
+		}
 
 		// Alloc-spike alert (build 140): if heap-alloc grew more than
 		// allocSpikeThreshold (5 MB) between ticks, emit a dedicated
@@ -4825,6 +4848,9 @@ func sanitizeLog(s string) string { return strings.ReplaceAll(s, "\x00", "") }
 func isAuthError(err error) bool {
 	if err == nil {
 		return false
+	}
+	if isPeerRefused(err) {
+		return false // a 403 on the PERMISSION is the relay's policy about our peer, not a dead credential
 	}
 	s := err.Error()
 	return strings.Contains(s, "error 401:") || strings.Contains(s, "error 403:")
@@ -5881,7 +5907,7 @@ func (p *Proxy) setupSRTPSession(ctx context.Context, turnAddr string, creds *TU
 	}
 	if err := tc.CreatePermission(p.peer); err != nil {
 		abortSetup()
-		return nil, fmt.Errorf("turn create permission: %w", err)
+		return nil, p.relayRefusedPeer(connIdx, turnAddr, attempt, fmt.Errorf("turn create permission: %w", err))
 	}
 	log.Printf("proxy: [conn %d] TURN relay allocated: %s (RTT %dms, local=%s)",
 		connIdx, relayConn.LocalAddr(), allocDur.Milliseconds(), ctlConn.LocalAddr())

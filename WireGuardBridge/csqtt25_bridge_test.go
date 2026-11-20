@@ -35,6 +35,8 @@ type fakeEngine struct {
 	err     error
 	conf    csqtt25.ConfigResponse
 	stats   csqtt25.Stats
+	quiet   csqtt25.WireQuiet
+	takes   atomic.Int32
 	pathChg atomic.Int32
 	wakes   atomic.Int32
 }
@@ -65,6 +67,7 @@ func (f *fakeEngine) Close() {
 	}
 }
 func (f *fakeEngine) Stats() csqtt25.Stats           { return f.stats }
+func (f *fakeEngine) WireQuiet() csqtt25.WireQuiet   { f.takes.Add(1); return f.quiet }
 func (f *fakeEngine) Config() csqtt25.ConfigResponse { return f.conf }
 func (f *fakeEngine) OnPathChange()                  { f.pathChg.Add(1) }
 func (f *fakeEngine) Wake()                          { f.wakes.Add(1) }

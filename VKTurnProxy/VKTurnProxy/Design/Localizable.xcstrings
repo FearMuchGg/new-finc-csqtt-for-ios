@@ -17,6 +17,38 @@
         }
       }
     },
+    "<1 minute": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "<1 minute"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "< 1 минуты"
+          }
+        }
+      }
+    },
+    "A relay that stops taking bytes is restarted after a second instead of holding every connection's traffic until the liveness rule restarts it (35–60 s). Off: a write waits as long as the relay makes it (the behaviour before build 438).": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "A relay that stops taking bytes is restarted after a second instead of holding every connection's traffic until the liveness rule restarts it (35–60 s). Off: a write waits as long as the relay makes it (the behaviour before build 438)."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Релей, переставший принимать байты, перезапускается через секунду, а не держит трафик всех соединений до срабатывания правила живости (35–60 с). Выкл.: запись ждёт столько, сколько её держит релей (поведение до сборки 438)."
+          }
+        }
+      }
+    },
     "Add": {
       "localizations": {
         "en": {
@@ -45,6 +77,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Добавьте ссылку подписки, чтобы серверы обновлялись сами. Одна подписка использует одно устройство для всех своих серверов."
+          }
+        }
+      }
+    },
+    "Add at least one call link (one per line). Each adds 2 TURN relays (~20 connections); the first line is also anonymous mode.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Add at least one call link (one per line). Each adds 2 TURN relays (~20 connections); the first line is also anonymous mode."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Добавьте хотя бы одну ссылку звонка (по одной в строке). Каждая добавляет 2 TURN-ретранслятора (~20 подключений); первая строка также используется в анонимном режиме."
           }
         }
       }
@@ -97,6 +145,22 @@
         }
       }
     },
+    "Attempt limit reached": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Attempt limit reached"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Достигнут лимит попыток"
+          }
+        }
+      }
+    },
     "Auto": {
       "localizations": {
         "en": {
@@ -109,22 +173,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Авто"
-          }
-        }
-      }
-    },
-    "Connections": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Connections"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Подключения"
           }
         }
       }
@@ -225,6 +273,22 @@
         }
       }
     },
+    "Bypass VPN": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bypass VPN"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Обход VPN"
+          }
+        }
+      }
+    },
     "Cancel": {
       "localizations": {
         "en": {
@@ -237,6 +301,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Отмена"
+          }
+        }
+      }
+    },
+    "Captured Browser Profile Cleared": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Captured Browser Profile Cleared"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Профиль браузера очищен"
           }
         }
       }
@@ -269,6 +349,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Проверка…"
+          }
+        }
+      }
+    },
+    "Choose a server": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Choose a server"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Выбор сервера"
           }
         }
       }
@@ -321,6 +417,118 @@
         }
       }
     },
+    "Clipboard Empty": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Clipboard Empty"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Буфер обмена пуст"
+          }
+        }
+      }
+    },
+    "Connect": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connect"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Подключить"
+          }
+        }
+      }
+    },
+    "Connected to": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connected to"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Подключено к"
+          }
+        }
+      }
+    },
+    "Connected — server unknown": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connected — server unknown"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Подключено — сервер неизвестен"
+          }
+        }
+      }
+    },
+    "Connecting to": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connecting to"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Подключение к"
+          }
+        }
+      }
+    },
+    "Connecting — server unknown": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connecting — server unknown"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Подключение — сервер неизвестен"
+          }
+        }
+      }
+    },
+    "Connection Status": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connection Status"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Состояние соединения"
+          }
+        }
+      }
+    },
     "Connection cancelled by the user": {
       "localizations": {
         "en": {
@@ -333,6 +541,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "Подключение отменено пользователем"
+          }
+        }
+      }
+    },
+    "Connections": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Connections"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Подключения"
+          }
+        }
+      }
+    },
+    "Cookies Deleted": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cookies Deleted"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cookies удалены"
           }
         }
       }
@@ -381,6 +621,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Не удалось переключить маршрутизацию."
+          }
+        }
+      }
+    },
+    "Creates a new VK call FROM YOUR VK ACCOUNT and puts its link at the top of the field above. This is not anonymous: the call belongs to the account you confirm on the next screen, so a burner is recommended. Created from the saved VK login; the cookie-auth toggle below may stay off.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Creates a new VK call FROM YOUR VK ACCOUNT and puts its link at the top of the field above. This is not anonymous: the call belongs to the account you confirm on the next screen, so a burner is recommended. Created from the saved VK login; the cookie-auth toggle below may stay off."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Создаёт новый звонок VK ИЗ ВАШЕГО АККАУНТА VK и помещает его ссылку в начало поля выше. Это не анонимно: звонок принадлежит аккаунту, который вы подтвердите на следующем экране, поэтому рекомендуем одноразовый. Создаётся из сохранённого входа в VK; переключатель cookie-авторизации ниже может оставаться выключенным."
           }
         }
       }
@@ -609,6 +865,22 @@
         }
       }
     },
+    "Disconnect": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Disconnect"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Отключить"
+          }
+        }
+      }
+    },
     "Done": {
       "localizations": {
         "en": {
@@ -653,6 +925,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Включить"
+          }
+        }
+      }
+    },
+    "Export Failed": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Export Failed"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ошибка экспорта"
           }
         }
       }
@@ -721,6 +1009,22 @@
         }
       }
     },
+    "Get Connection Status": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Get Connection Status"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Получить состояние соединения"
+          }
+        }
+      }
+    },
     "Get VK call URL": {
       "localizations": {
         "en": {
@@ -769,6 +1073,22 @@
         }
       }
     },
+    "Import Complete": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import Complete"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Импорт завершён"
+          }
+        }
+      }
+    },
     "Import Connection Link?": {
       "localizations": {
         "en": {
@@ -781,6 +1101,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Импортировать ссылку подключения?"
+          }
+        }
+      }
+    },
+    "Import Failed": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Import Failed"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ошибка импорта"
           }
         }
       }
@@ -813,6 +1149,102 @@
           "stringUnit": {
             "state": "translated",
             "value": "Импорт из ссылки подключения…"
+          }
+        }
+      }
+    },
+    "Inner traffic summary every minute": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inner traffic summary every minute"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Сводка внутреннего трафика раз в минуту"
+          }
+        }
+      }
+    },
+    "Last known": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Last known"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Последние данные"
+          }
+        }
+      }
+    },
+    "Last known:": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Last known:"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Последние данные:"
+          }
+        }
+      }
+    },
+    "Last known: Connected": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Last known: Connected"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Последние данные: подключено"
+          }
+        }
+      }
+    },
+    "Legacy (DTLS+WG)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Legacy (DTLS+WG)"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Устаревший (DTLS+WG)"
+          }
+        }
+      }
+    },
+    "Live Activity": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Live Activity"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Live Activity (экран блокировки)"
           }
         }
       }
@@ -913,6 +1345,38 @@
         }
       }
     },
+    "More servers": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "More servers"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ещё серверы"
+          }
+        }
+      }
+    },
+    "NEVER CONFIRMED": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "NEVER CONFIRMED"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "НЕ ПОДТВЕРЖДЕНО"
+          }
+        }
+      }
+    },
     "Name (optional)": {
       "localizations": {
         "en": {
@@ -925,6 +1389,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Имя (необязательно)"
+          }
+        }
+      }
+    },
+    "Name, city or sponsor": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Name, city or sponsor"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Название, город или спонсор"
           }
         }
       }
@@ -973,6 +1453,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "Подписок пока нет"
+          }
+        }
+      }
+    },
+    "Non-anonymous fallback for when VK disables anonymous call join. Log in to a VK account (a burner is recommended) in an embedded browser — 2FA works. Only the session cookies are stored, in the Keychain, never in a backup. When ON the app uses ONLY this path (no anonymous fallback). Turning it OFF keeps the saved cookies for later.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Non-anonymous fallback for when VK disables anonymous call join. Log in to a VK account (a burner is recommended) in an embedded browser — 2FA works. Only the session cookies are stored, in the Keychain, never in a backup. When ON the app uses ONLY this path (no anonymous fallback). Turning it OFF keeps the saved cookies for later."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Неанонимная альтернатива на случай, когда VK отключает анонимное подключение к звонку. Войдите в аккаунт VK (рекомендуем одноразовый) во встроенном браузере — 2FA работает. Сохраняются только cookie сессии, в Keychain, никогда в резервной копии. При включении приложение использует ТОЛЬКО этот путь (без анонимного запасного). Выключение сохраняет cookie для дальнейшего использования."
+          }
+        }
+      }
+    },
+    "Not logged in": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not logged in"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Нет входа"
           }
         }
       }
@@ -1057,6 +1569,22 @@
         }
       }
     },
+    "Peer public key": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Peer public key"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Публичный ключ пира"
+          }
+        }
+      }
+    },
     "Preshared Key (base64)": {
       "localizations": {
         "en": {
@@ -1073,6 +1601,22 @@
         }
       }
     },
+    "Preshared key": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Preshared key"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Общий ключ"
+          }
+        }
+      }
+    },
     "Private Key (base64)": {
       "localizations": {
         "en": {
@@ -1085,6 +1629,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Приватный ключ (base64)"
+          }
+        }
+      }
+    },
+    "Private key": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Private key"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Приватный ключ"
           }
         }
       }
@@ -1249,6 +1809,22 @@
         }
       }
     },
+    "Reset Failed": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reset Failed"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ошибка сброса"
+          }
+        }
+      }
+    },
     "Reset TURN Cache": {
       "localizations": {
         "en": {
@@ -1313,6 +1889,54 @@
         }
       }
     },
+    "Returns Connected or Disconnected. Connected means a VPN session exists — it does not confirm that traffic is crossing it.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Returns Connected or Disconnected. Connected means a VPN session exists — it does not confirm that traffic is crossing it."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Возвращает «Подключено» или «Отключено». «Подключено» означает, что сеанс VPN существует, но не подтверждает, что трафик идёт через него."
+          }
+        }
+      }
+    },
+    "Route around the tunnel": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Route around the tunnel"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "В обход туннеля"
+          }
+        }
+      }
+    },
+    "Routes traffic around the tunnel, or puts it back through it. Requires a running connection; this does not connect or disconnect.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Routes traffic around the tunnel, or puts it back through it. Requires a running connection; this does not connect or disconnect."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Направляет трафик в обход туннеля или возвращает его обратно. Нужно активное подключение; команда не подключает и не отключает VPN."
+          }
+        }
+      }
+    },
     "Run": {
       "localizations": {
         "en": {
@@ -1373,6 +1997,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Сервер"
+          }
+        }
+      }
+    },
+    "Server ID": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Server ID"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "ID сервера"
           }
         }
       }
@@ -1501,6 +2141,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Задать MTU вручную"
+          }
+        }
+      }
+    },
+    "Set VPN Bypass": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Set VPN Bypass"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Установить обход VPN"
           }
         }
       }
@@ -1645,6 +2301,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "Сменить сервер"
+          }
+        }
+      }
+    },
+    "Switch to server": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Switch to server"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Переключиться на сервер"
+          }
+        }
+      }
+    },
+    "TURN Cache Cleared": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "TURN Cache Cleared"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Кэш TURN очищен"
           }
         }
       }
@@ -1857,6 +2545,38 @@
         }
       }
     },
+    "Tunnel status": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tunnel status"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Состояние туннеля"
+          }
+        }
+      }
+    },
+    "Tunnel status: last known": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tunnel status: last known"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Состояние туннеля: последние данные"
+          }
+        }
+      }
+    },
     "Updated": {
       "localizations": {
         "en": {
@@ -1937,6 +2657,22 @@
         }
       }
     },
+    "Use VPN": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Use VPN"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Через VPN"
+          }
+        }
+      }
+    },
     "VK Account Auth": {
       "localizations": {
         "en": {
@@ -1969,6 +2705,38 @@
         }
       }
     },
+    "VK Turn Proxy could not read its VPN configuration.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VK Turn Proxy could not read its VPN configuration."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VK Turn Proxy не удалось прочитать конфигурацию VPN."
+          }
+        }
+      }
+    },
+    "VK account (cookie)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "VK account (cookie)"
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Аккаунт VK (cookie)"
+          }
+        }
+      }
+    },
     "WRAP key (64 hex chars)": {
       "localizations": {
         "en": {
@@ -1981,6 +2749,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "Ключ WRAP (64 hex-символа)"
+          }
+        }
+      }
+    },
+    "csqtt 2.5 has no devices: the tunnel address belongs to the password, and one password serves one device at a time. Its keys come from a DTLS handshake with the server; if the server answers none, from the password alone — and then, as with 2.1.9, traffic recorded today can be decrypted by anyone who learns the password later.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "csqtt 2.5 has no devices: the tunnel address belongs to the password, and one password serves one device at a time. Its keys come from a DTLS handshake with the server; if the server answers none, from the password alone — and then, as with 2.1.9, traffic recorded today can be decrypted by anyone who learns the password later."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "У csqtt 2.5 нет устройств: адрес туннеля принадлежит паролю, и один пароль обслуживает одно устройство одновременно. Ключи берутся из DTLS-рукопожатия с сервером; если сервер его не выполняет — из одного пароля, и тогда, как и в 2.1.9, записанный сегодня трафик сможет расшифровать любой, кто узнает пароль позже."
+          }
+        }
+      }
+    },
+    "csqtt has no key exchange: the password is the tunnel's only key, so traffic recorded today can be decrypted by anyone who learns it later (no forward secrecy). The other modes do not have this property.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "csqtt has no key exchange: the password is the tunnel's only key, so traffic recorded today can be decrypted by anyone who learns it later (no forward secrecy). The other modes do not have this property."
+          }
+        },
+        "ru": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "В csqtt нет обмена ключами: пароль — единственный ключ туннеля, поэтому записанный сегодня трафик сможет расшифровать любой, кто узнает его позже (нет прямой секретности). У других режимов такого свойства нет."
           }
         }
       }
@@ -2641,118 +3441,6 @@
         }
       }
     },
-    "Connect": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Connect"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Подключить"
-          }
-        }
-      }
-    },
-    "Disconnect": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Disconnect"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Отключить"
-          }
-        }
-      }
-    },
-    "Last known": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Last known"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Последние данные"
-          }
-        }
-      }
-    },
-    "Last known:": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Last known:"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Последние данные:"
-          }
-        }
-      }
-    },
-    "Last known: Connected": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Last known: Connected"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Последние данные: подключено"
-          }
-        }
-      }
-    },
-    "Tunnel status": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tunnel status"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Состояние туннеля"
-          }
-        }
-      }
-    },
-    "Tunnel status: last known": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Tunnel status: last known"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Состояние туннеля: последние данные"
-          }
-        }
-      }
-    },
     "· last known": {
       "localizations": {
         "en": {
@@ -2765,582 +3453,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "· последние данные"
-          }
-        }
-      }
-    },
-    "Connected to": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Connected to"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Подключено к"
-          }
-        }
-      }
-    },
-    "Connecting to": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Connecting to"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Подключение к"
-          }
-        }
-      }
-    },
-    "Connected — server unknown": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Connected — server unknown"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Подключено — сервер неизвестен"
-          }
-        }
-      }
-    },
-    "Connecting — server unknown": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Connecting — server unknown"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Подключение — сервер неизвестен"
-          }
-        }
-      }
-    },
-    "Choose a server": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Choose a server"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Выбор сервера"
-          }
-        }
-      }
-    },
-    "More servers": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "More servers"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ещё серверы"
-          }
-        }
-      }
-    },
-    "Route around the tunnel": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Route around the tunnel"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "В обход туннеля"
-          }
-        }
-      }
-    },
-    "Switch to server": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Switch to server"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Переключиться на сервер"
-          }
-        }
-      }
-    },
-    "Server ID": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Server ID"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "ID сервера"
-          }
-        }
-      }
-    },
-    "Bypass VPN": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Bypass VPN"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Обход VPN"
-          }
-        }
-      }
-    },
-    "Use VPN": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Use VPN"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Через VPN"
-          }
-        }
-      }
-    },
-    "Connection Status": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Connection Status"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Состояние соединения"
-          }
-        }
-      }
-    },
-    "Get Connection Status": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Get Connection Status"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Получить состояние соединения"
-          }
-        }
-      }
-    },
-    "Set VPN Bypass": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Set VPN Bypass"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Установить обход VPN"
-          }
-        }
-      }
-    },
-    "Routes traffic around the tunnel, or puts it back through it. Requires a running connection; this does not connect or disconnect.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Routes traffic around the tunnel, or puts it back through it. Requires a running connection; this does not connect or disconnect."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Направляет трафик в обход туннеля или возвращает его обратно. Нужно активное подключение; команда не подключает и не отключает VPN."
-          }
-        }
-      }
-    },
-    "Returns Connected or Disconnected. Connected means a VPN session exists — it does not confirm that traffic is crossing it.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Returns Connected or Disconnected. Connected means a VPN session exists — it does not confirm that traffic is crossing it."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Возвращает «Подключено» или «Отключено». «Подключено» означает, что сеанс VPN существует, но не подтверждает, что трафик идёт через него."
-          }
-        }
-      }
-    },
-    "Name, city or sponsor": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Name, city or sponsor"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Название, город или спонсор"
-          }
-        }
-      }
-    },
-    "Peer public key": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Peer public key"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Публичный ключ пира"
-          }
-        }
-      }
-    },
-    "Preshared key": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Preshared key"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Общий ключ"
-          }
-        }
-      }
-    },
-    "Private key": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Private key"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Приватный ключ"
-          }
-        }
-      }
-    },
-    "VK account (cookie)": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "VK account (cookie)"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Аккаунт VK (cookie)"
-          }
-        }
-      }
-    },
-    "Legacy (DTLS+WG)": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Legacy (DTLS+WG)"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Устаревший (DTLS+WG)"
-          }
-        }
-      }
-    },
-    "Clipboard Empty": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Clipboard Empty"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Буфер обмена пуст"
-          }
-        }
-      }
-    },
-    "Cookies Deleted": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Cookies Deleted"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Cookies удалены"
-          }
-        }
-      }
-    },
-    "Export Failed": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Export Failed"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ошибка экспорта"
-          }
-        }
-      }
-    },
-    "Import Complete": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Import Complete"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Импорт завершён"
-          }
-        }
-      }
-    },
-    "Import Failed": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Import Failed"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ошибка импорта"
-          }
-        }
-      }
-    },
-    "Reset Failed": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reset Failed"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ошибка сброса"
-          }
-        }
-      }
-    },
-    "TURN Cache Cleared": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "TURN Cache Cleared"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Кэш TURN очищен"
-          }
-        }
-      }
-    },
-    "Attempt limit reached": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Attempt limit reached"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Достигнут лимит попыток"
-          }
-        }
-      }
-    },
-    "Not logged in": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Not logged in"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Нет входа"
-          }
-        }
-      }
-    },
-    "Captured Browser Profile Cleared": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Captured Browser Profile Cleared"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Профиль браузера очищен"
-          }
-        }
-      }
-    },
-    "<1 minute": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "<1 minute"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "< 1 минуты"
-          }
-        }
-      }
-    },
-    "NEVER CONFIRMED": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "NEVER CONFIRMED"
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "НЕ ПОДТВЕРЖДЕНО"
-          }
-        }
-      }
-    },
-    "VK Turn Proxy could not read its VPN configuration.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "VK Turn Proxy could not read its VPN configuration."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "VK Turn Proxy не удалось прочитать конфигурацию VPN."
-          }
-        }
-      }
-    },
-    "Add at least one call link (one per line). Each adds 2 TURN relays (~20 connections); the first line is also anonymous mode.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Add at least one call link (one per line). Each adds 2 TURN relays (~20 connections); the first line is also anonymous mode."
-          }
-        },
-        "ru": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Добавьте хотя бы одну ссылку звонка (по одной в строке). Каждая добавляет 2 TURN-ретранслятора (~20 подключений); первая строка также используется в анонимном режиме."
           }
         }
       }

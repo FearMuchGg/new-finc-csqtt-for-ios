@@ -1,405 +1,423 @@
 {
- "2.1.9 and 2.5 are different protocols: a server answers the wrong one with silence, so a tunnel that never comes up is what a wrong choice here looks like.": [
-  "ServerEditView.swift"
- ],
- "Advanced": [
-  "AdvancedView.swift",
-  "ContentView.swift"
- ],
- "Auto (nearest)": [
-  "SpeedTestServerPicker.swift"
- ],
- "Auto-scroll": [
-  "ContentView.swift"
- ],
- "Backup & Restore": [
-  "ContentView.swift"
- ],
- "Backup contains all settings, WireGuard keys, TURN credentials, and the captured browser profile. Treat the exported file as a secret.": [
-  "ContentView.swift"
- ],
- "Backup from \\(formatter.string(from: date)) with \\(serverCount) server(s) and \\(credCount) cached TURN cred(s)\\(profileMark). This will overwrite all current settings.": [
-  "ContentView.swift"
- ],
- "Both": [
-  "SpeedTestView.swift"
- ],
- "Bounded relay writes": [
-  "ServerEditView.swift"
- ],
- "Cancel": [
-  "ConnectionLinkImport.swift",
-  "ContentView.swift"
- ],
- "Clear": [
-  "ContentView.swift"
- ],
- "Clear search": [
-  "SpeedTestServerPicker.swift"
- ],
- "Client ID": [
-  "ServerEditView.swift"
- ],
- "Copy server": [
-  "ServerEditView.swift"
- ],
- "Could not switch routing": [
-  "TunnelManager.swift"
- ],
- "DIRECT": [
-  "AdvancedView.swift"
- ],
- "DNS Servers": [
-  "ServerEditView.swift"
- ],
- "Delete": [
-  "ContentView.swift"
- ],
- "Delete saved cookies": [
-  "ContentView.swift"
- ],
- "Delete saved cookies?": [
-  "ContentView.swift"
- ],
- "Delete server": [
-  "ServerEditView.swift"
- ],
- "Deletes the cached TURN credentials. The pool will be rebuilt on next connect via the regular VK API + captcha flow.": [
-  "ContentView.swift"
- ],
- "Deletes the captured browser fingerprint used by the auto-PoW captcha solver. Until the next manual captcha solve, the solver will use generated values which VK detects as bot far more often.": [
-  "ContentView.swift"
- ],
- "Detailed log every second": [
-  "AdvancedView.swift"
- ],
- "Device ID": [
-  "ServerEditView.swift"
- ],
- "Diagnostics": [
-  "AdvancedView.swift"
- ],
- "Direction": [
-  "SpeedTestView.swift"
- ],
- "Done": [
-  "ContentView.swift"
- ],
- "Download": [
-  "SpeedTestView.swift"
- ],
- "Enable": [
-  "AdvancedView.swift"
- ],
- "Export Full Backup…": [
-  "ContentView.swift"
- ],
- "Failed to load VPN config": [
-  "TunnelManager.swift"
- ],
- "Force legacy captcha path": [
-  "AdvancedView.swift"
- ],
- "Found by searching Ookla — NOT necessarily near you": [
-  "SpeedTestServerPicker.swift"
- ],
- "Get VK call URL": [
-  "ContentView.swift"
- ],
- "Import": [
-  "ConnectionLinkImport.swift",
-  "ContentView.swift"
- ],
- "Import Backup?": [
-  "ContentView.swift"
- ],
- "Import Connection Link?": [
-  "ConnectionLinkImport.swift",
-  "ContentView.swift"
- ],
- "Import Full Backup…": [
-  "ContentView.swift"
- ],
- "Import from Connection Link…": [
-  "ContentView.swift"
- ],
- "Live Activity": [
-  "AdvancedView.swift"
- ],
- "Loading captcha…": [
-  "ContentView.swift"
- ],
- "Loading…": [
-  "SpeedTestServerPicker.swift"
- ],
- "Logging": [
-  "AdvancedView.swift"
- ],
- "Logs": [
-  "ContentView.swift"
- ],
- "MTU": [
-  "AdvancedView.swift"
- ],
- "More (\\(context.state.page + 1)/\\(context.state.pageCount))": [
-  "VPNLiveActivity.swift"
- ],
- "New creates a server with default settings. Copy duplicates this one. The last server can't be deleted. vkLink and VK account auth are global (Settings screen), not per-server.": [
-  "ServerEditView.swift"
- ],
- "New server": [
-  "ServerEditView.swift"
- ],
- "OK": [
-  "ConnectionLinkImport.swift",
-  "ContentView.swift"
- ],
- "Obfuscation profile": [
-  "ServerEditView.swift"
- ],
- "Ookla returned nothing for “\\(query)”.": [
-  "SpeedTestServerPicker.swift"
- ],
- "Pace the uplink": [
-  "AdvancedView.swift"
- ],
- "Peer Public Key (base64)": [
-  "ServerEditView.swift"
- ],
- "Preshared Key (base64)": [
-  "ServerEditView.swift"
- ],
- "Private Key (base64)": [
-  "ServerEditView.swift"
- ],
- "Proxy Server (host:port)": [
-  "ServerEditView.swift"
- ],
- "Reload for this route": [
-  "SpeedTestServerPicker.swift"
- ],
- "Removes the stored VK session cookies. You'll need to log in again to use VK account auth.": [
-  "ContentView.swift"
- ],
- "Research mode": [
-  "SpeedTestView.swift"
- ],
- "Research mode discards a warm-up and reports the raw figure — ": [
-  "SpeedTestView.swift"
- ],
- "Reset": [
-  "ContentView.swift"
- ],
- "Reset Captured Browser Profile": [
-  "ContentView.swift"
- ],
- "Reset Captured Browser Profile?": [
-  "ContentView.swift"
- ],
- "Reset TURN Cache": [
-  "ContentView.swift"
- ],
- "Reset TURN Cache?": [
-  "ContentView.swift"
- ],
- "Result": [
-  "SpeedTestView.swift"
- ],
- "Run": [
-  "SpeedTestView.swift"
- ],
- "Search again": [
-  "SpeedTestServerPicker.swift"
- ],
- "Search for “\\(query)” failed: \\(message)": [
-  "SpeedTestServerPicker.swift"
- ],
- "Searching Ookla for “\\(query)”…": [
-  "SpeedTestServerPicker.swift"
- ],
- "Send traffic around the tunnel": [
-  "AdvancedView.swift"
- ],
- "Server": [
-  "SpeedTestServerPicker.swift",
-  "SpeedTestView.swift"
- ],
- "Server mode": [
-  "ServerEditView.swift"
- ],
- "Server name": [
-  "ServerEditView.swift"
- ],
- "Server password": [
-  "ServerEditView.swift"
- ],
- "Server version": [
-  "ServerEditView.swift"
- ],
- "Servers": [
-  "ContentView.swift"
- ],
- "Session": [
-  "ContentView.swift"
- ],
- "Session time in collapsed island": [
-  "AdvancedView.swift"
- ],
- "Set MTU manually": [
-  "AdvancedView.swift"
- ],
- "Settings": [
-  "ContentView.swift"
- ],
- "Share": [
-  "ContentView.swift"
- ],
- "Solve Captcha": [
-  "ContentView.swift"
- ],
- "Speed test": [
-  "ContentView.swift",
-  "SpeedTestView.swift"
- ],
- "Statistics unavailable — the app can't reach the tunnel extension. The VPN itself is unaffected; see Logs for the reason.": [
-  "ContentView.swift"
- ],
- "Stop": [
-  "SpeedTestView.swift"
- ],
- "Switch server": [
-  "VPNLiveActivity.swift"
- ],
- "TURN servers (host:port[:quota[:pace]] or $vkurls, comma-separated, optional)": [
-  "ServerEditView.swift"
- ],
- "Tap the circle to make a server active; tap the name to edit it. The active server's settings are used when you connect.": [
-  "ContentView.swift"
- ],
- "Test": [
-  "SpeedTestView.swift"
- ],
- "The list comes from the address the internet sees for this device, ": [
-  "SpeedTestServerPicker.swift"
- ],
- "The tunnel had stopped": [
-  "TunnelManager.swift"
- ],
- "The tunnel stopped": [
-  "TunnelManager.swift"
- ],
- "These came from a search of Ookla's whole list, so the distance is ": [
-  "SpeedTestServerPicker.swift"
- ],
- "Threads": [
-  "SpeedTestView.swift"
- ],
- "Transport": [
-  "ServerEditView.swift"
- ],
- "Try again": [
-  "SpeedTestServerPicker.swift"
- ],
- "Tunnel": [
-  "AdvancedView.swift"
- ],
- "Tunnel Address": [
-  "ServerEditView.swift"
- ],
- "Uplink": [
-  "AdvancedView.swift"
- ],
- "Upload": [
-  "SpeedTestView.swift"
- ],
- "Use UDP transport to TURN": [
-  "ServerEditView.swift"
- ],
- "Use VK account (cookie) auth": [
-  "ContentView.swift"
- ],
- "VK Account Auth": [
-  "ContentView.swift"
- ],
- "VK Call Link": [
-  "ContentView.swift"
- ],
- "VK Turn Proxy": [
-  "ContentView.swift"
- ],
- "VK временно не отдаёт капчу": [
-  "ContentView.swift"
- ],
- "WRAP key (64 hex chars)": [
-  "ServerEditView.swift"
- ],
- "WireGuard": [
-  "ServerEditView.swift"
- ],
- "\\(context.state.page + 1)/\\(context.state.pageCount) ›": [
-  "VPNLiveActivity.swift"
- ],
- "\\(elapsedSec)s": [
-  "ContentView.swift"
- ],
- "\\(progress.engine) · app build \\(Self.appBuild)": [
-  "SpeedTestResultView.swift"
- ],
- "\\(progress.serverDesc) · id \\(progress.serverID)": [
-  "SpeedTestResultView.swift"
- ],
- "\\(tunnelMTU)": [
-  "AdvancedView.swift"
- ],
- "csqtt 2.1.9": [
-  "ServerEditView.swift"
- ],
- "csqtt 2.5": [
-  "ServerEditView.swift"
- ],
- "csqtt.appearance.animations": [
-  "AdvancedView.swift"
- ],
- "csqtt.appearance.footer": [
-  "AdvancedView.swift"
- ],
- "csqtt.appearance.glass": [
-  "AdvancedView.swift"
- ],
- "csqtt.appearance.haptics": [
-  "AdvancedView.swift"
- ],
- "csqtt.appearance.title": [
-  "AdvancedView.swift"
- ],
- "id \\(server.id) · \\(server.proximity)": [
-  "SpeedTestServerPicker.swift"
- ],
- "id \\(serverID)": [
-  "SpeedTestView.swift"
- ],
- "rtpopus": [
-  "ServerEditView.swift"
- ],
- "rtpopus2": [
-  "ServerEditView.swift"
- ],
- "rtpopus3": [
-  "ServerEditView.swift"
- ],
- "seen by Ookla as \\(progress.ooklaSeesIP) (\\(progress.ooklaSeesISP))": [
-  "SpeedTestResultView.swift"
- ],
- "· last known": [
-  "VPNLiveActivity.swift"
- ],
- "Вход в VK": [
-  "VKAuthWebView.swift"
- ],
- "Ищем рабочую — попытка \\(tunnel.captchaRefreshAttempt) из \\(tunnel.maxCaptchaRefreshAttempts)": [
-  "ContentView.swift"
- ],
- "Создание звонка VK": [
-  "VKOAuthWebView.swift"
- ]
+  "2.1.9 and 2.5 are different protocols: a server answers the wrong one with silence, so a tunnel that never comes up is what a wrong choice here looks like.": [
+    "ServerEditView.swift"
+  ],
+  "A relay that stops taking bytes is restarted after a second instead of holding every connection's traffic until the liveness rule restarts it (35–60 s). Off: a write waits as long as the relay makes it (the behaviour before build 438).": [
+    "ServerEditView.swift"
+  ],
+  "Advanced": [
+    "AdvancedView.swift",
+    "ContentView.swift"
+  ],
+  "Auto (nearest)": [
+    "SpeedTestServerPicker.swift"
+  ],
+  "Auto-scroll": [
+    "ContentView.swift"
+  ],
+  "Backup & Restore": [
+    "ContentView.swift"
+  ],
+  "Backup contains all settings, WireGuard keys, TURN credentials, and the captured browser profile. Treat the exported file as a secret.": [
+    "ContentView.swift"
+  ],
+  "Backup from \\(formatter.string(from: date)) with \\(serverCount) server(s) and \\(credCount) cached TURN cred(s)\\(profileMark). This will overwrite all current settings.": [
+    "ContentView.swift"
+  ],
+  "Both": [
+    "SpeedTestView.swift"
+  ],
+  "Bounded relay writes": [
+    "ServerEditView.swift"
+  ],
+  "Cancel": [
+    "ConnectionLinkImport.swift",
+    "ContentView.swift"
+  ],
+  "Clear": [
+    "ContentView.swift"
+  ],
+  "Clear search": [
+    "SpeedTestServerPicker.swift"
+  ],
+  "Client ID": [
+    "ServerEditView.swift"
+  ],
+  "Copy server": [
+    "ServerEditView.swift"
+  ],
+  "Could not switch routing": [
+    "TunnelManager.swift"
+  ],
+  "Creates a new VK call FROM YOUR VK ACCOUNT and puts its link at the top of the field above. This is not anonymous: the call belongs to the account you confirm on the next screen, so a burner is recommended. Created from the saved VK login; the cookie-auth toggle below may stay off.": [
+    "ContentView.swift"
+  ],
+  "DIRECT": [
+    "AdvancedView.swift"
+  ],
+  "DNS Servers": [
+    "ServerEditView.swift"
+  ],
+  "Delete": [
+    "ContentView.swift"
+  ],
+  "Delete saved cookies": [
+    "ContentView.swift"
+  ],
+  "Delete saved cookies?": [
+    "ContentView.swift"
+  ],
+  "Delete server": [
+    "ServerEditView.swift"
+  ],
+  "Deletes the cached TURN credentials. The pool will be rebuilt on next connect via the regular VK API + captcha flow.": [
+    "ContentView.swift"
+  ],
+  "Deletes the captured browser fingerprint used by the auto-PoW captcha solver. Until the next manual captcha solve, the solver will use generated values which VK detects as bot far more often.": [
+    "ContentView.swift"
+  ],
+  "Detailed log every second": [
+    "AdvancedView.swift"
+  ],
+  "Device ID": [
+    "ServerEditView.swift"
+  ],
+  "Diagnostics": [
+    "AdvancedView.swift"
+  ],
+  "Direction": [
+    "SpeedTestView.swift"
+  ],
+  "Done": [
+    "ContentView.swift"
+  ],
+  "Download": [
+    "SpeedTestView.swift"
+  ],
+  "Enable": [
+    "AdvancedView.swift"
+  ],
+  "Export Full Backup…": [
+    "ContentView.swift"
+  ],
+  "Failed to load VPN config": [
+    "TunnelManager.swift"
+  ],
+  "Force legacy captcha path": [
+    "AdvancedView.swift"
+  ],
+  "Found by searching Ookla — NOT necessarily near you": [
+    "SpeedTestServerPicker.swift"
+  ],
+  "Get VK call URL": [
+    "ContentView.swift"
+  ],
+  "Import": [
+    "ConnectionLinkImport.swift",
+    "ContentView.swift"
+  ],
+  "Import Backup?": [
+    "ContentView.swift"
+  ],
+  "Import Connection Link?": [
+    "ConnectionLinkImport.swift",
+    "ContentView.swift"
+  ],
+  "Import Full Backup…": [
+    "ContentView.swift"
+  ],
+  "Import from Connection Link…": [
+    "ContentView.swift"
+  ],
+  "Inner traffic summary every minute": [
+    "AdvancedView.swift"
+  ],
+  "Live Activity": [
+    "AdvancedView.swift"
+  ],
+  "Loading captcha…": [
+    "ContentView.swift"
+  ],
+  "Loading…": [
+    "SpeedTestServerPicker.swift"
+  ],
+  "Logging": [
+    "AdvancedView.swift"
+  ],
+  "Logs": [
+    "ContentView.swift"
+  ],
+  "MTU": [
+    "AdvancedView.swift"
+  ],
+  "More (\\(context.state.page + 1)/\\(context.state.pageCount))": [
+    "VPNLiveActivity.swift"
+  ],
+  "New creates a server with default settings. Copy duplicates this one. The last server can't be deleted. vkLink and VK account auth are global (Settings screen), not per-server.": [
+    "ServerEditView.swift"
+  ],
+  "New server": [
+    "ServerEditView.swift"
+  ],
+  "Non-anonymous fallback for when VK disables anonymous call join. Log in to a VK account (a burner is recommended) in an embedded browser — 2FA works. Only the session cookies are stored, in the Keychain, never in a backup. When ON the app uses ONLY this path (no anonymous fallback). Turning it OFF keeps the saved cookies for later.": [
+    "ContentView.swift"
+  ],
+  "OK": [
+    "ConnectionLinkImport.swift",
+    "ContentView.swift"
+  ],
+  "Obfuscation profile": [
+    "ServerEditView.swift"
+  ],
+  "Ookla returned nothing for “\\(query)”.": [
+    "SpeedTestServerPicker.swift"
+  ],
+  "Pace the uplink": [
+    "AdvancedView.swift"
+  ],
+  "Peer Public Key (base64)": [
+    "ServerEditView.swift"
+  ],
+  "Preshared Key (base64)": [
+    "ServerEditView.swift"
+  ],
+  "Private Key (base64)": [
+    "ServerEditView.swift"
+  ],
+  "Proxy Server (host:port)": [
+    "ServerEditView.swift"
+  ],
+  "Reload for this route": [
+    "SpeedTestServerPicker.swift"
+  ],
+  "Removes the stored VK session cookies. You'll need to log in again to use VK account auth.": [
+    "ContentView.swift"
+  ],
+  "Research mode": [
+    "SpeedTestView.swift"
+  ],
+  "Research mode discards a warm-up and reports the raw figure — ": [
+    "SpeedTestView.swift"
+  ],
+  "Reset": [
+    "ContentView.swift"
+  ],
+  "Reset Captured Browser Profile": [
+    "ContentView.swift"
+  ],
+  "Reset Captured Browser Profile?": [
+    "ContentView.swift"
+  ],
+  "Reset TURN Cache": [
+    "ContentView.swift"
+  ],
+  "Reset TURN Cache?": [
+    "ContentView.swift"
+  ],
+  "Result": [
+    "SpeedTestView.swift"
+  ],
+  "Run": [
+    "SpeedTestView.swift"
+  ],
+  "Search again": [
+    "SpeedTestServerPicker.swift"
+  ],
+  "Search for “\\(query)” failed: \\(message)": [
+    "SpeedTestServerPicker.swift"
+  ],
+  "Searching Ookla for “\\(query)”…": [
+    "SpeedTestServerPicker.swift"
+  ],
+  "Send traffic around the tunnel": [
+    "AdvancedView.swift"
+  ],
+  "Server": [
+    "SpeedTestServerPicker.swift",
+    "SpeedTestView.swift"
+  ],
+  "Server mode": [
+    "ServerEditView.swift"
+  ],
+  "Server name": [
+    "ServerEditView.swift"
+  ],
+  "Server password": [
+    "ServerEditView.swift"
+  ],
+  "Server version": [
+    "ServerEditView.swift"
+  ],
+  "Servers": [
+    "ContentView.swift"
+  ],
+  "Session": [
+    "ContentView.swift"
+  ],
+  "Session time in collapsed island": [
+    "AdvancedView.swift"
+  ],
+  "Set MTU manually": [
+    "AdvancedView.swift"
+  ],
+  "Settings": [
+    "ContentView.swift"
+  ],
+  "Share": [
+    "ContentView.swift"
+  ],
+  "Solve Captcha": [
+    "ContentView.swift"
+  ],
+  "Speed test": [
+    "ContentView.swift",
+    "SpeedTestView.swift"
+  ],
+  "Statistics unavailable — the app can't reach the tunnel extension. The VPN itself is unaffected; see Logs for the reason.": [
+    "ContentView.swift"
+  ],
+  "Stop": [
+    "SpeedTestView.swift"
+  ],
+  "Switch server": [
+    "VPNLiveActivity.swift"
+  ],
+  "TURN servers (host:port[:quota[:pace]] or $vkurls, comma-separated, optional)": [
+    "ServerEditView.swift"
+  ],
+  "Tap the circle to make a server active; tap the name to edit it. The active server's settings are used when you connect.": [
+    "ContentView.swift"
+  ],
+  "Test": [
+    "SpeedTestView.swift"
+  ],
+  "The list comes from the address the internet sees for this device, ": [
+    "SpeedTestServerPicker.swift"
+  ],
+  "The tunnel had stopped": [
+    "TunnelManager.swift"
+  ],
+  "The tunnel stopped": [
+    "TunnelManager.swift"
+  ],
+  "These came from a search of Ookla's whole list, so the distance is ": [
+    "SpeedTestServerPicker.swift"
+  ],
+  "Threads": [
+    "SpeedTestView.swift"
+  ],
+  "Transport": [
+    "ServerEditView.swift"
+  ],
+  "Try again": [
+    "SpeedTestServerPicker.swift"
+  ],
+  "Tunnel": [
+    "AdvancedView.swift"
+  ],
+  "Tunnel Address": [
+    "ServerEditView.swift"
+  ],
+  "Uplink": [
+    "AdvancedView.swift"
+  ],
+  "Upload": [
+    "SpeedTestView.swift"
+  ],
+  "Use UDP transport to TURN": [
+    "ServerEditView.swift"
+  ],
+  "Use VK account (cookie) auth": [
+    "ContentView.swift"
+  ],
+  "VK Account Auth": [
+    "ContentView.swift"
+  ],
+  "VK Call Link": [
+    "ContentView.swift"
+  ],
+  "VK Turn Proxy": [
+    "ContentView.swift"
+  ],
+  "VK временно не отдаёт капчу": [
+    "ContentView.swift"
+  ],
+  "WRAP key (64 hex chars)": [
+    "ServerEditView.swift"
+  ],
+  "WireGuard": [
+    "ServerEditView.swift"
+  ],
+  "\\(context.state.page + 1)/\\(context.state.pageCount) ›": [
+    "VPNLiveActivity.swift"
+  ],
+  "\\(elapsedSec)s": [
+    "ContentView.swift"
+  ],
+  "\\(progress.engine) · app build \\(Self.appBuild)": [
+    "SpeedTestResultView.swift"
+  ],
+  "\\(progress.serverDesc) · id \\(progress.serverID)": [
+    "SpeedTestResultView.swift"
+  ],
+  "\\(tunnelMTU)": [
+    "AdvancedView.swift"
+  ],
+  "csqtt 2.1.9": [
+    "ServerEditView.swift"
+  ],
+  "csqtt 2.5": [
+    "ServerEditView.swift"
+  ],
+  "csqtt 2.5 has no devices: the tunnel address belongs to the password, and one password serves one device at a time. Its keys come from a DTLS handshake with the server; if the server answers none, from the password alone — and then, as with 2.1.9, traffic recorded today can be decrypted by anyone who learns the password later.": [
+    "ServerEditView.swift"
+  ],
+  "csqtt has no key exchange: the password is the tunnel's only key, so traffic recorded today can be decrypted by anyone who learns it later (no forward secrecy). The other modes do not have this property.": [
+    "ServerEditView.swift"
+  ],
+  "csqtt.appearance.animations": [
+    "AdvancedView.swift"
+  ],
+  "csqtt.appearance.footer": [
+    "AdvancedView.swift"
+  ],
+  "csqtt.appearance.glass": [
+    "AdvancedView.swift"
+  ],
+  "csqtt.appearance.haptics": [
+    "AdvancedView.swift"
+  ],
+  "csqtt.appearance.title": [
+    "AdvancedView.swift"
+  ],
+  "id \\(server.id) · \\(server.proximity)": [
+    "SpeedTestServerPicker.swift"
+  ],
+  "id \\(serverID)": [
+    "SpeedTestView.swift"
+  ],
+  "rtpopus": [
+    "ServerEditView.swift"
+  ],
+  "rtpopus2": [
+    "ServerEditView.swift"
+  ],
+  "rtpopus3": [
+    "ServerEditView.swift"
+  ],
+  "seen by Ookla as \\(progress.ooklaSeesIP) (\\(progress.ooklaSeesISP))": [
+    "SpeedTestResultView.swift"
+  ],
+  "· last known": [
+    "VPNLiveActivity.swift"
+  ],
+  "Вход в VK": [
+    "VKAuthWebView.swift"
+  ],
+  "Ищем рабочую — попытка \\(tunnel.captchaRefreshAttempt) из \\(tunnel.maxCaptchaRefreshAttempts)": [
+    "ContentView.swift"
+  ],
+  "Создание звонка VK": [
+    "VKOAuthWebView.swift"
+  ]
 }
